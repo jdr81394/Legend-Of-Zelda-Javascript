@@ -1,3 +1,4 @@
+const ASSET_PATH = "./assets/";
 
 
 class Component {
@@ -28,7 +29,7 @@ class SpriteComponent extends Component {
     constructor(componentType, componentObj) {
         super(componentType);
         this.sprite = new Image();
-        this.sprite.src = componentObj.path;        // string to file
+        this.sprite.src = ASSET_PATH + componentObj.path;        // string to file
     }
 }
 

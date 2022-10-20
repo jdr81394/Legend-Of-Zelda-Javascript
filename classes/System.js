@@ -2,8 +2,17 @@
 
 class System {
     constructor(systemType) {
-        this.systemType = systemType++; // string
+        this.systemType = systemType ; // string
+        this.entities = []
     }
 }
 
-export {System}
+
+class RenderSystem extends System {
+    constructor(systemType) {
+        super (systemType);
+        this.componentRequirements = ["Position", "Sprite"];        // string[]
+    }
+}
+
+export {System, RenderSystem}

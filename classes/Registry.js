@@ -1,7 +1,6 @@
 import {Entity} from "./Entity.js";
 import {PositionComponent, SpriteComponent, MovementComponent} from "./Component.js";
-import {System} from "./System.js"
-
+import {System, RenderSystem} from "./System.js"
 
 
 
@@ -9,25 +8,33 @@ import {System} from "./System.js"
 class Registry {
     constructor() {
         this.numberOfEntities = 0;
+        this.systems = {}               // object { name (string) : RenderSystem,VelocitySystem, etc (string) }
         this.entitiesToBeAdded = [];    // entities[]
         this.entitiesToBeKilled = []    // entities[]
     }
 
-
+    //3
     update = () => {
-        requestAnimationFrame(this.update)
         for(let entity of this.entitiesToBeAdded) {
+            this.addEntityToSystem(entity);
         }
 
-        for(let entity of this.entitiesToBeKilled) {}
+        this.entitiesToBeAdded = [];
+
+        for(let entity of this.entitiesToBeKilled) {
+            // remove entities from systenm
+        }
+    
+        this.entitiesToBeKilled = [];
     }
 
 
+    //1
     /*
-    // component =  Array of Objects : 
+    component =  Array of Objects : 
     [
         { 
-            componentName: string, componentName , 
+            name: string, componentName , 
             value: Object { 
                 k: v 
             } 
@@ -53,19 +60,56 @@ class Registry {
                 }
                 case "Sprite": {
                     const componentObj = component["value"];
-                    newEntityComponents["Sprite"] = new PositionComponent(component, componentObj);
+                    newEntityComponents["Sprite"] = new SpriteComponent(component, componentObj);
                     break;
                 }
                 default:
                     break;
             }
         }
-        console.log(newEntityComponents)
 
         newEntity.components = newEntityComponents;
-
-
         this.entitiesToBeAdded.push(newEntity);
+    }
+
+    // 2
+    // systemType string : RenderSystem, VelocitySystem, etc
+    addSystem = (systemType) => {
+        let newSystem;
+        console.log(systemType)
+        switch (systemType) {
+            case "RenderSystem":
+                newSystem = new RenderSystem(systemType);
+                break;
+
+            default:
+                break;
+        }
+        this.systems[systemType] = newSystem;
+    }
+
+    //4
+    // entity : Entity
+    addEntityToSystem = (entity) => {
+
+        Object.values(this.systems).forEach((system) => {
+            let addToSystem = true;
+
+            const componentRequirements = system["componentRequirements"];
+            
+            for (let i = 0; i < componentRequirements.length; i++) {
+                const req = componentRequirements[i];
+                if(entity.components[req] === undefined) {
+                    addToSystem = false;
+                    break;
+                }
+
+            }
+            if(addToSystem) system.entities.push(entity);  
+        })
+
+        console.log(this.systems);
+
     }
 
 }
