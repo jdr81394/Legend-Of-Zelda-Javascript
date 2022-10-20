@@ -46,5 +46,17 @@ class AnimationComponent extends Component {
     }
 }
 
+class CollisionComponent extends Component {
+    constructor(componentType, componentObj) {
+        super(componentType);
+    }
+}
 
-export {Component, PositionComponent, MovementComponent, SpriteComponent,AnimationComponent}
+class PlayerComponent extends Component {
+    constructor(componentType, componentObj) {
+        super(componentType);
+    }
+}
+
+
+export {Component, PositionComponent, MovementComponent, SpriteComponent,AnimationComponent, CollisionComponent,PlayerComponent}

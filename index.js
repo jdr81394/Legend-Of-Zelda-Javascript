@@ -18,11 +18,16 @@ class Game {
         this.numRows = 13;
         this.numCols = 18;
         this.screenObject = screenObject;
+        this.isDebug = true;
+        this.player = null;
+
     }
 
     initialize = () => {
         this.registry.addSystem("RenderSystem");
         this.registry.addSystem("AnimationSystem");
+        this.registry.addSystem("MovementSystem");
+        // this.registry.addSystem("CollisionSystem");
 
         this.loadScreen();
     }
@@ -30,7 +35,9 @@ class Game {
 
     update = () => {
         requestAnimationFrame(this.update);
-        game.registry.getSystem("AnimationSystem").update();
+        this.registry.getSystem("AnimationSystem").update();
+        this.registry.getSystem("MovementSystem").update();
+        // this.registry.getSystem("CollisionSystem").update(this.player, this.isDebug);
 
         this.registry.update();
     }
@@ -38,7 +45,7 @@ class Game {
 
     render = () => {
         requestAnimationFrame(this.render);
-        game.registry.getSystem("RenderSystem").update();
+        this.registry.getSystem("RenderSystem").update();
     }
 
 
@@ -88,13 +95,40 @@ class Game {
                 //     }
                 // };
 
-                const components = [positionDummyComponent, spriteDummyComponent];
+                // const collisionComponent = {
+                //     "name": "Collision"
+                // }
+
+                const components = [
+                    positionDummyComponent, 
+                    spriteDummyComponent,
+                    // collisionComponent
+                ];
 
                 this.registry.createEntity(components);
 
 
             }
         }
+
+        // We will use a grid to determine where the player loads up
+        // gridCoX is a grid coefficient
+        // gridCoY is a gridcoffiecien
+        const gridCoX = 5;
+        const gridCoY = 8;
+        const playerDummyComponent = { "name": "Player" };
+        const positionDummyComponent = {"name": "Position", "value": {x: gridCoX * TILE_SIZE, y: gridCoY * TILE_SIZE}};
+        const spriteDummyComponent = {
+            "name": "Sprite", "value": 
+            { 
+                srcRect: {x: 0, y: 0, width: 19, height: 19}, 
+                path: "link.png",
+                // pixelsBetween: 30
+            }
+        };
+
+        this.registry.createEntity([playerDummyComponent,positionDummyComponent,spriteDummyComponent])
+
     }
 }
 

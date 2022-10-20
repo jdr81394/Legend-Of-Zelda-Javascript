@@ -25,17 +25,20 @@ class RenderSystem extends System {
 
             if(srcRect) {
                 const {x,y,width, height} = srcRect;
+                if(entity.components["Player"]){
+                    c.globalCompositeOperation="source-over";
+                }
                 c.drawImage(
                     sprite,
                     x,y,width,height,
                     positionComponent.x, positionComponent.y, TILE_SIZE,TILE_SIZE
                 )
             } else {
+                c.globalCompositeOperation="destination-over";
                 c.drawImage(sprite,
                     positionComponent.x, positionComponent.y, TILE_SIZE,TILE_SIZE)
             }
 
-            // console.log(srcRect);
 
 
         }
@@ -71,4 +74,71 @@ class AnimationSystem extends System {
     }
 }
 
-export {System, RenderSystem, AnimationSystem}
+class MovementSystem extends System {
+    constructor(systemType) {
+        this.systemType = systemType;
+        this.componentRequirements = ["Movement"];
+    }
+
+    update = () => {
+        
+    }
+}
+
+
+class CollisionSystem extends System {
+    constructor(systemType) {
+        super(systemType);
+        this.componentRequirements = ["Collision"];
+    }
+
+    // Entity
+    update = (player, isDebug) => {
+
+        for ( let i = 0; i < this.entities.length; i++) {
+            const collidable = this.entities[i];
+
+            if(player.id === collidable.id) continue;       // this means comparing player to itself so  move on
+
+            const {Position, Movement, Sprite} = player.components;
+
+            const collidablePosition = collidable.components.Position;
+            const collidableSprite = collidable.components.Sprite ? collidable.components.Sprite : {width: TILE_SIZE, height: TILE_SIZE};
+
+            if(
+                player && collidable &&
+                Position.x < collidablePosition.x + collidableSprite.width  &&
+                Position.x + Movement.vX + Sprite.width > collidablePosition.x &&
+                Position.y  < collidablePosition.y + collidableSprite.height  && 
+                Position.y + Movement.vY + Sprite.height > collidablePosition.y 
+            ) { 
+
+                if(player.dx !==0 && player.dy !== 0) {
+                    this.player.collisionX = true;
+                    this.player.collisionY  = true;
+                }
+
+                if(player.dx !== 0) this.player.collisionX = true;
+                if(player.dy !== 0) this.player.collisionY  = true;
+
+            }
+
+            if(isDebug) {
+                    console.log("in here" , player.id , collidable.id)
+                c.beginPath();
+                c.rect(collidablePosition.x,collidablePosition.y, collidableSprite.width, collidableSprite.height);
+                c.lineWidth = 3;
+                c.strokeStyle = "red";
+                c.stroke();
+            }
+
+            
+        }
+
+
+
+
+    }
+}
+
+export {System, RenderSystem, AnimationSystem, CollisionSystem,MovementSystem}
