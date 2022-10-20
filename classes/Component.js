@@ -26,12 +26,25 @@ class MovementComponent extends Component {
 }
 
 class SpriteComponent extends Component {
-    constructor(componentType, componentObj) {
+    constructor(componentType, componentObj, pixelsBetween) {
         super(componentType);
         this.sprite = new Image();
         this.sprite.src = ASSET_PATH + componentObj.path;        // string to file
+        this.srcRect = componentObj.srcRect         // object with {x: int, y: int, width: int, height: int} This is the coordinates on the src path
+        this.pixelsBetween = componentObj.pixelsBetween;
+    }
+}
+
+class AnimationComponent extends Component {
+    constructor(componentType, componentObj) {
+        super(componentType);
+        this.numFrames = componentObj.numFrames;
+        this.currentFrame = componentObj.currentFrame;
+        this.frameSpeedRate = componentObj.frameSpeedRate;
+        this.isLoop = componentObj.isLoop;
+        this.startTime = componentObj.startTime;
     }
 }
 
 
-export {Component, PositionComponent, MovementComponent, SpriteComponent}
+export {Component, PositionComponent, MovementComponent, SpriteComponent,AnimationComponent}

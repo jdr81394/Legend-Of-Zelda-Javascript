@@ -1,6 +1,6 @@
 import {Entity} from "./Entity.js";
-import {PositionComponent, SpriteComponent, MovementComponent} from "./Component.js";
-import {System, RenderSystem} from "./System.js"
+import {PositionComponent, SpriteComponent, MovementComponent, AnimationComponent} from "./Component.js";
+import {AnimationSystem, RenderSystem} from "./System.js"
 
 
 
@@ -50,17 +50,23 @@ class Registry {
             switch (component["name"]) {
                 case "Position": {
                     const componentObj = component["value"];
-                    newEntityComponents["Position"] = new PositionComponent(component, componentObj);
+                    newEntityComponents["Position"] = new PositionComponent(component["name"], componentObj);
                     break;
                 }
                 case "Movement": {
                     const componentObj = component["value"];
-                    newEntityComponents["Movement"] = new MovementComponent(component, componentObj);
+                    newEntityComponents["Movement"] = new MovementComponent(component["name"], componentObj);
                     break;
                 }
                 case "Sprite": {
                     const componentObj = component["value"];
-                    newEntityComponents["Sprite"] = new SpriteComponent(component, componentObj);
+                    console.log(componentObj)
+                    newEntityComponents["Sprite"] = new SpriteComponent(component["name"], componentObj);
+                    break;
+                }
+                case "Animation": {
+                    const componentObj = component["value"];
+                    newEntityComponents["Animation"] = new AnimationComponent(component["name"], componentObj);
                     break;
                 }
                 default:
@@ -69,6 +75,7 @@ class Registry {
         }
 
         newEntity.components = newEntityComponents;
+        console.log("NEW ENTITY: " , newEntity);
         this.entitiesToBeAdded.push(newEntity);
     }
 
@@ -76,12 +83,12 @@ class Registry {
     // systemType string : RenderSystem, VelocitySystem, etc
     addSystem = (systemType) => {
         let newSystem;
-        console.log(systemType)
         switch (systemType) {
             case "RenderSystem":
                 newSystem = new RenderSystem(systemType);
                 break;
-
+            case "AnimationSystem":
+                newSystem = new AnimationSystem(systemType);
             default:
                 break;
         }
@@ -107,11 +114,14 @@ class Registry {
             }
             if(addToSystem) system.entities.push(entity);  
         })
-
-        console.log(this.systems);
-
     }
 
+    // 5
+    // returns System
+    // systemType: string
+    getSystem = (systemType) => {
+        return this.systems[systemType];
+    }
 }
 
 export {Registry};
