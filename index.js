@@ -27,7 +27,7 @@ class Game {
         this.registry.addSystem("RenderSystem");
         this.registry.addSystem("AnimationSystem");
         this.registry.addSystem("MovementSystem");
-        // this.registry.addSystem("CollisionSystem");
+        this.registry.addSystem("CollisionSystem");
 
         this.loadScreen();
     }
@@ -37,7 +37,7 @@ class Game {
         requestAnimationFrame(this.update);
         this.registry.getSystem("AnimationSystem").update();
         this.registry.getSystem("MovementSystem").update();
-        // this.registry.getSystem("CollisionSystem").update(this.player, this.isDebug);
+        this.registry.getSystem("CollisionSystem").update(this.player, this.isDebug);
 
         this.registry.update();
     }
@@ -45,7 +45,7 @@ class Game {
 
     render = () => {
         requestAnimationFrame(this.render);
-        this.registry.getSystem("RenderSystem").update();
+        this.registry.getSystem("RenderSystem").update(this.isDebug);
     }
 
 
@@ -54,15 +54,26 @@ class Game {
 
             for(let j = 0; j < this.numCols; j++) {
 
+                let components = [];
+
                 const positionDummyComponent = {"name": "Position", "value": {x: j * TILE_SIZE, y: i * TILE_SIZE}};
+                components.push(positionDummyComponent);
+
                 let path = '';
+
                 const {assetPath} = screenOneObject; 
+
                 const type = typeof this.screenObject.screen[i][j];
                 const name = this.screenObject.screen[i][j]
                 if(name === undefined ) continue;
 
                 if(type === "string") {
                     path = "collidables/"
+
+                    const collisionComponent = {
+                        "name": "Collision"
+                    }
+                    components.push(collisionComponent);
                 }
                 else if (type === "number") {
                     path = "tiles/"
@@ -75,6 +86,7 @@ class Game {
                 }
 
                
+
                 const spriteDummyComponent = {
                     "name": "Sprite", "value": 
                     { 
@@ -83,6 +95,7 @@ class Game {
                         // pixelsBetween: 30
                     }
                 };
+                components.push(spriteDummyComponent);
    
                 // const animationDummyComponent = {
                 //     "name": "Animation", 
@@ -95,17 +108,9 @@ class Game {
                 //     }
                 // };
 
-                // const collisionComponent = {
-                //     "name": "Collision"
-                // }
+        
 
-                const components = [
-                    positionDummyComponent, 
-                    spriteDummyComponent,
-                    // collisionComponent
-                ];
-
-                this.registry.createEntity(components);
+                this.player = this.registry.createEntity(components);
 
 
             }
@@ -118,6 +123,9 @@ class Game {
         const gridCoY = 8;
         const playerDummyComponent = { "name": "Player" };
         const positionDummyComponent = {"name": "Position", "value": {x: gridCoX * TILE_SIZE, y: gridCoY * TILE_SIZE}};
+        const collisionComponent = {
+            "name": "Collision"
+        }
         const spriteDummyComponent = {
             "name": "Sprite", "value": 
             { 
@@ -127,7 +135,7 @@ class Game {
             }
         };
 
-        this.registry.createEntity([playerDummyComponent,positionDummyComponent,spriteDummyComponent])
+        this.registry.createEntity([playerDummyComponent,positionDummyComponent,collisionComponent,spriteDummyComponent])
 
     }
 }

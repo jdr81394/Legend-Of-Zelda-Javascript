@@ -85,6 +85,7 @@ class Registry {
 
         newEntity.components = newEntityComponents;
         this.entitiesToBeAdded.push(newEntity);
+        return this.entitiesToBeAdded[this.entitiesToBeAdded.length - 1];
     }
 
     // 2

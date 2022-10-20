@@ -14,7 +14,7 @@ class RenderSystem extends System {
         this.componentRequirements = ["Position", "Sprite"];        // string[]
     }
 
-    update = () => {
+    update = (isDebug) => {
         c.clearRect(0,0,canvas.width,canvas.height);
         for(let entity of this.entities) {
             const spriteComponent = entity.components["Sprite"];
@@ -23,6 +23,7 @@ class RenderSystem extends System {
             const {sprite, srcRect} = spriteComponent;
             c.beginPath();
 
+            
             if(srcRect) {
                 const {x,y,width, height} = srcRect;
                 if(entity.components["Player"]){
@@ -37,6 +38,18 @@ class RenderSystem extends System {
                 c.globalCompositeOperation="destination-over";
                 c.drawImage(sprite,
                     positionComponent.x, positionComponent.y, TILE_SIZE,TILE_SIZE)
+            }
+
+            console.log(entity.components);
+            console.log(isDebug)
+            
+            if(isDebug && entity.components["Collision"]) {
+
+                c.beginPath();
+                c.rect(positionComponent.x,positionComponent.y, TILE_SIZE, TILE_SIZE);
+                c.lineWidth = 3;
+                c.strokeStyle = "red";
+                c.stroke();
             }
 
 
@@ -93,47 +106,43 @@ class CollisionSystem extends System {
     }
 
     // Entity
-    update = (player, isDebug) => {
+    update = (player) => {
 
-        for ( let i = 0; i < this.entities.length; i++) {
-            const collidable = this.entities[i];
-
-            if(player.id === collidable.id) continue;       // this means comparing player to itself so  move on
-
-            const {Position, Movement, Sprite} = player.components;
-
-            const collidablePosition = collidable.components.Position;
-            const collidableSprite = collidable.components.Sprite ? collidable.components.Sprite : {width: TILE_SIZE, height: TILE_SIZE};
-
-            if(
-                player && collidable &&
-                Position.x < collidablePosition.x + collidableSprite.width  &&
-                Position.x + Movement.vX + Sprite.width > collidablePosition.x &&
-                Position.y  < collidablePosition.y + collidableSprite.height  && 
-                Position.y + Movement.vY + Sprite.height > collidablePosition.y 
-            ) { 
-
-                if(player.dx !==0 && player.dy !== 0) {
-                    this.player.collisionX = true;
-                    this.player.collisionY  = true;
+        if(player) {
+            for ( let i = 0; i < this.entities.length; i++) {
+                const collidable = this.entities[i];
+    
+                if(player.id === collidable.id) continue;       // this means comparing player to itself so  move on
+    
+                const {Position, Movement, Sprite} = player.components;
+    
+                const collidablePosition = collidable.components.Position;
+                const collidableSprite = collidable.components.Sprite ? collidable.components.Sprite : {width: TILE_SIZE, height: TILE_SIZE};
+    
+                if(
+                    player && collidable &&
+                    Position.x < collidablePosition.x + collidableSprite.width  &&
+                    Position.x + Movement.vX + Sprite.width > collidablePosition.x &&
+                    Position.y  < collidablePosition.y + collidableSprite.height  && 
+                    Position.y + Movement.vY + Sprite.height > collidablePosition.y 
+                ) { 
+    
+                    if(player.dx !==0 && player.dy !== 0) {
+                        this.player.collisionX = true;
+                        this.player.collisionY  = true;
+                    }
+    
+                    if(player.dx !== 0) this.player.collisionX = true;
+                    if(player.dy !== 0) this.player.collisionY  = true;
+    
                 }
+    
 
-                if(player.dx !== 0) this.player.collisionX = true;
-                if(player.dy !== 0) this.player.collisionY  = true;
-
+    
+                
             }
-
-            if(isDebug) {
-                    console.log("in here" , player.id , collidable.id)
-                c.beginPath();
-                c.rect(collidablePosition.x,collidablePosition.y, collidableSprite.width, collidableSprite.height);
-                c.lineWidth = 3;
-                c.strokeStyle = "red";
-                c.stroke();
-            }
-
-            
         }
+
 
 
 
