@@ -22,6 +22,8 @@ class MovementComponent extends Component {
         super(componentType);
         this.vX = componentObj.vX;
         this.vY = componentObj.vY;
+        this.collisionX = false;
+        this.collisionY = false;
     }
 }
 
@@ -55,6 +57,8 @@ class CollisionComponent extends Component {
 class PlayerComponent extends Component {
     constructor(componentType, componentObj) {
         super(componentType);
+        this.facing = "up";
+
     }
 }
 

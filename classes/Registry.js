@@ -1,6 +1,6 @@
 import {Entity} from "./Entity.js";
 import {PositionComponent, SpriteComponent, MovementComponent, AnimationComponent, CollisionComponent, PlayerComponent} from "./Component.js";
-import {AnimationSystem, CollisionSystem, RenderSystem} from "./System.js"
+import {AnimationSystem, CollisionSystem, MovementSystem, RenderSystem} from "./System.js"
 
 
 
@@ -43,7 +43,7 @@ class Registry {
 
     */
     createEntity = (components) => {
-        const newEntity = new Entity(++this.numberOfEntities, this);
+        const newEntity = new Entity(this.numberOfEntities++, this);
         let newEntityComponents = {}
         for(let i = 0 ; i < components.length; i++ ) {
             const component = components[i];
@@ -85,7 +85,9 @@ class Registry {
 
         newEntity.components = newEntityComponents;
         this.entitiesToBeAdded.push(newEntity);
-        return this.entitiesToBeAdded[this.entitiesToBeAdded.length - 1];
+        if(newEntity.components["Player"]){ 
+            return newEntity;
+        }
     }
 
     // 2
@@ -93,17 +95,26 @@ class Registry {
     addSystem = (systemType) => {
         let newSystem;
         switch (systemType) {
-            case "RenderSystem":
+            case "RenderSystem": {
                 newSystem = new RenderSystem(systemType);
                 break;
-            case "AnimationSystem":
+            }
+            case "AnimationSystem":{
                 newSystem = new AnimationSystem(systemType);
-            case "CollisionSystem":
-                newSystem = new CollisionSystem(systemType);
-            case "MovementSystem":
-                newSystem = new CollisionSystem(systemType);
-            default:
                 break;
+            }
+            case "CollisionSystem": {
+                newSystem = new CollisionSystem(systemType);
+                break;
+            }
+            case "MovementSystem": {
+                newSystem = new MovementSystem(systemType);
+                console.log(newSystem);
+                break;
+            }
+            default: {
+                break;
+            }
         }
         this.systems[systemType] = newSystem;
     }

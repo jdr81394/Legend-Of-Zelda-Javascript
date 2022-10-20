@@ -30,16 +30,21 @@ class Game {
         this.registry.addSystem("CollisionSystem");
 
         this.loadScreen();
+
+
     }
     
 
     update = () => {
         requestAnimationFrame(this.update);
         this.registry.getSystem("AnimationSystem").update();
-        this.registry.getSystem("MovementSystem").update();
-        this.registry.getSystem("CollisionSystem").update(this.player, this.isDebug);
+        this.registry.getSystem("MovementSystem").update(this.player.facing);
+        this.registry.getSystem("CollisionSystem").update(this.player);
 
         this.registry.update();
+
+        document.addEventListener("keyup", this.handleUserInput);
+        document.addEventListener("keydown", this.handleUserInput);
     }
 
 
@@ -109,9 +114,9 @@ class Game {
                 // };
 
         
-
-                this.player = this.registry.createEntity(components);
-
+                
+                this.registry.createEntity(components);
+                
 
             }
         }
@@ -135,7 +140,64 @@ class Game {
             }
         };
 
-        this.registry.createEntity([playerDummyComponent,positionDummyComponent,collisionComponent,spriteDummyComponent])
+        const movementComponent = {
+            "name": "Movement",
+            "value": {
+                vX: 0,
+                vY: 0
+            }
+        }
+
+        this.player = this.registry.createEntity([playerDummyComponent,positionDummyComponent,movementComponent, collisionComponent,spriteDummyComponent])
+    }
+
+    handleUserInput = (e) => {
+        const {key, type} = e;
+
+        if(this.player) {
+            if(type === "keydown") {
+                switch(key) {
+                    case "w": {
+                        this.player.facing = "up";
+                        this.player.components["Movement"].vY = -2
+                        break;
+                    }
+                    case "a": {
+                        this.player.facing = "right"
+                        this.player.components["Movement"].vX = -2
+                        break;
+                    }
+                    case "s": {
+                        this.player.facing = "down"
+                        this.player.components["Movement"].vY =2
+                        break;
+                    }
+                    case "d": {
+                        this.player.facing = "right"
+                        this.player.components["Movement"].vX =2
+                        break;
+                    }
+                    case "v": {
+                    
+                        break;
+                    }
+                    case "g": {
+                        this.isDebug = !this.isDebug;
+                        break;
+                    }
+    
+                    default:
+                        break;
+                }
+            }
+    
+            else if(type === "keyup") {
+                this.player.components["Movement"].vY = 0
+                this.player.components["Movement"].vX = 0
+
+            }
+        }
+
 
     }
 }
