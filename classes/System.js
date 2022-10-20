@@ -32,19 +32,19 @@ class RenderSystem extends System {
                 c.drawImage(
                     sprite,
                     x,y,width,height,
-                    positionComponent.x, positionComponent.y, TILE_SIZE,TILE_SIZE
+                    positionComponent.x, positionComponent.y, positionComponent.width,positionComponent.height
                 )
             } else {
                 c.globalCompositeOperation="destination-over";
                 c.drawImage(sprite,
-                    positionComponent.x, positionComponent.y, TILE_SIZE,TILE_SIZE)
+                    positionComponent.x, positionComponent.y, positionComponent.width,positionComponent.height)
             }
 
 
             if(isDebug && entity.components["Collision"]) {
 
                 c.beginPath();
-                c.rect(positionComponent.x,positionComponent.y, TILE_SIZE, TILE_SIZE);
+                c.rect(positionComponent.x,positionComponent.y, positionComponent.width, positionComponent.height);
                 c.lineWidth = 3;
                 c.strokeStyle = "red";
                 c.stroke();
@@ -97,8 +97,9 @@ class MovementSystem extends System {
 
             if(this.entities[i].components["Movement"].collisionX) {
                 this.entities[i].components["Movement"].vX = 0;
-                if(facing === "left") this.entities[i].components["Position"].x -= 5
-                if(facing === "right") this.entities[i].components["Position"].x += 5
+                console.log("facing: " , facing);
+                if(facing === "left") this.entities[i].components["Position"].x += 5
+                if(facing === "right") this.entities[i].components["Position"].x -= 5
             }
 
             if( this.entities[i].components["Movement"].collisionY) {
@@ -137,28 +138,19 @@ class CollisionSystem extends System {
 
                 if(player.id === collidable.id) continue;       // this means comparing player to itself so  move on
     
-                const {Position, Movement, Sprite} = player.components;
+                const {Position, Movement} = player.components;
     
                 const collidablePosition = collidable.components.Position;
-                const collidableSprite = 
-                    collidable.components.Sprite ? 
-                    collidable.components.Sprite : 
-                    {width: TILE_SIZE, height: TILE_SIZE};
-
-                    // console.log(collidableSprite)
-                    // console.log(Position.x < collidablePosition.x + collidableSprite.width);
-                    // console.log("Position x: " , Position.x  , ' collidable position x: ' , collidablePosition.x  , " collidable sprite width: " , collidableSprite.width);
-                    // console.log(Position.x + Movement.vX + Sprite.width > collidablePosition.x);
-                    // console.log(Position.y  < collidablePosition.y + collidableSprite.height);
-                    // console.log(Position.y + Movement.vY + Sprite.height > collidablePosition.y);
+       
+           
 
     
                 if(
                     player && collidable &&
-                    Position.x < collidablePosition.x + TILE_SIZE &&
-                    Position.x + Movement.vX + TILE_SIZE > collidablePosition.x &&
-                    Position.y  < collidablePosition.y + TILE_SIZE  && 
-                    Position.y + Movement.vY + TILE_SIZE > collidablePosition.y 
+                    Position.x < collidablePosition.x + collidablePosition.width &&
+                    Position.x + Movement.vX + Position.width > collidablePosition.x &&
+                    Position.y  < collidablePosition.y + collidablePosition.height  && 
+                    Position.y + Movement.vY + Position.height > collidablePosition.y 
                 ) { 
 
     

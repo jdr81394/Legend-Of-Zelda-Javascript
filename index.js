@@ -61,7 +61,7 @@ class Game {
 
                 let components = [];
 
-                const positionDummyComponent = {"name": "Position", "value": {x: j * TILE_SIZE, y: i * TILE_SIZE}};
+                const positionDummyComponent = {"name": "Position", "value": {x: j * TILE_SIZE, y: i * TILE_SIZE, width: TILE_SIZE, height: TILE_SIZE}};
                 components.push(positionDummyComponent);
 
                 let path = '';
@@ -127,7 +127,7 @@ class Game {
         const gridCoX = 5;
         const gridCoY = 8;
         const playerDummyComponent = { "name": "Player" };
-        const positionDummyComponent = {"name": "Position", "value": {x: gridCoX * TILE_SIZE, y: gridCoY * TILE_SIZE}};
+        const positionDummyComponent = {"name": "Position", "value": {x: gridCoX * TILE_SIZE, y: gridCoY * TILE_SIZE, height: TILE_SIZE - 10, width: TILE_SIZE - 10}};
         const collisionComponent = {
             "name": "Collision"
         }
@@ -149,6 +149,7 @@ class Game {
         }
 
         this.player = this.registry.createEntity([playerDummyComponent,positionDummyComponent,movementComponent, collisionComponent,spriteDummyComponent])
+        console.log(this.player)
     }
 
     handleUserInput = (e) => {
@@ -158,23 +159,27 @@ class Game {
             if(type === "keydown") {
                 switch(key) {
                     case "w": {
-                        this.player.facing = "up";
                         this.player.components["Movement"].vY = -2
+                        this.player.facing = "up";
+
                         break;
                     }
                     case "a": {
-                        this.player.facing = "right"
                         this.player.components["Movement"].vX = -2
+                        this.player.facing = "left"
+
                         break;
                     }
                     case "s": {
-                        this.player.facing = "down"
                         this.player.components["Movement"].vY =2
+                        this.player.facing = "down"
+
                         break;
                     }
                     case "d": {
-                        this.player.facing = "right"
                         this.player.components["Movement"].vX =2
+                        this.player.facing = "right"
+
                         break;
                     }
                     case "v": {
@@ -192,6 +197,7 @@ class Game {
             }
     
             else if(type === "keyup") {
+                console.log("key up");
                 this.player.components["Movement"].vY = 0
                 this.player.components["Movement"].vX = 0
 

@@ -13,6 +13,8 @@ class PositionComponent extends Component {
         super(componentType);
         this.x = componentObj.x;        // integer
         this.y = componentObj.y         // integer
+        this.width = componentObj.width;   // integer
+        this.height = componentObj.height // integer
     }
 }
 
