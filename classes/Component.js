@@ -26,7 +26,7 @@ class MovementComponent extends Component {
 }
 
 class SpriteComponent extends Component {
-    constructor(componentType, componentObj, pixelsBetween) {
+    constructor(componentType, componentObj) {
         super(componentType);
         this.sprite = new Image();
         this.sprite.src = ASSET_PATH + componentObj.path;        // string to file

@@ -1,5 +1,5 @@
 
-
+import {TILE_SIZE, c , canvas} from "../index.js";
 class System {
     constructor(systemType) {
         this.systemType = systemType ; // string
@@ -12,30 +12,32 @@ class RenderSystem extends System {
     constructor(systemType) {
         super (systemType);
         this.componentRequirements = ["Position", "Sprite"];        // string[]
-        this.canvas = document.querySelector('canvas')
-        this.c = this.canvas.getContext('2d')
-
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
-        console.log(this.c);
     }
 
     update = () => {
-        this.c.clearRect(0,0,this.canvas.width,this.canvas.height);
+        c.clearRect(0,0,canvas.width,canvas.height);
         for(let entity of this.entities) {
             const spriteComponent = entity.components["Sprite"];
             const positionComponent = entity.components["Position"];
             
             const {sprite, srcRect} = spriteComponent;
-            const {x,y,width, height} = srcRect;
+            c.beginPath();
+
+            if(srcRect) {
+                const {x,y,width, height} = srcRect;
+                c.drawImage(
+                    sprite,
+                    x,y,width,height,
+                    positionComponent.x, positionComponent.y, TILE_SIZE,TILE_SIZE
+                )
+            } else {
+                c.drawImage(sprite,
+                    positionComponent.x, positionComponent.y, TILE_SIZE,TILE_SIZE)
+            }
 
             // console.log(srcRect);
-            this.c.beginPath();
-            this.c.drawImage(
-                sprite,
-                x,y,width,height,
-                positionComponent.x, positionComponent.y, 40,40
-            )
+
+
         }
     }
 }
@@ -62,7 +64,8 @@ class AnimationSystem extends System {
             // console.log(entity.components["Animation"]["currentFrame"])
 
             // console.log(entity.components["Sprite"]);
-            entity.components["Sprite"]["srcRect"]["x"] = entity.components["Animation"]["currentFrame"] * entity.components["Sprite"]["pixelsBetween"];
+            if(entity.components["Sprite"]["pixelsBetween"]) entity.components["Sprite"]["srcRect"]["x"] = entity.components["Animation"]["currentFrame"] * entity.components["Sprite"]["pixelsBetween"];
+            else entity.components["Sprite"]["srcRect"]["x"] = entity.components["Animation"]["currentFrame"] * entity.components["Sprite"]["width"]
             // console.log(entity.components["Sprite"]["srcRect"]["x"])
         }
     }

@@ -60,7 +60,6 @@ class Registry {
                 }
                 case "Sprite": {
                     const componentObj = component["value"];
-                    console.log(componentObj)
                     newEntityComponents["Sprite"] = new SpriteComponent(component["name"], componentObj);
                     break;
                 }
@@ -75,7 +74,6 @@ class Registry {
         }
 
         newEntity.components = newEntityComponents;
-        console.log("NEW ENTITY: " , newEntity);
         this.entitiesToBeAdded.push(newEntity);
     }
 
