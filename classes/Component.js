@@ -42,11 +42,39 @@ class SpriteComponent extends Component {
 class AnimationComponent extends Component {
     constructor(componentType, componentObj) {
         super(componentType);
-        this.numFrames = componentObj.numFrames;
-        this.currentFrame = componentObj.currentFrame;
-        this.frameSpeedRate = componentObj.frameSpeedRate;
-        this.isLoop = componentObj.isLoop;
-        this.startTime = componentObj.startTime;
+        this.isStatic = componentObj.isStatic;      // determines if there are other directions to the image
+        this.isLoop = componentObj.isLoop;          // loops
+        this.frames = componentObj.frames;          
+        this.isAttacking = componentObj.isAttacking;
+        this.currentTimeOfAnimation = componentObj.currentTimeOfAnimation;
+        /*
+        this.frames = 
+            
+                {
+                    up: {
+                        move: [
+                            {
+                                x: 1,
+                                y: 1,
+                                width: 20,
+                                height: 20
+                            },
+                            {
+                                x: 20,
+                                y: 1,
+                                width: 20,
+                                height: 20
+                            }
+                        ],
+                        attack: [
+                            {...}
+                        ]
+                    }
+                }
+            
+
+        */
+
     }
 }
 

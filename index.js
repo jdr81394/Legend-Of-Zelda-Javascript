@@ -3,6 +3,7 @@ import {Component} from "./classes/Component.js";
 import {System} from "./classes/System.js"
 import {Registry} from "./classes/Registry.js"
 import {screenOneObject} from "./screens/screen.js"
+import { LINK_ANIMATIONS } from "./animations/animations.js";
 var canvas = document.querySelector('canvas')
 var c = canvas.getContext('2d')
 
@@ -37,8 +38,8 @@ class Game {
 
     update = () => {
         requestAnimationFrame(this.update);
-        this.registry.getSystem("AnimationSystem").update();
-        this.registry.getSystem("MovementSystem").update(this.player.facing);
+        this.registry.getSystem("AnimationSystem").update(this.player);
+        this.registry.getSystem("MovementSystem").update(this.player.components["Player"].facing);
         this.registry.getSystem("CollisionSystem").update(this.player);
 
         this.registry.update();
@@ -102,17 +103,7 @@ class Game {
                 };
                 components.push(spriteDummyComponent);
    
-                // const animationDummyComponent = {
-                //     "name": "Animation", 
-                //     "value": {
-                //         numFrames: 2,
-                //         currentFrame: 0,
-                //         frameSpeedRate: 3,
-                //         isLoop: true,
-                //         startTime: Date.now()
-                //     }
-                // };
-
+       
         
                 
                 this.registry.createEntity(components);
@@ -121,6 +112,12 @@ class Game {
             }
         }
 
+
+        this.createPlayer();
+
+    }
+
+    createPlayer = () => {
         // We will use a grid to determine where the player loads up
         // gridCoX is a grid coefficient
         // gridCoY is a gridcoffiecien
@@ -134,11 +131,17 @@ class Game {
         const spriteDummyComponent = {
             "name": "Sprite", "value": 
             { 
-                srcRect: {x: 0, y: 0, width: 19, height: 19}, 
+                srcRect: {
+                    x: 58,
+                    y: -1,
+                    width: 19,
+                    height: 19
+                },      // facing up 
                 path: "link.png",
-                // pixelsBetween: 30
+                pixelsBetween: 30
             }
         };
+
 
         const movementComponent = {
             "name": "Movement",
@@ -148,8 +151,11 @@ class Game {
             }
         }
 
-        this.player = this.registry.createEntity([playerDummyComponent,positionDummyComponent,movementComponent, collisionComponent,spriteDummyComponent])
-        console.log(this.player)
+
+
+        this.player = this.registry.createEntity([playerDummyComponent,positionDummyComponent,movementComponent, collisionComponent,spriteDummyComponent, 
+            LINK_ANIMATIONS
+        ])
     }
 
     handleUserInput = (e) => {
@@ -160,30 +166,40 @@ class Game {
                 switch(key) {
                     case "w": {
                         this.player.components["Movement"].vY = -2
-                        this.player.facing = "up";
+                        this.player.components["Movement"].vX = 0;
+                        this.player.components["Player"].facing = "up";
+                        this.player.components["Animation"].shouldAnimate = true;
 
                         break;
                     }
                     case "a": {
                         this.player.components["Movement"].vX = -2
-                        this.player.facing = "left"
+                        this.player.components["Movement"].vY = 0;
+                        this.player.components["Animation"].shouldAnimate = true;
+                        this.player.components["Player"].facing = "left";
+                        
 
                         break;
                     }
                     case "s": {
-                        this.player.components["Movement"].vY =2
-                        this.player.facing = "down"
+                        this.player.components["Movement"].vY = 2
+                        this.player.components["Movement"].vX = 0;
+                        this.player.components["Animation"].shouldAnimate = true;
+                        this.player.components["Player"].facing = "down";
 
                         break;
                     }
                     case "d": {
                         this.player.components["Movement"].vX =2
-                        this.player.facing = "right"
-
+                        this.player.components["Movement"].vY = 0;
+                        this.player.components["Animation"].shouldAnimate = true;
+                        this.player.components["Player"].facing = "right";
+                        
                         break;
                     }
                     case "v": {
-                    
+                        this.player.components["Animation"].isAttacking = true;
+
                         break;
                     }
                     case "g": {
@@ -197,9 +213,22 @@ class Game {
             }
     
             else if(type === "keyup") {
-                console.log("key up");
-                this.player.components["Movement"].vY = 0
-                this.player.components["Movement"].vX = 0
+                const facing = this.player.components["Player"].facing;
+                if(key === "w" || key === "s" ) {
+                    this.player.components["Movement"].vY = 0
+                    this.player.components["Animation"].shouldAnimate = false;
+
+                }
+                else if( key === "d" || key === "a" ){
+                    this.player.components["Movement"].vX = 0
+                    this.player.components["Animation"].shouldAnimate = false;
+                }
+                else if (key === "v") {
+
+                    this.player.components["Animation"].isAttacking = false;
+
+                }
+
 
             }
         }

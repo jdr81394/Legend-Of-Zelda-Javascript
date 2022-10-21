@@ -23,8 +23,10 @@ class RenderSystem extends System {
             const {sprite, srcRect} = spriteComponent;
             c.beginPath();
 
+
             
             if(srcRect) {
+
                 const {x,y,width, height} = srcRect;
                 if(entity.components["Player"]){
                     c.globalCompositeOperation="source-over";
@@ -65,22 +67,33 @@ class AnimationSystem extends System {
 
     update = () => {
         for(let entity of this.entities) {
-            // const animationComponent = entity.components["Animation"];
             
 
-            entity.components["Animation"]["currentFrame"] = Math.round(
-                (Date.now() - entity.components["Animation"]["startTime"]) 
-                * entity.components["Animation"]["frameSpeedRate"] / 1000
-            ) % entity.components["Animation"]["numFrames"];
+            const {facing} = entity.components["Player"];
 
-            // console.log(entity.components["Animation"]["startTime"]);
-            // console.log(entity.components["Animation"]["frameSpeedRate"])
-            // console.log(entity.components["Animation"]["currentFrame"])
+           if( entity.components["Animation"].shouldAnimate === true ||  entity.components["Animation"].isAttacking === true) {
 
-            // console.log(entity.components["Sprite"]);
-            if(entity.components["Sprite"]["pixelsBetween"]) entity.components["Sprite"]["srcRect"]["x"] = entity.components["Animation"]["currentFrame"] * entity.components["Sprite"]["pixelsBetween"];
-            else entity.components["Sprite"]["srcRect"]["x"] = entity.components["Animation"]["currentFrame"] * entity.components["Sprite"]["width"]
-            // console.log(entity.components["Sprite"]["srcRect"]["x"])
+                if(facing) {
+                    const mode =  entity.components["Animation"].isAttacking ? "attack" : "move";
+
+                    const currentFrame = 
+                        Math.floor(
+                        ( Date.now() - entity.components["Animation"]["frames"][facing][mode]["startTime"] ) 
+                        * 
+                        entity.components["Animation"]["frames"][facing][mode]["frameSpeedRate"] / 1000 ) 
+                        % entity.components["Animation"]["frames"][facing][mode]["numFrames"];
+    
+
+                    entity.components["Sprite"]["srcRect"] = entity.components["Animation"]["frames"][facing][mode]["srcRect"][currentFrame]
+    
+               
+                }
+           } else {
+                entity.components["Sprite"]["srcRect"] = entity.components["Animation"]["frames"][facing]["move"]["srcRect"][0];
+
+           }
+            
+
         }
     }
 }
@@ -97,7 +110,6 @@ class MovementSystem extends System {
 
             if(this.entities[i].components["Movement"].collisionX) {
                 this.entities[i].components["Movement"].vX = 0;
-                console.log("facing: " , facing);
                 if(facing === "left") this.entities[i].components["Position"].x += 5
                 if(facing === "right") this.entities[i].components["Position"].x -= 5
             }

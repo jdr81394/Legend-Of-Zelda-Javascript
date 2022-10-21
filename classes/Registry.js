@@ -109,7 +109,6 @@ class Registry {
             }
             case "MovementSystem": {
                 newSystem = new MovementSystem(systemType);
-                console.log(newSystem);
                 break;
             }
             default: {
