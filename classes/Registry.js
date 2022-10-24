@@ -1,6 +1,6 @@
 import {Entity} from "./Entity.js";
-import {PositionComponent, SpriteComponent, MovementComponent, AnimationComponent, CollisionComponent, PlayerComponent} from "./Component.js";
-import {AnimationSystem, CollisionSystem, MovementSystem, RenderSystem} from "./System.js"
+import {TransitionComponent, PositionComponent, SpriteComponent, MovementComponent, AnimationComponent, CollisionComponent, PlayerComponent} from "./Component.js";
+import {AnimationSystem, CollisionSystem, MovementSystem, RenderSystem, TransitionSystem} from "./System.js"
 
 
 
@@ -78,6 +78,11 @@ class Registry {
                     newEntityComponents["Collision"] = new CollisionComponent(component["name"], componentObj);
                     break;
                 }
+                case "Transition": {
+                    const componentObj = component["value"];
+                    newEntityComponents["Transition"] = new TransitionComponent(component["name"], componentObj);
+                    break;
+                }
                 default:
                     break;
             }
@@ -109,6 +114,10 @@ class Registry {
             }
             case "MovementSystem": {
                 newSystem = new MovementSystem(systemType);
+                break;
+            }
+            case "TransitionSystem": {
+                newSystem = new TransitionSystem(systemType);
                 break;
             }
             default: {

@@ -182,11 +182,49 @@ class CollisionSystem extends System {
             }
         }
 
-
-
-
-
     }
 }
 
-export {System, RenderSystem, AnimationSystem, CollisionSystem,MovementSystem}
+class TransitionSystem extends System {
+    constructor(systemType) {
+        super(systemType);
+        this.componentRequirements = ["Transition"];
+    }
+    update = (player) => {
+        
+        if(player) {
+            for ( let i = 0; i < this.entities.length; i++) {
+                const transitionSpace = this.entities[i];
+                
+
+                if(player.id === transitionSpace.id) continue;       // this means comparing player to itself so  move on
+    
+                const {Position, Movement} = player.components;
+    
+                const transitionSpacePosition = transitionSpace.components.Position;
+       
+           
+
+    
+                if(
+                    player && transitionSpace &&
+                    Position.x < transitionSpacePosition.x + transitionSpacePosition.width &&
+                    Position.x + Movement.vX + Position.width > transitionSpacePosition.x &&
+                    Position.y  < transitionSpacePosition.y + transitionSpacePosition.height - 45   &&  // the - 45 enables the transition to look smoother and not pull the user in directly
+                    Position.y + Movement.vY + Position.height > transitionSpacePosition.y 
+                ) { 
+
+    
+                    // console.log("Here")
+    
+                }
+    
+
+    
+                
+            }
+        }
+    }
+}
+
+export {System, RenderSystem, AnimationSystem, TransitionSystem,CollisionSystem,MovementSystem}

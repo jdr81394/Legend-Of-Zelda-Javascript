@@ -29,6 +29,7 @@ class Game {
         this.registry.addSystem("AnimationSystem");
         this.registry.addSystem("MovementSystem");
         this.registry.addSystem("CollisionSystem");
+        this.registry.addSystem("TransitionSystem");
 
         this.loadScreen();
 
@@ -41,6 +42,7 @@ class Game {
         this.registry.getSystem("AnimationSystem").update(this.player);
         this.registry.getSystem("MovementSystem").update(this.player.components["Player"].facing);
         this.registry.getSystem("CollisionSystem").update(this.player);
+        this.registry.getSystem("TransitionSystem").update(this.player);
 
         this.registry.update();
 
@@ -69,11 +71,11 @@ class Game {
 
                 const {assetPath} = screenOneObject; 
 
-                const type = typeof this.screenObject.screen[i][j];
-                const name = this.screenObject.screen[i][j]
-                if(name === undefined ) continue;
+                const typeOf = typeof this.screenObject.screen[i][j];
+                let tile = this.screenObject.screen[i][j]
+                if(tile === undefined ) continue;
 
-                if(type === "string") {
+                if(typeOf === "string") {
                     path = "collidables/"
 
                     const collisionComponent = {
@@ -81,14 +83,25 @@ class Game {
                     }
                     components.push(collisionComponent);
                 }
-                else if (type === "number") {
+                else if (typeOf === "number") {
                     path = "tiles/"
                 }
-                else if (type === "object") {
-                    path = "not found in object"
+                else if (typeOf === "object") {
+                    const {type, index} = tile;
+                    
+                    const {screen, coX, coY} = this.screenObject["transitionSpaces"][type][index];
+
+                    const transitionSpaceComponent = { name: "Transition", value: {screen, coX, coY}};
+
+                    components.push(transitionSpaceComponent);
+                    
+                    path = "actionableTiles/" 
+
+                    tile = tile.tile;           // Reassigning tile to tile.tile means it will get the name of the png that is suppose to be used
+
                 } else {
                     path = "Not Found";
-                    console.log(name);
+                    console.log(tile);
                 }
 
                
@@ -97,7 +110,7 @@ class Game {
                     "name": "Sprite", "value": 
                     { 
                         // srcRect: {x: 0, y: 0, width: 460, height: 460}, 
-                        path: assetPath + path + name + ".png",
+                        path: assetPath + path + tile + ".png",
                         // pixelsBetween: 30
                     }
                 };

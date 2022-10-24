@@ -18,6 +18,16 @@ class PositionComponent extends Component {
     }
 }
 
+class TransitionComponent extends Component {
+    constructor(componentType, componentObj) {
+        super(componentType);
+        this.screen = componentObj.screen;  // array of strings, objects, numbers
+        this.coX = componentObj.coX;        // number
+        this.coY = componentObj.coY;
+
+    }
+}
+
 
 class MovementComponent extends Component {
     constructor(componentType, componentObj) {
@@ -93,4 +103,4 @@ class PlayerComponent extends Component {
 }
 
 
-export {Component, PositionComponent, MovementComponent, SpriteComponent,AnimationComponent, CollisionComponent,PlayerComponent}
+export {Component, PositionComponent, MovementComponent, TransitionComponent, SpriteComponent,AnimationComponent, CollisionComponent,PlayerComponent}
