@@ -31,11 +31,16 @@ class RenderSystem extends System {
 
             
             if(srcRect) {
+                if(!entity.components["Player"]) {
+                    // console.log("Sprite: ", sprite);
+                    // console.log("srcRect: " ,srcRect)
+                    // console.log("position: ", positionComponent); 
+                }
 
                 const {x,y,width, height} = srcRect;
-                if(entity.components["Player"]){
+                // if(entity.components["Player"]){
                     c.globalCompositeOperation="source-over";
-                }
+                // }
                 c.drawImage(
                     sprite,
                     x,y,width,height,
@@ -72,11 +77,10 @@ class AnimationSystem extends System {
 
     update = () => {
         for(let entity of this.entities) {
-            
+    
+            const {facing} = entity.components["Character"];
 
-            const {facing} = entity.components["Player"];
-
-           if( entity.components["Animation"].shouldAnimate === true ||  entity.components["Animation"].isAttacking === true) {
+            if( entity.components["Player"] && ( entity.components["Animation"].shouldAnimate === true ||  entity.components["Animation"].isAttacking === true)) {
 
                 if(facing) {
                     const mode =  entity.components["Animation"].isAttacking ? "attack" : "move";
@@ -93,7 +97,27 @@ class AnimationSystem extends System {
     
                
                 }
-           } else {
+            } 
+            // If not player and it is a character
+            else if (!entity.components["Player"] && entity.components["Character"]) {  
+                if(entity.components["Animation"].isStatic ) {
+                    const currentFrame = 
+                        Math.floor(
+                            (Date.now() - entity.components["Animation"]["frames"]["startTime"] ) 
+                            *
+                            entity.components["Animation"]["frames"]["frameSpeedRate"] / 1000 
+                        )  % entity.components["Animation"]["frames"]["numFrames"];
+                    
+                        
+
+                    console.log(entity.components["Sprite"]["srcRect"] )
+                    entity.components["Sprite"]["srcRect"] = entity.components["Animation"]["frames"]["srcRect"][currentFrame];
+                  
+                    
+
+                }
+            }
+            else {
                 entity.components["Sprite"]["srcRect"] = entity.components["Animation"]["frames"][facing]["move"]["srcRect"][0];
 
            }

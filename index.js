@@ -3,7 +3,7 @@ import {Component} from "./classes/Component.js";
 import {System} from "./classes/System.js"
 import {Registry} from "./classes/Registry.js"
 import {screenOneObject, shop1} from "./screens/screen.js"
-import { LINK_ANIMATIONS } from "./animations/animations.js";
+import { LINK_ANIMATIONS , FIRE_ANIMATIONS} from "./animations/animations.js";
 var canvas = document.querySelector('canvas')
 var c = canvas.getContext('2d')
 
@@ -40,7 +40,7 @@ class Game {
     update = () => {
         requestAnimationFrame(this.update);
         this.registry.getSystem("AnimationSystem").update(this.player);
-        this.registry.getSystem("MovementSystem").update(this.player.components["Player"].facing);
+        this.registry.getSystem("MovementSystem").update(this.player.components["Character"].facing);
         this.registry.getSystem("CollisionSystem").update(this.player);
         this.registry.getSystem("TransitionSystem").update(this.player,this.eventBus, this.reloadNewScreen);
 
@@ -63,7 +63,7 @@ class Game {
 
     render = () => {
         requestAnimationFrame(this.render);
-        this.registry.getSystem("RenderSystem").update(this.isDebug, this.linkTileDestination, this.doorTileDestination, this.floorTileDestination);
+        this.registry.getSystem("RenderSystem").update(this.isDebug);
     }
 
 
@@ -101,16 +101,38 @@ class Game {
                 }
                 else if (typeOf === "object") {
                     const {type, index} = tile;
-                    
-                    const {screen, coX, coY} = this.screenObject["transitionSpaces"][type][index];
+                    if(type === "door") {
+                        const {screen, coX, coY} = this.screenObject["transitionSpaces"][type][index];
 
-                    const transitionSpaceComponent = { name: "Transition", value: {screen, coX, coY}};
+                        const transitionSpaceComponent = { name: "Transition", value: {screen, coX, coY}};
+    
+                        components.push(transitionSpaceComponent);
+                        
+                        path = "actionableTiles/" 
+    
+                        tile = tile.tile;           // Reassigning tile to tile.tile means it will get the name of the png that is suppose to be used
+    
+                    }
+                    else if(type === "enemy") {
+                        const {name} = this.screenObject["npcs"][type][index];
 
-                    components.push(transitionSpaceComponent);
-                    
-                    path = "actionableTiles/" 
+                        if(name === "fire") {
+                            components.push(FIRE_ANIMATIONS);
+                        }
+                        const characterDummyComponent = {name: "Character", value: {facing : "down"} };
+                        
+                        components.push(characterDummyComponent);
 
-                    tile = tile.tile;           // Reassigning tile to tile.tile means it will get the name of the png that is suppose to be used
+                        const collisionComponent = {
+                            "name": "Collision"
+                        }
+                        components.push(collisionComponent);
+
+                        path = `enemies/${name}/`
+
+                        tile = tile.tile;
+                    }
+
 
                 } else {
                     path = "Not Found";
@@ -188,6 +210,7 @@ class Game {
         const gridCoX = coX !==undefined ? coX : 5;
         const gridCoY = coY !=undefined ? coY: 8;
         const playerDummyComponent = { "name": "Player" };
+        const characterDummyComponent = {name: "Character", value: {facing : "down"}};
         const positionDummyComponent = {"name": "Position", "value": {x: gridCoX * TILE_SIZE, y: gridCoY * TILE_SIZE, height: TILE_SIZE - 10, width: TILE_SIZE - 10}};
         const collisionComponent = {
             "name": "Collision"
@@ -217,7 +240,7 @@ class Game {
 
 
 
-        this.player = this.registry.createEntity([playerDummyComponent,positionDummyComponent,movementComponent, collisionComponent,spriteDummyComponent, 
+        this.player = this.registry.createEntity([playerDummyComponent,positionDummyComponent, characterDummyComponent, movementComponent, collisionComponent,spriteDummyComponent, 
             LINK_ANIMATIONS
         ])
     }
@@ -231,7 +254,7 @@ class Game {
                     case "w": {
                         this.player.components["Movement"].vY = -2
                         this.player.components["Movement"].vX = 0;
-                        this.player.components["Player"].facing = "up";
+                        this.player.components["Character"].facing = "up";
                         this.player.components["Animation"].shouldAnimate = true;
 
                         break;
@@ -240,7 +263,7 @@ class Game {
                         this.player.components["Movement"].vX = -2
                         this.player.components["Movement"].vY = 0;
                         this.player.components["Animation"].shouldAnimate = true;
-                        this.player.components["Player"].facing = "left";
+                        this.player.components["Character"].facing = "left";
                         
 
                         break;
@@ -249,7 +272,7 @@ class Game {
                         this.player.components["Movement"].vY = 2
                         this.player.components["Movement"].vX = 0;
                         this.player.components["Animation"].shouldAnimate = true;
-                        this.player.components["Player"].facing = "down";
+                        this.player.components["Character"].facing = "down";
 
                         break;
                     }
@@ -257,7 +280,7 @@ class Game {
                         this.player.components["Movement"].vX =2
                         this.player.components["Movement"].vY = 0;
                         this.player.components["Animation"].shouldAnimate = true;
-                        this.player.components["Player"].facing = "right";
+                        this.player.components["Character"].facing = "right";
                         
                         break;
                     }
@@ -277,7 +300,7 @@ class Game {
             }
     
             else if(type === "keyup") {
-                const facing = this.player.components["Player"].facing;
+                const facing = this.player.components["Character"].facing;
                 if(key === "w" || key === "s" ) {
                     this.player.components["Movement"].vY = 0
                     this.player.components["Animation"].shouldAnimate = false;

@@ -1,5 +1,5 @@
 import {Entity} from "./Entity.js";
-import {TransitionComponent, PositionComponent, SpriteComponent, MovementComponent, AnimationComponent, CollisionComponent, PlayerComponent} from "./Component.js";
+import {TransitionComponent, CharacterComponent, PositionComponent, SpriteComponent, MovementComponent, AnimationComponent, CollisionComponent, PlayerComponent} from "./Component.js";
 import {AnimationSystem, CollisionSystem, MovementSystem, RenderSystem, TransitionSystem} from "./System.js"
 
 
@@ -81,6 +81,11 @@ class Registry {
                 case "Transition": {
                     const componentObj = component["value"];
                     newEntityComponents["Transition"] = new TransitionComponent(component["name"], componentObj);
+                    break;
+                }
+                case "Character" : {
+                    const componentObj = component["value"];
+                    newEntityComponents["Character"] = new CharacterComponent(component["name"], componentObj);
                     break;
                 }
                 default:

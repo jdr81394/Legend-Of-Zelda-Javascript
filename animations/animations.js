@@ -187,4 +187,36 @@ const LINK_ANIMATIONS = {
     }
 };
 
-export {LINK_ANIMATIONS}
+
+const FIRE_ANIMATIONS = {
+    name: "Animation",
+    value: {
+        isStatic: true,
+        isLoop: true,
+        isAttacking: false,
+        shouldAnimate: true,
+        currentTimeOfAnimation: 0,
+        frames: {
+            srcRect: [
+                {
+                    x: 0,
+                    y: 0,
+                    width: 225,
+                    height: 135,
+                },
+                {
+                    x: 225,
+                    y: 0,
+                    width: 225,
+                    height: 135,
+                }
+            ],
+            startTime: Date.now(),
+            currentFrame: 0,
+            numFrames: 2,
+            frameSpeedRate: 3,
+    }
+}
+}
+
+export {LINK_ANIMATIONS, FIRE_ANIMATIONS}

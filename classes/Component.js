@@ -97,10 +97,16 @@ class CollisionComponent extends Component {
 class PlayerComponent extends Component {
     constructor(componentType, componentObj) {
         super(componentType);
-        this.facing = "up";
-
     }
 }
 
+class CharacterComponent extends Component {
+    constructor(componentType, componentObj) {
+        super(componentType);
+        this.facing = componentObj.facing;
+    }
 
-export {Component, PositionComponent, MovementComponent, TransitionComponent, SpriteComponent,AnimationComponent, CollisionComponent,PlayerComponent}
+}
+
+
+export {Component,CharacterComponent, PositionComponent, MovementComponent, TransitionComponent, SpriteComponent,AnimationComponent, CollisionComponent,PlayerComponent}
