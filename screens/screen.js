@@ -5,7 +5,7 @@ const screenOneObject = {
     assetPath: "overworld/",
     transitionSpaces: {
         door: [
-            { screen: "shop1", coX: 9, coY: 9 } // this is what the entity will be made with 
+            { screen: "shop1", coX: 9, coY: 11 } // this is what the entity will be made with 
         ],
         space: []
     },
@@ -26,5 +26,29 @@ const screenOneObject = {
     ]
 };
 
+const shop1 = {
+    assetPath: "shop/",
+    transitionSpaces: {
+        door: [
+            { screen: "screen1", coX: 5, coY: 3 } // this is what the entity will be made with 
+        ],
+        space: []
+    },
+    screen: [
+        [o,  o,   o,    o,   o,   o,   o,   o, o, o ,o,o,o,o,o,o, o,o,o],
+        [o,"1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1",o],
+        [o,"1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1",o],
+        [o,"1","1",0,0, 0,0,0,0,0,0,0,0,0,0,"1","1",o],
+        [o,"1","1",0,0,0,0,0,0,0,0,0,0,0,0,"1","1",o],
+        [o,"1","1",0,0,0,0,0,0,0,0,0,0,0,0,"1","1",o],
+        [o,"1", "1",0,0,0,0,0,0,0,0,0,0,0,0,"1","1",o],
+        [o,"1","1",0,0,0,0,0,0,0,0,0,0,0,0,"1","1",o],
+        [o,"1","1",0,0,0,0,0,0,0,0,0,0,0,0,"1","1",o],
+        [o,"1","1",0,0,0,0,0,0,0,0,0,0,0,0,"1","1",o],
+        [o,"1","1","1","1","1","1","1",0,0,"1","1","1","1","1","1","1",o],
+        [o,"1","1","1","1","1","1","1",0,0,"1","1","1","1","1","1","1",o],
+        [o,o,o,o,o,o,o,o,{type: "door", index: 0, tile: undefined} ,{type: "door", index: 0, tile: undefined},o ,o,o,o,o,o, o,o,o],
+    ]
+}
 
-export  {screenOneObject};
+export  {screenOneObject, shop1};

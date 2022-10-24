@@ -5,6 +5,11 @@ class System {
         this.systemType = systemType ; // string
         this.entities = []
     }
+
+
+    removeAllEntities = () => {
+        this.entities = [];
+    }
 }
 
 
@@ -190,7 +195,7 @@ class TransitionSystem extends System {
         super(systemType);
         this.componentRequirements = ["Transition"];
     }
-    update = (player) => {
+    update = (player,eventBus, reloadNewScreen) => {
         
         if(player) {
             for ( let i = 0; i < this.entities.length; i++) {
@@ -214,8 +219,15 @@ class TransitionSystem extends System {
                     Position.y + Movement.vY + Position.height > transitionSpacePosition.y 
                 ) { 
 
+                    const {Transition} = transitionSpace.components
+
     
-                    // console.log("Here")
+                    eventBus.push(
+                        {
+                            func: reloadNewScreen, 
+                            Transition
+                        }
+                    );
     
                 }
     
@@ -224,6 +236,12 @@ class TransitionSystem extends System {
                 
             }
         }
+    }
+
+    // transitionSpace object with coX, coY, screen (string), type
+    enterTransitionSpace = ({coX, coY, screen}) => {
+        // console.log("Transition Space: " , game);
+        game.unloadScreen();
     }
 }
 

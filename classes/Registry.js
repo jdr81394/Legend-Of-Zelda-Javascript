@@ -154,6 +154,13 @@ class Registry {
     getSystem = (systemType) => {
         return this.systems[systemType];
     }
+
+
+    removeAllEntities = () => {
+        Object.values(this.systems).forEach((system) => {
+            system.removeAllEntities();
+        })
+    }
 }
 
 export {Registry};
