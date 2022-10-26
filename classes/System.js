@@ -1,5 +1,6 @@
 
 import {TILE_SIZE, c , canvas} from "../index.js";
+import {LINK_WEAPON_PICKUP} from "../animations/animations.js";
 class System {
     constructor(systemType) {
         this.systemType = systemType ; // string
@@ -53,7 +54,9 @@ class RenderSystem extends System {
             }
 
 
-            if(isDebug && entity.components["Collision"]) {
+            if(isDebug 
+                // && entity.components["Collision"] 
+                ) {
 
                 c.beginPath();
                 c.rect(positionComponent.x,positionComponent.y, positionComponent.width, positionComponent.height);
@@ -110,7 +113,6 @@ class AnimationSystem extends System {
                     
                         
 
-                    console.log(entity.components["Sprite"]["srcRect"] )
                     entity.components["Sprite"]["srcRect"] = entity.components["Animation"]["frames"]["srcRect"][currentFrame];
                   
                     
@@ -158,6 +160,39 @@ class MovementSystem extends System {
             this.entities[i].components["Position"].x +=  this.entities[i].components["Movement"].vX;
             this.entities[i].components["Position"].y +=  this.entities[i].components["Movement"].vY;
 
+        }
+    }
+}
+
+class ActionableSystem extends System {
+    constructor(systemType) {
+        super(systemType);
+        this.componentRequirements = ["Actionable"]
+    }
+
+    update = (player) => {
+
+        if(player) {
+            for(let i = 0; i < this.entities.length; i++) {
+
+                const actionableTile = this.entities[i];
+
+                const {Position, Movement} = player.components;
+
+                const actionableTilePosition = actionableTile.components.Position;
+
+                if(
+                    player && actionableTile &&
+                    Position.x < actionableTilePosition.x + actionableTilePosition.width &&
+                    Position.x + Movement.vX + Position.width > actionableTilePosition.x &&
+                    Position.y  < actionableTilePosition.y + actionableTilePosition.height  && 
+                    Position.y + Movement.vY + Position.height > actionableTilePosition.y 
+                ) {
+                    
+                    actionableTile.components["Actionable"].action(actionableTile);
+
+                }
+            }
         }
     }
 }
@@ -269,4 +304,4 @@ class TransitionSystem extends System {
     }
 }
 
-export {System, RenderSystem, AnimationSystem, TransitionSystem,CollisionSystem,MovementSystem}
+export {System, RenderSystem, AnimationSystem, TransitionSystem,CollisionSystem,MovementSystem, ActionableSystem}

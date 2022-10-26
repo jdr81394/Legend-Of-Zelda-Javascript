@@ -7,7 +7,6 @@ class Entity {
         this.components = {};   // object {k: string, v: object}
     }
 
-
 }
 
-export {Entity};
+export {Entity };

@@ -1,6 +1,6 @@
 import {Entity} from "./Entity.js";
-import {TransitionComponent, CharacterComponent, PositionComponent, SpriteComponent, MovementComponent, AnimationComponent, CollisionComponent, PlayerComponent} from "./Component.js";
-import {AnimationSystem, CollisionSystem, MovementSystem, RenderSystem, TransitionSystem} from "./System.js"
+import {TransitionComponent, CharacterComponent, PositionComponent, SpriteComponent, MovementComponent, AnimationComponent, CollisionComponent, PlayerComponent, ActionableComponent} from "./Component.js";
+import {AnimationSystem, ActionableSystem,  CollisionSystem, MovementSystem, RenderSystem, TransitionSystem} from "./System.js"
 
 
 
@@ -15,14 +15,30 @@ class Registry {
 
     //3
     update = () => {
+        // console.log(this.systems["ActionableSystem"].entities);
+        // console.log(this.systems["RenderSystem"].entities);
+
         for(let entity of this.entitiesToBeAdded) {
             this.addEntityToSystem(entity);
         }
 
         this.entitiesToBeAdded = [];
 
-        for(let entity of this.entitiesToBeKilled) {
+
+        for(let entityToBeKilled of this.entitiesToBeKilled) {
             // remove entities from systenm
+            // Go through each component it has
+
+            for(let system of Object.values(this.systems)) {
+
+
+                for (let i = 0; i < system.entities.length; i++) {
+
+                    system.entities = system.entities.filter( (entity) => entity.id !== entityToBeKilled.id );
+
+                }
+
+            }
         }
     
         this.entitiesToBeKilled = [];
@@ -42,6 +58,8 @@ class Registry {
     ]
 
     */
+
+    // components is an array
     createEntity = (components) => {
         const newEntity = new Entity(this.numberOfEntities++, this);
         let newEntityComponents = {}
@@ -88,6 +106,11 @@ class Registry {
                     newEntityComponents["Character"] = new CharacterComponent(component["name"], componentObj);
                     break;
                 }
+                case "Actionable" : {
+                    const componentObj = component["value"];
+                    newEntityComponents["Actionable"] = new ActionableComponent(component["name"], componentObj);
+                    break;
+                }
                 default:
                     break;
             }
@@ -95,9 +118,9 @@ class Registry {
 
         newEntity.components = newEntityComponents;
         this.entitiesToBeAdded.push(newEntity);
-        if(newEntity.components["Player"]){ 
+        // if(newEntity.components["Player"]){ 
             return newEntity;
-        }
+        // }
     }
 
     // 2
@@ -124,6 +147,9 @@ class Registry {
             case "TransitionSystem": {
                 newSystem = new TransitionSystem(systemType);
                 break;
+            }
+            case "ActionableSystem": {
+                newSystem = new ActionableSystem(systemType);
             }
             default: {
                 break;

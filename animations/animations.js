@@ -13,7 +13,7 @@ const LINK_ANIMATIONS = {
                             {
                                 x: -2,
                                 y: -1,
-                                width: 19,
+                                width: 20,
                                 height: 19
                             },
                             {
@@ -219,4 +219,52 @@ const FIRE_ANIMATIONS = {
 }
 }
 
-export {LINK_ANIMATIONS, FIRE_ANIMATIONS}
+
+const LINK_WEAPON_PICKUP = {
+    name: "Animation",
+    value: {
+        isStatic: true,
+        isLoop: true,
+        isAttacking: false,
+        shouldAnimate: true,
+        currentTimeOfAnimation: 0,
+        frames: {
+            srcRect: [
+                {
+                    x: -2,
+                    y: 147.5,
+                    width: 20,
+                    height: 20,
+                },
+                {
+                    x: -2,
+                    y: 147.5,
+                    width: 20,
+                    height: 20,
+                }
+            ],
+            startTime: Date.now(),
+            currentFrame: 0,
+            numFrames: 2,
+            frameSpeedRate: 3,
+        }
+    }
+};
+
+const SWORD = {
+    name: "Animation",
+    value: {
+        frames: {
+            srcRect: [
+                {
+                    x: 200,
+                    y: 200,
+                    width: 100,
+                    height: 100
+                }
+            ]
+        }
+    }
+}
+
+export {LINK_ANIMATIONS, FIRE_ANIMATIONS,LINK_WEAPON_PICKUP,SWORD }

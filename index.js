@@ -1,17 +1,15 @@
-import {Entity} from "./classes/Entity.js";
-import {Component} from "./classes/Component.js";
-import {System} from "./classes/System.js"
 import {Registry} from "./classes/Registry.js"
 import {screenOneObject, shop1} from "./screens/screen.js"
-import { LINK_ANIMATIONS , FIRE_ANIMATIONS} from "./animations/animations.js";
+import { LINK_ANIMATIONS , FIRE_ANIMATIONS, LINK_WEAPON_PICKUP} from "./animations/animations.js";
 var canvas = document.querySelector('canvas')
 var c = canvas.getContext('2d')
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-
+const ASSET_PATH = "./assets/";
 const TILE_SIZE = 70;
+
 
 class Game {
     constructor() {
@@ -20,7 +18,7 @@ class Game {
         this.numCols = 18;
         this.screenObject = null;
         this.eventBus = [];
-        this.isDebug = true;
+        this.isDebug = false;
         this.player = null;
 
     }
@@ -32,8 +30,11 @@ class Game {
         this.registry.addSystem("MovementSystem");
         this.registry.addSystem("CollisionSystem");
         this.registry.addSystem("TransitionSystem");
+        this.registry.addSystem("ActionableSystem");
 
 
+        document.addEventListener("keyup", this.handleUserInput);
+        document.addEventListener("keydown", this.handleUserInput);
     }
     
 
@@ -43,7 +44,8 @@ class Game {
         this.registry.getSystem("MovementSystem").update(this.player.components["Character"].facing);
         this.registry.getSystem("CollisionSystem").update(this.player);
         this.registry.getSystem("TransitionSystem").update(this.player,this.eventBus, this.reloadNewScreen);
-
+        this.registry.getSystem("ActionableSystem").update(this.player);
+        // console.log(this.registry.systems)
         this.registry.update();
 
         const event = this.eventBus.pop();
@@ -56,8 +58,6 @@ class Game {
 
         
 
-        document.addEventListener("keyup", this.handleUserInput);
-        document.addEventListener("keydown", this.handleUserInput);
     }
 
 
@@ -68,12 +68,11 @@ class Game {
 
 
     loadScreen = (screenObject) => {
-        console.log(screenObject);
         this.screenObject = screenObject;
         for(let i = 0; i < this.numRows; i++) {
 
             for(let j = 0; j < this.numCols; j++) {
-
+                let srcRect = undefined;
                 let components = [];
 
                 const positionDummyComponent = {"name": "Position", "value": {x: j * TILE_SIZE, y: i * TILE_SIZE, width: TILE_SIZE, height: TILE_SIZE}};
@@ -81,8 +80,7 @@ class Game {
 
                 let path = '';
 
-                const {assetPath} = screenObject; 
-                console.log(assetPath)
+                let {assetPath} = screenObject; 
 
                 const typeOf = typeof this.screenObject.screen[i][j];
                 let tile = this.screenObject.screen[i][j]
@@ -100,7 +98,7 @@ class Game {
                     path = "tiles/"
                 }
                 else if (typeOf === "object") {
-                    const {type, index} = tile;
+                    const {type, index} = tile; 
                     if(type === "door") {
                         const {screen, coX, coY} = this.screenObject["transitionSpaces"][type][index];
 
@@ -132,6 +130,34 @@ class Game {
 
                         tile = tile.tile;
                     }
+                    else if (type === "actTile") {
+
+                        const {entity} = this.screenObject[type][index];
+
+                        if(entity === "SwordTile") {
+                            path = 'actTiles/';
+                            tile = '0';      //
+                            //  srcRect = {
+                            //     x: 58,
+                            //     y: 192,
+                            //     width: 30,
+                            //     height: 20
+                            // }
+                            const actionableDummyComponent = {
+                                name: "Actionable",
+                                value: {
+                                    action: this.weaponPickupAnimation
+                                }
+                            };
+
+                            components.push(actionableDummyComponent);
+
+                        }
+
+
+
+
+                    }
 
 
                 } else {
@@ -145,7 +171,7 @@ class Game {
                     const spriteDummyComponent = {
                         "name": "Sprite", "value": 
                         { 
-                            // srcRect: {x: 0, y: 0, width: 460, height: 460}, 
+                            srcRect,
                             path: assetPath + path + tile + ".png",
                             // pixelsBetween: 30
                         }
@@ -185,7 +211,6 @@ class Game {
             screenObject = shop1;
         }
 
-        console.log(screenObject)
 
         this.loadScreen(screenObject);
         this.createPlayer(coX,coY);
@@ -196,8 +221,6 @@ class Game {
     createPlayer = (coX, coY) => {
 
         if(this.player) {
-            console.log(coX);
-            console.log(coY);
 
             this.player.components["Position"].x = coX * TILE_SIZE;
             this.player.components["Position"].y = coY * TILE_SIZE;
@@ -322,15 +345,102 @@ class Game {
 
 
     }
+
+    weaponPickupAnimation = (actionableTile) => {
+
+        // Create tile to replace the tile that is going to be killed
+        let dummyPositionComponent = {
+            name: "Position",
+            value: {
+                ...actionableTile.components["Position"]
+            }
+        };
+        let dummySpriteComponent = {
+            name: "Sprite",
+            value: {
+                path: "shop/" + "tiles/" + "0.png"
+            }
+        }
+
+        this.registry.createEntity([dummyPositionComponent, dummySpriteComponent]);
+
+        this.registry.entitiesToBeKilled.push(actionableTile);
+
+
+        // Create sword entity
+        let endTime = Date.now() + 3000;
+
+        const facing = this.player.components["Character"].facing;
+        const mode = this.player.components["Animation"].isAttacking ? "attack" : "move";
+        const originalSrcRect = this.player.components["Animation"]["frames"][facing][mode]["srcRect"];
+ 
+        dummyPositionComponent = {
+            name: "Position", 
+            value: {
+                x: this.player.components["Position"].x - 7,
+                y: this.player.components["Position"].y - 48,
+                height: this.player.components["Position"].height ,
+                width: this.player.components["Position"].width
+            } 
+        }
+
+        dummySpriteComponent = {
+            name: "Sprite",
+            value: {
+                srcRect: {
+                    x: 58,
+                    y: 192,
+                    width: 30,
+                    height: 20
+                },
+                path: "link.png"
+            }
+        }
+
+        const swordEntity = this.registry.createEntity([dummyPositionComponent, dummySpriteComponent]);
+
+        this.player.components["Animation"]["frames"][facing][mode]["srcRect"] = LINK_WEAPON_PICKUP.value.frames.srcRect;
+        
+        document.removeEventListener("keyup", this.handleUserInput);
+        document.removeEventListener("keydown", this.handleUserInput);
+
+        // Recursion to waste time
+        const recursion = () => {
+            let currentTime = Date.now();
+            if(endTime > currentTime) {
+                currentTime = Date.now();
+                requestAnimationFrame(recursion);
+                this.player.components["Movement"].vY = 0
+                this.player.components["Movement"].vX = 0
+
+            } 
+            else {
+                // return everything to normal
+                document.addEventListener("keyup", this.handleUserInput);
+                document.addEventListener("keydown", this.handleUserInput);
+                this.player.components["Animation"]["frames"][facing][mode]["srcRect"] = originalSrcRect;
+
+                // remove sword entity
+                this.registry.entitiesToBeKilled.push(swordEntity);
+
+            }
+        }
+
+        recursion();
+       
+
+    }
 }
 
 const game = new Game();
 game.initialize();
-game.loadScreen(screenOneObject);
+// game.loadScreen(screenOneObject);
+game.loadScreen(shop1);
+
 game.update();
 game.render();
 
-
+// game.weaponPickupAnimation();
 
 
 
@@ -364,4 +474,4 @@ game.render();
 // )
 
 
-export {TILE_SIZE,c, canvas}
+export {TILE_SIZE,c, canvas, ASSET_PATH}

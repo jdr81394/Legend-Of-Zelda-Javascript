@@ -1,5 +1,4 @@
-const ASSET_PATH = "./assets/";
-
+import {ASSET_PATH} from "../index.js";
 
 class Component {
     constructor(componentType) {
@@ -108,5 +107,12 @@ class CharacterComponent extends Component {
 
 }
 
+class ActionableComponent extends Component {
+    constructor(componentType, componentObj) {
+        super(componentType);
+        this.action = componentObj.action;
+    }
+}
 
-export {Component,CharacterComponent, PositionComponent, MovementComponent, TransitionComponent, SpriteComponent,AnimationComponent, CollisionComponent,PlayerComponent}
+
+export {Component,CharacterComponent,ActionableComponent, PositionComponent, MovementComponent, TransitionComponent, SpriteComponent,AnimationComponent, CollisionComponent,PlayerComponent}
