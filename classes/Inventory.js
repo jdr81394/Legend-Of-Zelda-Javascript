@@ -29,9 +29,8 @@ class InventoryScreen {
     }
 
 
-    render = () => {
+    render = (isPaused) => {
         // Render black background
-        requestAnimationFrame(this.render);
         this.c.clearRect(0,0, this.canvas.width, this.canvas.height);
         this.c.fillStyle = "black";
         this.c.fillRect(0,0,this.canvas.width, this.canvas.height);
@@ -56,6 +55,38 @@ class InventoryScreen {
             0,0,140,200, 
             155,125,23,37
         )
+
+
+        // make dropdown
+        if(isPaused) {
+            // slide out top
+
+            let str = this.canvas.style.top.slice(0, this.canvas.style.top.length - 2);
+
+            // convert to number
+            let number = (str * 1 )  // javascript will coerce this into a number by multiplying
+
+            if(number < 200) {
+                console.log("HEre")
+                number = number + 10;
+                this.canvas.style.top = number + "px";
+            }
+            
+            // this.canvas.style.top = "800px";
+        } else {
+
+            let str = this.canvas.style.top.slice(0, this.canvas.style.top.length - 2);
+            let number = (str * 1 )  // javascript will coerce this into a number by multiplying
+            if(number > -558) {
+                console.log("HEre")
+                number = number - 10;
+                this.canvas.style.top = number + "px";
+            }
+
+
+        }
+
+
 
 
 

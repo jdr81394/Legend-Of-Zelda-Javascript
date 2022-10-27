@@ -21,6 +21,7 @@ class Game {
         this.eventBus = [];
         this.isDebug = false;
         this.player = null;
+        this.isPaused = false;
         this.inventoryScreen = new InventoryScreen();
     }
 
@@ -43,31 +44,46 @@ class Game {
     
 
     update = () => {
-        const event = this.eventBus.pop();
 
-        if(event){ 
-            const {func, args } = event;
-            func(args)
+        if(!this.isPaused) {
+            console.log("HERE IN UPDATE");
+
+            const event = this.eventBus.pop();
+
+            if(event){ 
+                const {func, args } = event;
+                func(args)
+            }
+    
+            this.registry.getSystem("AnimationSystem").update(this.player);
+            this.registry.getSystem("MovementSystem").update(this.player.components["Character"].facing);
+            this.registry.getSystem("CollisionSystem").update(this.player);
+            this.registry.getSystem("TransitionSystem").update(this.player,this.eventBus, this.reloadNewScreen);
+            this.registry.getSystem("ActionableSystem").update(this.player, this.eventBus);
+            // console.log(this.registry.systems)
+            this.registry.update();
+    
+    
+
         }
-
-        this.registry.getSystem("AnimationSystem").update(this.player);
-        this.registry.getSystem("MovementSystem").update(this.player.components["Character"].facing);
-        this.registry.getSystem("CollisionSystem").update(this.player);
-        this.registry.getSystem("TransitionSystem").update(this.player,this.eventBus, this.reloadNewScreen);
-        this.registry.getSystem("ActionableSystem").update(this.player, this.eventBus);
-        // console.log(this.registry.systems)
-        this.registry.update();
-
 
         requestAnimationFrame(this.update);
 
+
+        
 
     }
 
 
     render = () => {
+        if(!this.isPaused) {
+            this.registry.getSystem("RenderSystem").update(this.isDebug);
+        }
+
+        this.inventoryScreen.render(this.isPaused)
+
         requestAnimationFrame(this.render);
-        this.registry.getSystem("RenderSystem").update(this.isDebug);
+
     }
 
 
@@ -318,6 +334,11 @@ class Game {
                     }
                     case "g": {
                         this.isDebug = !this.isDebug;
+                        break;
+                    }
+                    case "p": {
+                        this.isPaused = !this.isPaused;
+                        console.log(this.isPaused)
                         break;
                     }
     
