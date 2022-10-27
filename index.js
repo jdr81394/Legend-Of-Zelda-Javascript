@@ -370,6 +370,7 @@ class Game {
         // Create sword entity
         let endTime = Date.now() + 3000;
 
+        // Set up for creating the sword
         const facing = this.player.components["Character"].facing;
         const mode = this.player.components["Animation"].isAttacking ? "attack" : "move";
         const originalSrcRect = this.player.components["Animation"]["frames"][facing][mode]["srcRect"];
@@ -419,7 +420,7 @@ class Game {
                 document.addEventListener("keyup", this.handleUserInput);
                 document.addEventListener("keydown", this.handleUserInput);
                 this.player.components["Animation"]["frames"][facing][mode]["srcRect"] = originalSrcRect;
-
+                this.player.components["Animation"].shouldAnimate = false;
                 // remove sword entity
                 this.registry.entitiesToBeKilled.push(swordEntity);
 
