@@ -1,6 +1,6 @@
 import {Registry} from "./classes/Registry.js"
 import {screenOneObject, shop1} from "./screens/screen.js"
-import { Inventory } from "./classes/Inventory.js";
+import { InventoryScreen } from "./classes/Inventory.js";
 import { LINK_ANIMATIONS , FIRE_ANIMATIONS, LINK_WEAPON_PICKUP} from "./animations/animations.js";
 var canvas = document.querySelector('canvas')
 var c = canvas.getContext('2d')
@@ -21,7 +21,7 @@ class Game {
         this.eventBus = [];
         this.isDebug = false;
         this.player = null;
-        this.inventoryScreen = new Inventory();
+        this.inventoryScreen = new InventoryScreen();
     }
 
     initialize = () => {
@@ -379,8 +379,6 @@ class Game {
         const mode = this.player.components["Animation"].isAttacking ? "attack" : "move";
         const originalSrcRect = LINK_ANIMATIONS["value"]["frames"][facing][mode]["srcRect"]
  
-        console.log("link animations: " , LINK_ANIMATIONS["value"]["frames"][facing][mode]["srcRect"]);
-        console.log("first srcRect: " , originalSrcRect);
         dummyPositionComponent = {
             name: "Position", 
             value: {
@@ -425,7 +423,6 @@ class Game {
                 // return everything to normal
                 document.addEventListener("keyup", this.handleUserInput);
                 document.addEventListener("keydown", this.handleUserInput);
-                console.log("original srcRect: " , originalSrcRect)
                 this.player.components["Animation"]["frames"][facing][mode]["srcRect"] = originalSrcRect;
                 this.player.components["Animation"].shouldAnimate = false;
                 // remove sword entity

@@ -193,10 +193,12 @@ class ActionableSystem extends System {
                     Position.y + Movement.vY + Position.height > actionableTilePosition.y 
                 ) {
                     
-                    eventBus.push({
-                        func: actionableTile.components["Actionable"].action,
-                        args: actionableTile
-                    }) ;
+                    // eventBus.push({
+                    //     func: actionableTile.components["Actionable"].action,
+                    //     args: actionableTile
+                    // }) ;
+
+                    actionableTile.components["Actionable"].action(actionableTile);
 
                 }
             }
