@@ -39,24 +39,24 @@ class Game {
     
 
     update = () => {
-        requestAnimationFrame(this.update);
+        const event = this.eventBus.pop();
+
+        if(event){ 
+            const {func, args } = event;
+            func(args)
+        }
+
         this.registry.getSystem("AnimationSystem").update(this.player);
         this.registry.getSystem("MovementSystem").update(this.player.components["Character"].facing);
         this.registry.getSystem("CollisionSystem").update(this.player);
         this.registry.getSystem("TransitionSystem").update(this.player,this.eventBus, this.reloadNewScreen);
-        this.registry.getSystem("ActionableSystem").update(this.player);
+        this.registry.getSystem("ActionableSystem").update(this.player, this.eventBus);
         // console.log(this.registry.systems)
         this.registry.update();
 
-        const event = this.eventBus.pop();
 
-        if(event){ 
-            console.log(event);
-            const {func, Transition } = event;
-            func(Transition)
-        }
+        requestAnimationFrame(this.update);
 
-        
 
     }
 
@@ -373,7 +373,7 @@ class Game {
         // Set up for creating the sword
         const facing = this.player.components["Character"].facing;
         const mode = this.player.components["Animation"].isAttacking ? "attack" : "move";
-        const originalSrcRect = this.player.components["Animation"]["frames"][facing][mode]["srcRect"];
+        const originalSrcRect = LINK_ANIMATIONS["value"]["frames"][facing][mode]["srcRect"]
  
         dummyPositionComponent = {
             name: "Position", 

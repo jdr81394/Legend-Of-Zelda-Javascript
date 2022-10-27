@@ -55,7 +55,11 @@ class RenderSystem extends System {
 
 
             if(isDebug 
-                // && entity.components["Collision"] 
+                && (
+                    entity.components["Collision"] 
+                    ||
+                    entity.components["Transition"]
+                    )
                 ) {
 
                 c.beginPath();
@@ -170,7 +174,7 @@ class ActionableSystem extends System {
         this.componentRequirements = ["Actionable"]
     }
 
-    update = (player) => {
+    update = (player, eventBus) => {
 
         if(player) {
             for(let i = 0; i < this.entities.length; i++) {
@@ -189,7 +193,10 @@ class ActionableSystem extends System {
                     Position.y + Movement.vY + Position.height > actionableTilePosition.y 
                 ) {
                     
-                    actionableTile.components["Actionable"].action(actionableTile);
+                    eventBus.push({
+                        func: actionableTile.components["Actionable"].action,
+                        args: actionableTile
+                    }) ;
 
                 }
             }
@@ -284,10 +291,9 @@ class TransitionSystem extends System {
                     eventBus.push(
                         {
                             func: reloadNewScreen, 
-                            Transition
+                            args: Transition
                         }
                     );
-    
                 }
     
 
