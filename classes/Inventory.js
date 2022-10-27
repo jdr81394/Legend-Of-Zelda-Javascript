@@ -1,21 +1,24 @@
-
+const PATH = "../assets/inventory/";
 class InventoryScreen {
     constructor() {
         this.canvas = document.getElementById("inventoryScreen");
         this.c = this.canvas.getContext("2d");
 
         this.goldIcon = new Image();
-        this.goldIcon.src = "../assets/inventory/goldIcon.png";
+        this.goldIcon.src = `${PATH}goldIcon.png`;
 
         this.keysAndBomb = new Image();
-        this.keysAndBomb.src = "../assets/inventory/keyAndBombIcon.png";
+        this.keysAndBomb.src = `${PATH}keyAndBombIcon.png`;
 
         this.bButton = new Image();
-        this.bButton.src = "../assets/inventory/B.png";
+        this.bButton.src = `${PATH}B.png`;
         
 
         this.aButton = new Image();
-        this.aButton.src = "../assets/inventory/A.png";
+        this.aButton.src = `${PATH}A.png`;
+
+        this.lifeText = new Image();
+        this.lifeText.src = `${PATH}life.png`;
 
 
         this.initialize();
@@ -42,19 +45,27 @@ class InventoryScreen {
         // render keys and bomb
         this.c.drawImage(this.keysAndBomb, 100, 130 ,15,15)
 
-        // render By button
+        // render B button
         this.c.drawImage(
             this.bButton, 
             0,0,140,200, 
-            130,125,20,20
+            145,125,20,20
         )
 
-        // render B button
+        // render A button
         this.c.drawImage(
             this.aButton, 
             0,0,140,200, 
-            155,125,23,37
+            170,125,23,37
         )
+
+        // render Life text
+        this.c.drawImage(
+            this.lifeText,
+            0,0, 250,200,
+            210,115,50,50
+        )
+
 
 
         // make dropdown
@@ -67,7 +78,6 @@ class InventoryScreen {
             let number = (str * 1 )  // javascript will coerce this into a number by multiplying
 
             if(number < 200) {
-                console.log("HEre")
                 number = number + 10;
                 this.canvas.style.top = number + "px";
             }
@@ -78,7 +88,6 @@ class InventoryScreen {
             let str = this.canvas.style.top.slice(0, this.canvas.style.top.length - 2);
             let number = (str * 1 )  // javascript will coerce this into a number by multiplying
             if(number > -558) {
-                console.log("HEre")
                 number = number - 10;
                 this.canvas.style.top = number + "px";
             }

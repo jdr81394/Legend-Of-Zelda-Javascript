@@ -46,7 +46,6 @@ class Game {
     update = () => {
 
         if(!this.isPaused) {
-            console.log("HERE IN UPDATE");
 
             const event = this.eventBus.pop();
 
