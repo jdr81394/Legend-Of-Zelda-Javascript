@@ -321,8 +321,9 @@ class Game {
                         break;
                     }
     
-                    default:
+                    default: {
                         break;
+                    }
                 }
             }
     
