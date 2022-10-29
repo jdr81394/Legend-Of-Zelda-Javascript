@@ -35,25 +35,91 @@ class RenderSystem extends System {
             if(srcRect) {
                 if(entity.components["Player"]) {
                     // render weapon
+                    let dummyHitboxComponent = undefined;
+
                     const facing = entity.components["Character"]["facing"];
                     if(entity.components["Player"]["activeA"] && entity.components["Animation"]["isAttacking"] && entity.components["Animation"]["frames"][facing]["attack"]["currentFrame"] === 0) {
                         let xPosition = entity.components["Position"].x;
                         let yPosition = entity.components["Position"].y;
+                        let value = {};
                         if(facing === "up") {
-                            xPosition = entity.components["Position"].x + ( entity.components["Position"].width / 2);
+                            xPosition = entity.components["Position"].x - 8;
+                            yPosition -= 50
+
+                            // width and height are for the srcRect
+                            value = {
+                                x: xPosition,
+                                y: yPosition,
+                                width: 70,
+                                height: 60
+                            }
+                            dummyHitboxComponent = {
+                                name: "Hitbox",
+                                value: {
+                                    x: xPosition + 10,
+                                    y: yPosition + 5,
+                                    width: 20,
+                                    height: 65
+                                }
+                            }
 
                         }
                         else if (facing === "left") {
-                            yPosition = entity.components["Position"].y + ( entity.components["Position"].height / 2);
+                            yPosition = entity.components["Position"].y + ( entity.components["Position"].height / 2) - 25;
+                            xPosition = entity.components["Position"].x - 40;
+                            value = {
+                                x: xPosition,
+                                y: yPosition,
+                                width: 80,
+                                height: 50
+                            }
+                            dummyHitboxComponent = {
+                                name: "Hitbox",
+                                value: {
+                                    x: xPosition,
+                                    y: yPosition + 17,
+                                    width: 65,
+                                    height: 20
+                                }
+                            }
                         }
                         else if (facing === "right") {
-                            xPosition = entity.components["Position"].x + entity.components["Position"].width;
-                            yPosition = entity.components["Position"].y + ( entity.components["Position"].height / 2);
+                            xPosition = entity.components["Position"].x + entity.components["Position"].width - 15;
+                            yPosition = entity.components["Position"].y + ( entity.components["Position"].height / 2) - 23;
+                            value = {
+                                x: xPosition,
+                                y: yPosition,
+                                width: 80,
+                                height: 50
+                            }
+                            dummyHitboxComponent = {
+                                name: "Hitbox",
+                                value: {
+                                    x: xPosition,
+                                    y: yPosition + 17,
+                                    width: 65,
+                                    height: 20
+                                }
+                            }
                         }
                         else if (facing === "down") {
-                            xPosition = entity.components["Position"].x + ( entity.components["Position"].width / 2);
-                            yPosition = entity.components["Position"].y + entity.components["Position"].height;
-    
+                            xPosition = entity.components["Position"].x + ( entity.components["Position"].width / 2) - 16;
+                            yPosition = entity.components["Position"].y + entity.components["Position"].height - 20;
+                            value = {
+                                x: xPosition,
+                                y: yPosition,
+                                width: 70,
+                                height: 60
+                            }
+                            dummyHitboxComponent = {
+                                name: "Hitbox",
+                                value: {
+                                    x: xPosition + 10,
+                                    y: yPosition,
+                                    width: 20,
+                                    height: 65
+                                }
+                            }
                         }
                         // Now create the weapon    
                         let dummyPositionComponent = undefined;
@@ -62,12 +128,7 @@ class RenderSystem extends System {
                         if(entity.components["Player"]["activeA"]["name"] === "Sword_1") {
                             dummyPositionComponent = {
                                 name: "Position",
-                                value: {
-                                    x: xPosition,
-                                    y: yPosition,
-                                    width: 35,
-                                    height: 35
-                                }
+                                value
                             }
         
                             dummySpriteComponent = {
@@ -77,11 +138,18 @@ class RenderSystem extends System {
                                     srcRect: INVENTORY_SWORD_1["srcRect"][facing]
                                 }
                             }
+
+                            
+                 
+                            // create hitbox
+
+                         
                         }
 
-                        if(!entity.components["Player"]["activeA"]["weaponEntity"]) entity.components["Player"]["activeA"]["weaponEntity"] = registry.createEntity([dummyPositionComponent,dummySpriteComponent]);
+                        if(!entity.components["Player"]["activeA"]["weaponEntity"]) entity.components["Player"]["activeA"]["weaponEntity"] = registry.createEntity([dummyPositionComponent,dummySpriteComponent, dummyHitboxComponent]);
+
                         
-                        
+                        // console.log(entity.components["Player"]["activeA"]["weaponEntity"])
 
                     } 
                     // Get rid of the entity
@@ -121,6 +189,15 @@ class RenderSystem extends System {
                 c.rect(positionComponent.x,positionComponent.y, positionComponent.width, positionComponent.height);
                 c.lineWidth = 3;
                 c.strokeStyle = "red";
+                c.stroke();
+            }
+
+            if(isDebug && entity.components["Hitbox"]) {
+                const {x,y,width,height} = entity.components["Hitbox"];
+                c.beginPath();
+                c.rect(x,y, width, height);
+                c.lineWidth = 3;
+                c.strokeStyle = "orange";
                 c.stroke();
             }
 
@@ -369,4 +446,17 @@ class TransitionSystem extends System {
     }
 }
 
-export {System, RenderSystem, AnimationSystem, TransitionSystem,CollisionSystem,MovementSystem, ActionableSystem}
+class HitboxSystem extends System {
+    constructor(systemType) {
+        super(systemType);
+        this.componentRequirements = ["Hitbox"];
+    }
+
+    update = () => {
+        for ( let i = 0; i < this.entities.length; i++) {
+
+        }
+    }
+}
+
+export {System, RenderSystem,HitboxSystem, AnimationSystem, TransitionSystem,CollisionSystem,MovementSystem, ActionableSystem}

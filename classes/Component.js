@@ -93,6 +93,17 @@ class CollisionComponent extends Component {
     }
 }
 
+
+class HitboxComponent extends Component {
+    constructor(componentType, componentObj) {
+        super(componentType);
+        this.x = componentObj.x;
+        this.y = componentObj.y;
+        this.width = componentObj.width;
+        this.height = componentObj.height;
+    }
+}
+
 class PlayerComponent extends Component {
     constructor(componentType, componentObj) {
         super(componentType);
@@ -125,4 +136,4 @@ class ActionableComponent extends Component {
 
 
 
-export {Component,CharacterComponent,ActionableComponent, PositionComponent, MovementComponent, TransitionComponent, SpriteComponent,AnimationComponent, CollisionComponent,PlayerComponent}
+export {Component,CharacterComponent,HitboxComponent, ActionableComponent, PositionComponent, MovementComponent, TransitionComponent, SpriteComponent,AnimationComponent, CollisionComponent,PlayerComponent}

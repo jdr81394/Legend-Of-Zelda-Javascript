@@ -1,6 +1,6 @@
 import {Entity} from "./Entity.js";
-import {TransitionComponent, CharacterComponent, PositionComponent, SpriteComponent, MovementComponent, AnimationComponent, CollisionComponent, PlayerComponent, ActionableComponent} from "./Component.js";
-import {AnimationSystem, ActionableSystem,  CollisionSystem, MovementSystem, RenderSystem, TransitionSystem} from "./System.js"
+import {TransitionComponent, CharacterComponent, PositionComponent, SpriteComponent, MovementComponent, AnimationComponent, CollisionComponent, PlayerComponent, ActionableComponent, HitboxComponent} from "./Component.js";
+import {AnimationSystem, ActionableSystem,  CollisionSystem, MovementSystem, RenderSystem, TransitionSystem, HitboxSystem} from "./System.js"
 
 
 
@@ -107,10 +107,18 @@ class Registry {
                     break;
                 }
                 case "Actionable" : {
+
                     const componentObj = component["value"];
                     newEntityComponents["Actionable"] = new ActionableComponent(component["name"], componentObj);
                     break;
                 }
+                case "Hitbox" : {
+                    const componentObj = component["value"];
+                    newEntityComponents["Hitbox"] = new HitboxComponent(component["name"], componentObj);
+                    break;
+
+                }
+
                 default:
                     break;
             }
@@ -118,6 +126,7 @@ class Registry {
 
         newEntity.components = newEntityComponents;
         this.entitiesToBeAdded.push(newEntity);
+
         // if(newEntity.components["Player"]){ 
             return newEntity;
         // }
@@ -149,7 +158,14 @@ class Registry {
                 break;
             }
             case "ActionableSystem": {
+                console.log("System type: " ,systemType)
                 newSystem = new ActionableSystem(systemType);
+                break;
+            }
+            case "HitboxSystem" : {
+                console.log(systemType)
+                newSystem = new HitboxSystem(systemType);
+                break;
             }
             default: {
                 break;
@@ -175,7 +191,13 @@ class Registry {
                 }
 
             }
-            if(addToSystem) system.entities.push(entity);  
+            if(addToSystem) {
+                if(system.systemType === "ActionableSystem") {
+                    console.log(system)
+                    console.log(entity)
+                }
+                system.entities.push(entity);  
+            }
         })
     }
 

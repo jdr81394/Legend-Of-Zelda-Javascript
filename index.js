@@ -20,7 +20,7 @@ class Game {
         this.numCols = 18;
         this.screenObject = null;
         this.eventBus = [];
-        this.isDebug = false;
+        this.isDebug = true;
         this.player = null;
         this.isPaused = false;
         this.gameTime = Date.now();
@@ -35,7 +35,7 @@ class Game {
         this.registry.addSystem("CollisionSystem");
         this.registry.addSystem("TransitionSystem");
         this.registry.addSystem("ActionableSystem");
-
+        this.registry.addSystem("HitboxSystem");
 
         document.addEventListener("keyup", this.handleUserInput);
         document.addEventListener("keydown", this.handleUserInput);
@@ -62,8 +62,11 @@ class Game {
             this.registry.getSystem("CollisionSystem").update(this.player);
             this.registry.getSystem("TransitionSystem").update(this.player,this.eventBus, this.reloadNewScreen);
             this.registry.getSystem("ActionableSystem").update(this.player, this.eventBus);
-            // console.log(this.registry.systems)
+            this.registry.getSystem("HitboxSystem").update();
+
             this.registry.update();
+
+            // console.log(this.registry.getSystem("ActionableSystem"))
     
     
 
@@ -173,6 +176,8 @@ class Game {
                             };
 
                             components.push(actionableDummyComponent);
+
+                            console.log(components)
 
                         }
 
@@ -289,7 +294,7 @@ class Game {
             LINK_ANIMATIONS
         ])
 
-        this.addItemToInventory(INVENTORY_SWORD_1);
+        // this.addItemToInventory(INVENTORY_SWORD_1);
     }
 
     handleUserInput = (e) => {
@@ -303,7 +308,8 @@ class Game {
                         this.player.components["Movement"].vX = 0;
                         this.player.components["Character"].facing = "up";
                         this.player.components["Animation"].shouldAnimate = true;
-
+                        this.player.components["Animation"].isAttacking = false;
+                        this.player.components["Animation"].currentTimeOfAnimation = 0;
                         break;
                     }
                     case "a": {
@@ -311,7 +317,8 @@ class Game {
                         this.player.components["Movement"].vY = 0;
                         this.player.components["Animation"].shouldAnimate = true;
                         this.player.components["Character"].facing = "left";
-                        
+                        this.player.components["Animation"].isAttacking = false;
+                        this.player.components["Animation"].currentTimeOfAnimation = 0;
 
                         break;
                     }
@@ -320,7 +327,8 @@ class Game {
                         this.player.components["Movement"].vX = 0;
                         this.player.components["Animation"].shouldAnimate = true;
                         this.player.components["Character"].facing = "down";
-
+                        this.player.components["Animation"].isAttacking = false;
+                        this.player.components["Animation"].currentTimeOfAnimation = 0;
                         break;
                     }
                     case "d": {
@@ -328,7 +336,8 @@ class Game {
                         this.player.components["Movement"].vY = 0;
                         this.player.components["Animation"].shouldAnimate = true;
                         this.player.components["Character"].facing = "right";
-                        
+                        this.player.components["Animation"].isAttacking = false;
+                        this.player.components["Animation"].currentTimeOfAnimation = 0;
                         break;
                     }
                     case "v": {
@@ -457,6 +466,7 @@ class Game {
                 this.player.components["Animation"].shouldAnimate = false;
                 // remove sword entity
                 this.registry.entitiesToBeKilled.push(swordEntity);
+                this.addItemToInventory(INVENTORY_SWORD_1);
 
             }
         }
@@ -481,8 +491,8 @@ class Game {
 
 const game = new Game();
 game.initialize();
-game.loadScreen(screenOneObject);
-// game.loadScreen(shop1);
+// game.loadScreen(screenOneObject);
+game.loadScreen(shop1);
 
 game.update();
 game.render();
