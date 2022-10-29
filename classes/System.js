@@ -1,6 +1,7 @@
 
 import {TILE_SIZE, c , canvas} from "../index.js";
 import {LINK_WEAPON_PICKUP} from "../animations/animations.js";
+import { INVENTORY_SWORD_1 } from "../items/weapons.js";
 class System {
     constructor(systemType) {
         this.systemType = systemType ; // string
@@ -20,7 +21,7 @@ class RenderSystem extends System {
         this.componentRequirements = ["Position", "Sprite"];        // string[]
     }
 
-    update = (isDebug) => {
+    update = (isDebug, registry) => {
         c.clearRect(0,0,canvas.width,canvas.height);
         for(let entity of this.entities) {
             const spriteComponent = entity.components["Sprite"];
@@ -32,10 +33,64 @@ class RenderSystem extends System {
 
             
             if(srcRect) {
-                if(!entity.components["Player"]) {
-                    // console.log("Sprite: ", sprite);
-                    // console.log("srcRect: " ,srcRect)
-                    // console.log("position: ", positionComponent); 
+                if(entity.components["Player"]) {
+                    // render weapon
+                    const facing = entity.components["Character"]["facing"];
+                    if(entity.components["Player"]["activeA"] && entity.components["Animation"]["isAttacking"] && entity.components["Animation"]["frames"][facing]["attack"]["currentFrame"] === 0) {
+                        let xPosition = entity.components["Position"].x;
+                        let yPosition = entity.components["Position"].y;
+                        if(facing === "up") {
+                            xPosition = entity.components["Position"].x + ( entity.components["Position"].width / 2);
+
+                        }
+                        else if (facing === "left") {
+                            yPosition = entity.components["Position"].y + ( entity.components["Position"].height / 2);
+                        }
+                        else if (facing === "right") {
+                            xPosition = entity.components["Position"].x + entity.components["Position"].width;
+                            yPosition = entity.components["Position"].y + ( entity.components["Position"].height / 2);
+                        }
+                        else if (facing === "down") {
+                            xPosition = entity.components["Position"].x + ( entity.components["Position"].width / 2);
+                            yPosition = entity.components["Position"].y + entity.components["Position"].height;
+    
+                        }
+                        // Now create the weapon    
+                        let dummyPositionComponent = undefined;
+                        let dummySpriteComponent = undefined;
+    
+                        if(entity.components["Player"]["activeA"]["name"] === "Sword_1") {
+                            dummyPositionComponent = {
+                                name: "Position",
+                                value: {
+                                    x: xPosition,
+                                    y: yPosition,
+                                    width: 35,
+                                    height: 35
+                                }
+                            }
+        
+                            dummySpriteComponent = {
+                                name: "Sprite",
+                                value: {
+                                    path: "link.png",
+                                    srcRect: INVENTORY_SWORD_1["srcRect"][facing]
+                                }
+                            }
+                        }
+
+                        if(!entity.components["Player"]["activeA"]["weaponEntity"]) entity.components["Player"]["activeA"]["weaponEntity"] = registry.createEntity([dummyPositionComponent,dummySpriteComponent]);
+                        
+                        
+
+                    } 
+                    // Get rid of the entity
+                    else if(entity.components["Player"]["activeA"] && (!entity.components["Animation"]["isAttacking"] || entity.components["Animation"]["frames"][facing]["attack"]["currentFrame"] === 1) && entity.components["Player"]["activeA"]["weaponEntity"] ) {
+                        registry.entitiesToBeKilled.push(entity.components["Player"]["activeA"]["weaponEntity"])
+                        entity.components["Player"]["activeA"]["weaponEntity"] = undefined;
+                        
+                    }
+                    
                 }
 
                 const {x,y,width, height} = srcRect;
@@ -75,14 +130,13 @@ class RenderSystem extends System {
     }
 }
 
-
 class AnimationSystem extends System {
     constructor(systemType) {
         super(systemType);
         this.componentRequirements = ["Position", "Sprite", "Animation"];
     }
 
-    update = () => {
+    update = (gameTime) => {
         for(let entity of this.entities) {
     
             const {facing} = entity.components["Character"];
@@ -94,14 +148,17 @@ class AnimationSystem extends System {
 
                     const currentFrame = 
                         Math.floor(
-                        ( Date.now() - entity.components["Animation"]["frames"][facing][mode]["startTime"] ) 
+                        ( gameTime - entity.components["Animation"]["currentTimeOfAnimation"] ) 
                         * 
                         entity.components["Animation"]["frames"][facing][mode]["frameSpeedRate"] / 1000 ) 
                         % entity.components["Animation"]["frames"][facing][mode]["numFrames"];
     
 
+                    if(currentFrame < 0 ) currentFrame = 0;
+
                     entity.components["Sprite"]["srcRect"] = entity.components["Animation"]["frames"][facing][mode]["srcRect"][currentFrame]
-    
+                    
+                    entity.components["Animation"]["frames"][facing][mode]["currentFrame"] = currentFrame
                
                 }
             } 

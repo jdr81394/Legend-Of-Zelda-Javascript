@@ -32,7 +32,10 @@ class InventoryScreen {
     }
 
 
-    render = (isPaused) => {
+    render = (isPaused, player) => {
+
+        this.c.imageSmoothingEnabled  =true;
+        this.c.imageSmoothingQuality = "high";
         // Render black background
         this.c.clearRect(0,0, this.canvas.width, this.canvas.height);
         this.c.fillStyle = "black";
@@ -67,6 +70,28 @@ class InventoryScreen {
         )
 
 
+        // If player has sword, render sword in A button
+
+        if(player && player["components"]["Player"]["inventory"]["sword"]) {
+            player["components"]["Player"]["inventory"]["activeA"] = player["components"]["Player"]["inventory"]["sword"];
+        }
+
+
+
+        // If active A, render it
+        if(player && player["components"]["Player"]["inventory"]["activeA"]) {
+            const {img, srcRect} = player["components"]["Player"]["inventory"]["activeA"];
+
+            const {up} = srcRect;
+            // render A button
+            this.c.drawImage(
+                img,
+                up.x,up.y,up.width,up.height, 
+                175,127,20,18
+            )
+        }
+
+
 
         // make dropdown
         if(isPaused) {
@@ -81,8 +106,40 @@ class InventoryScreen {
                 number = number + 10;
                 this.canvas.style.top = number + "px";
             }
-            
-            // this.canvas.style.top = "800px";
+
+            // write Inventory
+            this.c.font = "12px Arial";
+            this.c.fillStyle = "red";
+            this.c.fillText("Inventory", 20, 20, 100);
+
+
+            // render selected B item
+            this.c.beginPath();
+            this.c.rect(30,30,30,30);
+            this.c.lineWidth = 2;
+            this.c.strokeStyle = "blue";
+            this.c.stroke();
+
+            // Write use B button for this
+            this.c.fillStyle = "white"
+            this.c.fillText("Use B Button", 20, 75, 100);
+            this.c.fillText("for this", 20, 85, 100);
+
+
+            // Render blue circle for inventory items
+
+            this.c.beginPath();
+            this.c.rect(150,10,140,45);
+            this.c.lineWidth = 2;
+            this.c.strokeStyle = "blue";
+            this.c.stroke();
+
+
+
+        
+
+
+
         } else {
 
             let str = this.canvas.style.top.slice(0, this.canvas.style.top.length - 2);

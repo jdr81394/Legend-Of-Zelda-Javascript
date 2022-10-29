@@ -2,6 +2,7 @@ import {Registry} from "./classes/Registry.js"
 import {screenOneObject, shop1} from "./screens/screen.js"
 import { InventoryScreen } from "./classes/Inventory.js";
 import { LINK_ANIMATIONS , FIRE_ANIMATIONS, LINK_WEAPON_PICKUP} from "./animations/animations.js";
+import { INVENTORY_SWORD_1 } from "./items/weapons.js";
 var canvas = document.querySelector('canvas')
 var c = canvas.getContext('2d')
 
@@ -22,6 +23,7 @@ class Game {
         this.isDebug = false;
         this.player = null;
         this.isPaused = false;
+        this.gameTime = Date.now();
         this.inventoryScreen = new InventoryScreen();
     }
 
@@ -45,6 +47,7 @@ class Game {
 
     update = () => {
 
+        this.gameTime = Date.now();
         if(!this.isPaused) {
 
             const event = this.eventBus.pop();
@@ -54,7 +57,7 @@ class Game {
                 func(args)
             }
     
-            this.registry.getSystem("AnimationSystem").update(this.player);
+            this.registry.getSystem("AnimationSystem").update(this.gameTime);
             this.registry.getSystem("MovementSystem").update(this.player.components["Character"].facing);
             this.registry.getSystem("CollisionSystem").update(this.player);
             this.registry.getSystem("TransitionSystem").update(this.player,this.eventBus, this.reloadNewScreen);
@@ -76,10 +79,10 @@ class Game {
 
     render = () => {
         if(!this.isPaused) {
-            this.registry.getSystem("RenderSystem").update(this.isDebug);
+            this.registry.getSystem("RenderSystem").update(this.isDebug, this.registry, this.gameTime);
         }
 
-        this.inventoryScreen.render(this.isPaused)
+        this.inventoryScreen.render(this.isPaused, this.player)
 
         requestAnimationFrame(this.render);
 
@@ -285,6 +288,8 @@ class Game {
         this.player = this.registry.createEntity([playerDummyComponent,positionDummyComponent, characterDummyComponent, movementComponent, collisionComponent,spriteDummyComponent, 
             LINK_ANIMATIONS
         ])
+
+        this.addItemToInventory(INVENTORY_SWORD_1);
     }
 
     handleUserInput = (e) => {
@@ -327,7 +332,10 @@ class Game {
                         break;
                     }
                     case "v": {
-                        this.player.components["Animation"].isAttacking = true;
+                        if(!this.player.components["Animation"].isAttacking) {
+                            this.player.components["Animation"].isAttacking = true;
+                            this.player.components["Animation"].currentTimeOfAnimation = Date.now();
+                        }
 
                         break;
                     }
@@ -361,6 +369,7 @@ class Game {
                 else if (key === "v") {
 
                     this.player.components["Animation"].isAttacking = false;
+                    this.player.components["Animation"].currentTimeOfAnimation = 0;
 
                 }
 
@@ -459,13 +468,21 @@ class Game {
 
     addItemToInventory = (item) => {
 
+
+        if(item.name === "Sword_1") {
+            item.img = new Image();
+            item.img.src = item.path;
+            this.player.components["Player"].inventory.sword = item;
+            this.player.components["Player"].activeA = item;
+            console.log(this.player)
+        }
     }
 }
 
 const game = new Game();
 game.initialize();
-// game.loadScreen(screenOneObject);
-game.loadScreen(shop1);
+game.loadScreen(screenOneObject);
+// game.loadScreen(shop1);
 
 game.update();
 game.render();

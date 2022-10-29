@@ -96,7 +96,16 @@ class CollisionComponent extends Component {
 class PlayerComponent extends Component {
     constructor(componentType, componentObj) {
         super(componentType);
+        this.activeA = undefined;           // weapon
+        this.activeB = undefined;           // weapon
+        this.inventory = {
+            sword: undefined,               // {name (string) , attack (integer), path (string), img (Image), srcRect: {x,y,width,height} , weaponEntity: Entity | undefined
+            bombs: undefined,
+            wand: undefined,
+            boomerang: undefined
+        }
     }
+   
 }
 
 class CharacterComponent extends Component {
@@ -113,6 +122,7 @@ class ActionableComponent extends Component {
         this.action = componentObj.action;
     }
 }
+
 
 
 export {Component,CharacterComponent,ActionableComponent, PositionComponent, MovementComponent, TransitionComponent, SpriteComponent,AnimationComponent, CollisionComponent,PlayerComponent}

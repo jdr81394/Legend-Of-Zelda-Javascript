@@ -31,14 +31,14 @@ const LINK_ANIMATIONS = {
                     attack: {
                         srcRect: [
                             {
-                                x: -2,
-                                y: -1,
+                                x: -1,
+                                y: 58,
                                 width: 19,
                                 height: 19
                             },
                             {
                                 x: -1,
-                                y: 58,
+                                y: 28,
                                 width: 19,
                                 height: 19
                             },
@@ -74,15 +74,15 @@ const LINK_ANIMATIONS = {
                         srcRect: [
                             {
                                 x: 28,
-                                y: -1,
-                                width: 19,
-                                height: 19
+                                y: 58,
+                                width: 20,
+                                height: 20
                             },
                             {
                                 x: 28,
-                                y: 58,
-                                width: 19,
-                                height: 19
+                                y: 28,
+                                width: 20,
+                                height: 20
                             },
                         ],
                         currentFrame: 0,
@@ -117,14 +117,14 @@ const LINK_ANIMATIONS = {
                         srcRect: [  
                             {
                                 x: 58,
-                                y: 28,
+                                y: 58,
                                 // y: 57,
                                 width: 19,
                                 height: 20
                             },                             
                             {
                                 x: 58,
-                                y: 58,
+                                y: 28,
                                 // y: 57,
                                 width: 19,
                                 height: 20
@@ -163,13 +163,13 @@ const LINK_ANIMATIONS = {
                         srcRect: [
                             {
                                 x: 88,
-                                y: -1,
+                                y: 58,
                                 width: 19,
                                 height: 19
                             },
                             {
                                 x: 88,
-                                y: 58,
+                                y: 28,
                                 width: 19,
                                 height: 19
                             },
