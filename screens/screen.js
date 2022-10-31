@@ -8,12 +8,13 @@ const screenOneObject = {
     assetPath: "overworld/",
     transitionSpaces: {
         door: [
-            { screen: "shop1", coX: 9, coY: 11 } // this is what the entity will be made with 
+            { screen: "shop1", coX: 9, coY: 11 }, // this is what the entity will be made with 
+            { screen: "screenA" , coX: 5, coY:5}
         ],
         space: []
     },
     screen: [
-        [o,  o,   o,    o,   o,   o,   o,   o, o, o ,o,o,o,o,o,o, o,o,o],
+        [o,  o,   o,    o,   o,   o,   o,   o, {type: "door", index: 1, tile: 0},{type: "door", index: 1, tile: 0} ,o,o,o,o,o,o, o,o,o],
         [o,"1","1","1","1","1","1","1",0,0,"1","1","1","1","1","1","1",o],
         [o,"1","1","1","1",{type: "door", index: 0, tile: 0},"1","2",0,0,"1","1","1","1","1","1","1",o],
         [o,"1","1","1","2", 0,0,0,0,0,"1","1","1","1","1","1","1",o],
@@ -30,7 +31,8 @@ const screenOneObject = {
 };
 
 const shop1 = {
-    audioPath: "",
+    audioPath: AUDIO_PATH + "silence.mp3",
+    audioObject: undefined,
     assetPath: "shop/",
     transitionSpaces: {
         door: [
@@ -64,4 +66,29 @@ const shop1 = {
     actTile: [{entity: "SwordTile", remove: false, audioPath:`${AUDIO_PATH}importantItem.mp3`}]            // actionableTile
 }
 
-export  {screenOneObject, shop1};
+const screenA = {
+    audioPath: AUDIO_PATH + "overworld.mp3",
+    audioObject: undefined,
+    assetPath: "overworld/",
+    transitionSpaces: {
+        door: [{ screen: "shop1", coX: 9, coY: 11 }],
+        space: []
+    },
+    screen: [
+        [o,  o,   o,    o,   o,   o,   o,   o, o, o ,o,o,o,o,o,o, o,o,o],
+        [o,"1","1","1","1","1","1","1",0,0,"1","1","1","1","1","1","1",o],
+        [o,"1","1","1","1",{type: "door", index: 0, tile: 0},"1","2",0,0,"1","1","1","1","1","1","1",o],
+        [o,"1","1","1","2", 0,0,0,0,0,"1","1","1","1","1","1","1",o],
+        [o,"1","1","2",0,0,0,0,0,0,"1","1","1","1","1","1","1",o],
+        [o,"1","2",0,0,0,0,0,0,0,"1","1","1","1","1","1","1",o],
+        [o,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,o],
+        [o,"1","1",0,0,0,0,0,0,0,0,0,0,0,0,"1","1",o],
+        [o,"1","1",0,0,0,0,0,0,0,0,0,0,0,0,"1","1",o],
+        [o,"1","1",0,0,0,0,0,0,0,0,0,0,0,0,"1","1",o],
+        [o,"1","1","1",0,0,0,0,"1","1","1","1","1","1","1","1","1",o],
+        [o,"1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1",o],
+        [o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o, o,o,o],
+    ]
+}
+
+export  {screenOneObject, shop1,screenA};

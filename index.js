@@ -1,5 +1,5 @@
 import {Registry} from "./classes/Registry.js"
-import {screenOneObject, shop1} from "./screens/screen.js"
+import {screenA, screenOneObject, shop1} from "./screens/screen.js"
 import { InventoryScreen } from "./classes/Inventory.js";
 import { LINK_ANIMATIONS , FIRE_ANIMATIONS, LINK_WEAPON_PICKUP} from "./animations/animations.js";
 import { INVENTORY_SWORD_1 } from "./items/weapons.js";
@@ -26,6 +26,7 @@ class Game {
         this.gameTime = Date.now();
         this.inventoryScreen = new InventoryScreen();
         this.audioObject = undefined;
+        this.audioPath = undefined;
     }
 
     initialize = () => {
@@ -126,6 +127,8 @@ class Game {
                 else if (typeOf === "object") {
                     const {type, index} = tile; 
                     if(type === "door") {
+
+                        console.log(this.screenObjectd)
                         const {screen, coX, coY} = this.screenObject["transitionSpaces"][type][index];
 
                         const transitionSpaceComponent = { name: "Transition", value: {screen, coX, coY}};
@@ -229,11 +232,17 @@ class Game {
             }
         }
 
-        if(this.screenObject && this.screenObject.audioPath) {
+        
+        if(this.audioObject && this.audioPath !== this.screenObject.audioPath ) this.audioObject.pause();
+
+
+        if(this.screenObject && this.screenObject.audioPath && this.audioPath !== this.screenObject.audioPath) {
+            this.audioPath = this.screenObject.audioPath;
             this.audioObject = new Audio(this.screenObject.audioPath);
             this.audioObject.loop = true;
             this.audioObject.play();
-        }
+        } 
+
 
 
         this.createPlayer();
@@ -243,24 +252,33 @@ class Game {
     // transitionSpace object with coX, coY, screen (string), type
     reloadNewScreen = (Transition) => {
 
-        if(this.audioObject) {
-            this.audioObject.pause();
-            this.audioObject = undefined;
-        }
+ 
 
         const {coX, coY, screen} = Transition;
 
         this.registry.removeAllEntities();
         
-
-
         // get the screen object based on name
         let screenObject;
-        if(screen === "screen1") {
-            screenObject = screenOneObject;
-        }
-        else if(screen === "shop1") {
-            screenObject = shop1;
+        switch(screen) {
+            case "screen1": {
+                screenObject = screenOneObject;
+
+                break;
+            }
+            case "screenA": {
+
+                screenObject = screenA;
+                break;
+            }
+            case "shop1" : {
+                screenObject = shop1;
+
+                break;
+            }
+            default:{
+                break;
+            }
         }
 
 
@@ -533,8 +551,8 @@ class Game {
 
 const game = new Game();
 game.initialize();
-// game.loadScreen(screenOneObject);
-game.loadScreen(shop1);
+game.loadScreen(screenOneObject);
+// game.loadScreen(shopd1);
 
 game.update();
 game.render();
