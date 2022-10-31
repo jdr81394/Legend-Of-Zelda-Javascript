@@ -131,6 +131,8 @@ class ActionableComponent extends Component {
     constructor(componentType, componentObj) {
         super(componentType);
         this.action = componentObj.action;
+        this.screenObject = componentObj.screenObject;
+        this.index = componentObj.index;
     }
 }
 

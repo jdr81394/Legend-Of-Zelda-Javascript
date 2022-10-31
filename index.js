@@ -176,12 +176,13 @@ class Game {
                                 const actionableDummyComponent = {
                                     name: "Actionable",
                                     value: {
-                                        action: this.weaponPickupAnimation
+                                        action: this.weaponPickupAnimation,
+                                        screenObject,
+                                        index
                                     }
                                 };
     
                                 components.push(actionableDummyComponent);
-                                this.screenObject[type][index]["remove"] = true;
                             }
 
 
