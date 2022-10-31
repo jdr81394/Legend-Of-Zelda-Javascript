@@ -133,6 +133,7 @@ class ActionableComponent extends Component {
         this.action = componentObj.action;
         this.screenObject = componentObj.screenObject;
         this.index = componentObj.index;
+        this.audioPath = componentObj.audioPath;
     }
 }
 

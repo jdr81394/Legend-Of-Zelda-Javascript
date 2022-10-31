@@ -158,7 +158,7 @@ class Game {
                     }
                     else if (type === "actTile") {
 
-                        const {entity, remove} = this.screenObject[type][index];
+                        const {entity, remove, audioPath} = this.screenObject[type][index];
                         if(remove === true) {
                             const {replacementTile} = this.screenObject[type][index];
                             path = "tiles/"
@@ -178,7 +178,8 @@ class Game {
                                     value: {
                                         action: this.weaponPickupAnimation,
                                         screenObject,
-                                        index
+                                        index,
+                                        audioPath 
                                     }
                                 };
     
@@ -415,6 +416,12 @@ class Game {
 
     weaponPickupAnimation = (actionableTile) => {
 
+
+        // Pause any current music thats being played - Later
+
+        // Extract music from actionable component
+        const {audioPath} = actionableTile.components["Actionable"];
+
         // Create tile to replace the tile that is going to be killed
         let dummyPositionComponent = {
             name: "Position",
@@ -472,6 +479,16 @@ class Game {
         document.removeEventListener("keyup", this.handleUserInput);
         document.removeEventListener("keydown", this.handleUserInput);
 
+        let oldAudioObject = this.audioObject;
+        // Start music
+        if(audioPath) {
+            if(this.audioObject) this.audioObject.pause();
+            
+            this.audioObject = new Audio(audioPath);
+            this.audioObject.play();
+        }
+
+
         // Recursion to waste time
         const recursion = () => {
             let currentTime = Date.now();
@@ -491,7 +508,8 @@ class Game {
                 // remove sword entity
                 this.registry.entitiesToBeKilled.push(swordEntity);
                 this.addItemToInventory(INVENTORY_SWORD_1);
-
+                this.audioObject = oldAudioObject;
+                this.audioObject.play();
             }
         }
 

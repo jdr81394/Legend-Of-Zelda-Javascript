@@ -308,7 +308,7 @@ class ActionableSystem extends System {
         this.componentRequirements = ["Actionable"]
     }
 
-    update = (player, eventBus) => {
+    update = (player) => {
 
         if(player) {
             for(let i = 0; i < this.entities.length; i++) {
@@ -331,9 +331,9 @@ class ActionableSystem extends System {
                     //     func: actionableTile.components["Actionable"].action,
                     //     args: actionableTile
                     // }) ;
-
+                    const {index} = actionableTile.components["Actionable"];
                     actionableTile.components["Actionable"].action(actionableTile);
-
+                    actionableTile.components["Actionable"]["screenObject"]["actTile"][index]["remove"] = true;
                 }
             }
         }

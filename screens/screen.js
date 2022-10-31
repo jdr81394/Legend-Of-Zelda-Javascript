@@ -52,7 +52,7 @@ const shop1 = {
         [o,"1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1",o],
         [o,"1","1",0,0, 0,0,0,0,0,0,0,0,0,0,"1","1",o],
         [o,"1","1",0,0,0,0,{type:"enemy", index:0, tile: 0},0,"0",0,{type:"enemy", index:0, tile:0},0,0,0,"1","1",o],
-        [o,"1","1",0,0,0,0,0,0,{type:"actTile", index: 0, tile: 0, replacementTile: 0},0,0,0,0,0,"1","1",o],
+        [o,"1","1",0,0,0,0,0,0,{type:"actTile", index: 0, tile: 0, replacementTile: 0 },0,0,0,0,0,"1","1",o],
         [o,"1", "1",0,0,0,0,0,0,0,0,0,0,0,0,"1","1",o],
         [o,"1","1",0,0,0,0,0,0,0,0,0,0,0,0,"1","1",o],
         [o,"1","1",0,0,0,0,0,0,0,0,0,0,0,0,"1","1",o],
@@ -61,7 +61,7 @@ const shop1 = {
         [o,"1","1","1","1","1","1","1",0,0,"1","1","1","1","1","1","1",o],
         [o,o,o,o,o,o,o,o,{type: "door", index: 0, tile: undefined} ,{type: "door", index: 0, tile: undefined},o ,o,o,o,o,o, o,o,o],
     ],
-    actTile: [{entity: "SwordTile", remove: false}]            // actionableTile
+    actTile: [{entity: "SwordTile", remove: false, audioPath:`${AUDIO_PATH}importantItem.mp3`}]            // actionableTile
 }
 
 export  {screenOneObject, shop1};
