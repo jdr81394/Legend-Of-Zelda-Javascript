@@ -1,7 +1,10 @@
 
 const o = undefined;
+const AUDIO_PATH = "../assets/audio/"
 
 const screenOneObject = {
+    audioPath: AUDIO_PATH + "overworld.mp3",
+    audioObject: undefined,
     assetPath: "overworld/",
     transitionSpaces: {
         door: [
@@ -27,6 +30,7 @@ const screenOneObject = {
 };
 
 const shop1 = {
+    audioPath: "",
     assetPath: "shop/",
     transitionSpaces: {
         door: [
@@ -57,7 +61,7 @@ const shop1 = {
         [o,"1","1","1","1","1","1","1",0,0,"1","1","1","1","1","1","1",o],
         [o,o,o,o,o,o,o,o,{type: "door", index: 0, tile: undefined} ,{type: "door", index: 0, tile: undefined},o ,o,o,o,o,o, o,o,o],
     ],
-    actTile: [{entity: "SwordTile"}]            // actionableTile
+    actTile: [{entity: "SwordTile", remove: false}]            // actionableTile
 }
 
 export  {screenOneObject, shop1};

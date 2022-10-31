@@ -25,6 +25,7 @@ class Game {
         this.isPaused = false;
         this.gameTime = Date.now();
         this.inventoryScreen = new InventoryScreen();
+        this.audioObject = undefined;
     }
 
     initialize = () => {
@@ -157,29 +158,38 @@ class Game {
                     }
                     else if (type === "actTile") {
 
-                        const {entity} = this.screenObject[type][index];
-
-                        if(entity === "SwordTile") {
+                        const {entity, remove} = this.screenObject[type][index];
+                        if(remove === true) {
+                            const {replacementTile} = this.screenObject[type][index];
+                            path = "tiles/"
+                            tile = replacementTile;
+                        }
+                        else {
                             path = 'actTiles/';
-                            tile = '0';      //
-                            //  srcRect = {
-                            //     x: 58,
-                            //     y: 192,
-                            //     width: 30,
-                            //     height: 20
-                            // }
-                            const actionableDummyComponent = {
-                                name: "Actionable",
-                                value: {
-                                    action: this.weaponPickupAnimation
-                                }
-                            };
-
-                            components.push(actionableDummyComponent);
-
-                            console.log(components)
 
                         }
+
+                        if(entity === "SwordTile") {
+                            tile = '0';    
+
+                            if(remove === false) {
+                                const actionableDummyComponent = {
+                                    name: "Actionable",
+                                    value: {
+                                        action: this.weaponPickupAnimation
+                                    }
+                                };
+    
+                                components.push(actionableDummyComponent);
+                                this.screenObject[type][index]["remove"] = true;
+                            }
+
+
+                        }
+
+
+                       
+
 
 
 
@@ -209,11 +219,18 @@ class Game {
    
        
         
+
                 
                 this.registry.createEntity(components);
                 
 
             }
+        }
+
+        if(this.screenObject && this.screenObject.audioPath) {
+            this.audioObject = new Audio(this.screenObject.audioPath);
+            this.audioObject.loop = true;
+            this.audioObject.play();
         }
 
 
@@ -224,9 +241,15 @@ class Game {
     // transitionSpace object with coX, coY, screen (string), type
     reloadNewScreen = (Transition) => {
 
+        if(this.audioObject) {
+            this.audioObject.pause();
+            this.audioObject = undefined;
+        }
+
         const {coX, coY, screen} = Transition;
 
         this.registry.removeAllEntities();
+        
 
 
         // get the screen object based on name
