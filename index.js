@@ -1,5 +1,5 @@
 import {Registry} from "./classes/Registry.js"
-import {screenA, screenOneObject, shop1} from "./screens/screen.js"
+import {screenA, screenB, screenC, screenD, screenE, screenOneObject, shop1} from "./screens/screen.js"
 import { InventoryScreen } from "./classes/Inventory.js";
 import { LINK_ANIMATIONS , FIRE_ANIMATIONS, LINK_WEAPON_PICKUP} from "./animations/animations.js";
 import { INVENTORY_SWORD_1 } from "./items/weapons.js";
@@ -266,9 +266,25 @@ class Game {
 
                 break;
             }
-            case "screenA": {
-
+            case "screenA" : {
                 screenObject = screenA;
+                break;
+            }
+            case "screenB" : {
+                screenObject = screenB;
+                break;
+            }
+            case "screenC": {
+
+                screenObject = screenC;
+                break;
+            }
+            case "screenD": {
+                screenObject = screenD;
+                break;
+            }
+            case "screenE": {
+                screenObject = screenE;
                 break;
             }
             case "shop1" : {
@@ -347,7 +363,7 @@ class Game {
             if(type === "keydown") {
                 switch(key) {
                     case "w": {
-                        this.player.components["Movement"].vY = -2
+                        this.player.components["Movement"].vY = -5
                         this.player.components["Movement"].vX = 0;
                         this.player.components["Character"].facing = "up";
                         this.player.components["Animation"].shouldAnimate = true;
@@ -356,7 +372,7 @@ class Game {
                         break;
                     }
                     case "a": {
-                        this.player.components["Movement"].vX = -2
+                        this.player.components["Movement"].vX = -5
                         this.player.components["Movement"].vY = 0;
                         this.player.components["Animation"].shouldAnimate = true;
                         this.player.components["Character"].facing = "left";
@@ -366,7 +382,7 @@ class Game {
                         break;
                     }
                     case "s": {
-                        this.player.components["Movement"].vY = 2
+                        this.player.components["Movement"].vY = 5
                         this.player.components["Movement"].vX = 0;
                         this.player.components["Animation"].shouldAnimate = true;
                         this.player.components["Character"].facing = "down";
@@ -375,7 +391,7 @@ class Game {
                         break;
                     }
                     case "d": {
-                        this.player.components["Movement"].vX =2
+                        this.player.components["Movement"].vX =5
                         this.player.components["Movement"].vY = 0;
                         this.player.components["Animation"].shouldAnimate = true;
                         this.player.components["Character"].facing = "right";
@@ -551,8 +567,14 @@ class Game {
 
 const game = new Game();
 game.initialize();
-game.loadScreen(screenOneObject);
-// game.loadScreen(shopd1);
+// game.loadScreen(screenOneObject);
+// game.loadScreen(shop1);
+// game.loadScreen(screenA);
+// game.loadScreen(screenB);
+// game.loadScreen(screenC);
+// game.loadScreen(screenD);
+game.loadScreen(screenE);
+
 
 game.update();
 game.render();
