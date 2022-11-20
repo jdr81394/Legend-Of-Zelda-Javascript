@@ -1,5 +1,5 @@
 import {Entity} from "./Entity.js";
-import {TransitionComponent, CharacterComponent, PositionComponent, SpriteComponent, MovementComponent, AnimationComponent, CollisionComponent, PlayerComponent, ActionableComponent, HitboxComponent} from "./Component.js";
+import {TransitionComponent, CharacterComponent, PositionComponent, SpriteComponent, MovementComponent, AnimationComponent, CollisionComponent, PlayerComponent, ActionableComponent, HitboxComponent, NodeComponent} from "./Component.js";
 import {AnimationSystem, ActionableSystem,  CollisionSystem, MovementSystem, RenderSystem, TransitionSystem, HitboxSystem} from "./System.js"
 
 
@@ -117,6 +117,13 @@ class Registry {
                     newEntityComponents["Hitbox"] = new HitboxComponent(component["name"], componentObj);
                     break;
 
+                }
+
+                case "Node" : {
+                    const componentObj = component["value"];
+
+                    newEntityComponents["Node"] = new NodeComponent(component["name"], componentObj);
+                    break;
                 }
 
                 default:

@@ -44,19 +44,19 @@ const shop1 = {
         space: []
     },
     npcs: {
-        enemy: [
+        hostileTile: [
             {
                 name: "fire",
                 invulnerable: true
             }
-        ]
+        ],
     },
     screen: [
         [o,  o,   o,    o,   o,   o,   o,   o, o, o ,o,o,o,o,o,o, o,o,o],
         [o,"1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1",o],
         [o,"1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1",o],
         [o,"1","1",0,0, 0,0,0,0,0,0,0,0,0,0,"1","1",o],
-        [o,"1","1",0,0,0,0,{type:"enemy", index:0, tile: 0},0,"0",0,{type:"enemy", index:0, tile:0},0,0,0,"1","1",o],
+        [o,"1","1",0,0,0,0,{type:"hostileTile", index:0, tile: 0},0,"0",0,{type:"hostileTile", index:0, tile:0},0,0,0,"1","1",o],
         [o,"1","1",0,0,0,0,0,0,{type:"actTile", index: 0, tile: 0, replacementTile: 0 },0,0,0,0,0,"1","1",o],
         [o,"1", "1",0,0,0,0,0,0,0,0,0,0,0,0,"1","1",o],
         [o,"1","1",0,0,0,0,0,0,0,0,0,0,0,0,"1","1",o],
@@ -198,13 +198,20 @@ const screenE = {
         ],
         space: []
     },
+    npcs: {
+        enemies: [
+            {
+                x: 5,           // x coefficient of tile
+                y: 5
+            }
+        ]
+    },
     screen: [
-        [
-            o,  o, o, o,{type: "door", index: 1, tile: undefined}, o,   {type: "door", index: 2, tile: undefined},   o,   {type: "door", index: 3, tile: undefined}, {type: "door", index: 4, tile: undefined}, o, {type: "door", index: 5, tile: undefined},o,{type: "door", index: 6, tile: undefined},o,{type: "door", index: 7, tile: undefined},o,o,o],
-        [o,"1","1","20",0,"20",0,"20",0,0,"20",0,"20",0,"20",0,"20",o],
-        [o,"1","1","20",0,"20",0,"20",0,0,"20",0,"20",0,"20",0,"20",o],
-        [o,"1","1",0,0, 0,0,0,0,0,0,0,0,0,0,0,0,o],
-        [o,"1","1",0,0,0,0,0,0,0,0,0,0,0,0,0,0,o],
+        [o,  o, o, o,{type: "door", index: 1, tile: undefined}, o,   {type: "door", index: 2, tile: undefined},   o,   {type: "door", index: 3, tile: undefined}, {type: "door", index: 4, tile: undefined}, o, {type: "door", index: 5, tile: undefined},o,{type: "door", index: 6, tile: undefined},o,{type: "door", index: 7, tile: undefined},o,o,o],
+        [o,"1","1","20",0,"20",0,"20",0,0,"20",0,"20",0,"20",0,"20",o], // 5
+        [o,"1","1","20",0,"20",0,"20",0,0,"20",0,"20",0,"20",0,"20",o], // 23
+        [o,"1","1",0,0, 0,0,0,0,0,0,0,0,0,0,0,0,o],                     // 41
+        [o,"1","1",0,0,0,0,0,0,0,0,0,0,0,0,0,0,o],                      // 59        if something is below or above, it will be 18 +/-
         [o,"1","2",0,0,0,0,"20",0,0,"20",0,"20",0,"20",0,0,o],
         [o,"2",0, "20", 0,"20",0,0,0,0,0,0,0,0,0,0,0,o],
         [{type: "door", index: 0, tile: undefined},0,0,0,0,0,0,"20",0,0,"20",0,"20",0,"20",0,0,o],

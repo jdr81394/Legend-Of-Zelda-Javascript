@@ -27,6 +27,14 @@ class TransitionComponent extends Component {
     }
 }
 
+class NodeComponent extends Component {
+    constructor(componentType, nodeId) {
+        super(componentType);
+        this.nodeId = nodeId;
+
+    }
+}
+
 
 class MovementComponent extends Component {
     constructor(componentType, componentObj) {
@@ -139,4 +147,4 @@ class ActionableComponent extends Component {
 
 
 
-export {Component,CharacterComponent,HitboxComponent, ActionableComponent, PositionComponent, MovementComponent, TransitionComponent, SpriteComponent,AnimationComponent, CollisionComponent,PlayerComponent}
+export {Component,CharacterComponent,HitboxComponent,NodeComponent, ActionableComponent, PositionComponent, MovementComponent, TransitionComponent, SpriteComponent,AnimationComponent, CollisionComponent,PlayerComponent}

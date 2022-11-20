@@ -1,7 +1,7 @@
 import {Registry} from "./classes/Registry.js"
 import {screenA, screenB, screenC, screenD, screenE, screenOneObject, shop1} from "./screens/screen.js"
 import { InventoryScreen } from "./classes/Inventory.js";
-import { LINK_ANIMATIONS , FIRE_ANIMATIONS, LINK_WEAPON_PICKUP} from "./animations/animations.js";
+import { LINK_ANIMATIONS , RED_OCKOTOK, FIRE_ANIMATIONS, LINK_WEAPON_PICKUP} from "./animations/animations.js";
 import { INVENTORY_SWORD_1 } from "./items/weapons.js";
 var canvas = document.querySelector('canvas')
 var c = canvas.getContext('2d')
@@ -27,6 +27,7 @@ class Game {
         this.inventoryScreen = new InventoryScreen();
         this.audioObject = undefined;
         this.audioPath = undefined;
+        this.graph = {};
     }
 
     initialize = () => {
@@ -96,9 +97,11 @@ class Game {
 
     loadScreen = (screenObject) => {
         this.screenObject = screenObject;
+        let numOfTiles = 0;     // this will be used to give the correct id to the node
         for(let i = 0; i < this.numRows; i++) {
 
             for(let j = 0; j < this.numCols; j++) {
+                numOfTiles++;           // increment even if node is not a navigatable tile because we take the non navigatables into account in order to navigate.
                 let srcRect = undefined;
                 let components = [];
 
@@ -125,12 +128,28 @@ class Game {
                     path = "tiles/"
 
                     // Add the node for the AI to path here.
+                    // If it is a tile, then we want our current AI to have access to it
+                    // Build the Navigatable Graph 
+                    // Store by map using an ID. This id can be used to determine what is next to it. +/- 1 for left right, +/- for top/bottom
+                    const nodeComponent = {
+                        name: "Node",
+                        value: {
+                            nodeId: numOfTiles // start at 1
+                        }
+                    };
+
+                    // Put value of id into the graph for fast access
+                    this.graph[numOfTiles] = {
+                        edges: undefined,           // We will set the edges here shortly,
+                        position: positionDummyComponent.value
+                    }       
+
+                    components.push(nodeComponent);
                 }
                 else if (typeOf === "object") {
                     const {type, index} = tile; 
                     if(type === "door") {
 
-                        console.log(this.screenObjectd)
                         const {screen, coX, coY} = this.screenObject["transitionSpaces"][type][index];
 
                         const transitionSpaceComponent = { name: "Transition", value: {screen, coX, coY}};
@@ -142,7 +161,7 @@ class Game {
                         tile = tile.tile;           // Reassigning tile to tile.tile means it will get the name of the png that is suppose to be used
     
                     }
-                    else if(type === "enemy") {
+                    else if(type === "hostileTile") {
                         const {name} = this.screenObject["npcs"][type][index];
 
                         if(name === "fire") {
@@ -234,6 +253,29 @@ class Game {
             }
         }
 
+
+        // load in enemies
+        if(this.screenObject.npcs && this.screenObject.npcs.enemies) {
+            const components = []
+            const {enemies} = this.screenObject.npcs;
+            for(let i = 0; i < enemies.length; i++) {
+                const {x,y} = enemies[i];
+
+                const positionDummyComponent = {name: "Position", value: {x: x * TILE_SIZE, y: y * TILE_SIZE, width: TILE_SIZE, height: TILE_SIZE}};
+                const characterDummyComponent = {name: "Character", value: {facing: "left"}};
+                const dummySpriteComponent = {
+                    name: "Sprite",
+                    value: {
+                        srcRect: {x:60, y: 30, width: 17, height: 17},
+                        path: "overworld/" + "enemies/" + "enemies.png"
+                    }
+                }
+                components.push(positionDummyComponent,characterDummyComponent,dummySpriteComponent, RED_OCKOTOK);
+                console.log(this.registry.createEntity(components));
+
+            }
+        }
+
         
         if(this.audioObject && this.audioPath !== this.screenObject.audioPath ) this.audioObject.pause();
 
@@ -248,6 +290,8 @@ class Game {
 
 
         this.createPlayer();
+
+        this.buildAiGraph();
 
     }
 
@@ -303,6 +347,32 @@ class Game {
         this.loadScreen(screenObject);
         this.createPlayer(coX,coY);
     
+
+    }
+
+    buildAiGraph = () => {
+        // We are going to check to the left, right, up and down of each indice to build the value 
+        Object.entries(this.graph).forEach((entry) => {
+            const id = entry[0] * 1;        // multiply by 1 to coerce a string type to a number      
+
+            // entry[1] has position, and edges
+            // We can use the id to compare
+            // Is there a value to the left that we should make an edge for? 
+            entry[1]["edges"] = [];
+
+            if(this.graph[id - 1]) {
+                entry[1]["edges"].push(id - 1);
+            }
+            if(this.graph[id + 1]) {
+                entry[1]["edges"].push(id + 1);
+            }
+            if(this.graph[id + 18]) {
+                entry[1]["edges"].push( id + 18);
+            }
+            if(this.graph[id - 18]) {
+                entry[1]["edges"].push(id - 18);
+            }
+        })
 
     }
 
@@ -614,5 +684,6 @@ game.render();
 //     ]
 // )
 
+// console.log(game.graph)
 
 export {TILE_SIZE,c, canvas, ASSET_PATH}

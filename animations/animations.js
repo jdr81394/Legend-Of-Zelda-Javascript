@@ -267,4 +267,108 @@ const SWORD = {
     }
 }
 
-export {LINK_ANIMATIONS, FIRE_ANIMATIONS,LINK_WEAPON_PICKUP,SWORD }
+const RED_OCKOTOK = {
+    name: "Animation",
+    value: {
+        isStatic: false,
+        isLoop: false,
+        isAttacking: false,
+        currentTimeOfAnimation: 0,
+        frames: {
+            down: {
+                move: { 
+                    srcRect: [
+                        {
+                            x: 0,
+                            y: 0,
+                            width: 17,
+                            height: 17
+                        },
+                        {
+                            x: 0,
+                            y: 30,
+                            width: 17,
+                            height: 17
+                        }
+                    ],
+                    currentFrame: 0,
+                    numFrames: 2,
+                    frameSpeedRate: 3,
+                    startTime: Date.now()
+                    },
+                    attack: {}
+            },
+            left: {
+                move: {
+                    srcRect: [
+                        {
+                            x: 30,
+                            y: 0,
+                            width: 17,
+                            height: 17
+                        },
+                        {
+                            x: 30,
+                            y: 30,
+                            width: 17,
+                            height: 17
+                        }
+                    ], 
+                    currentFrame: 0,
+                    numFrames: 2,
+                    frameSpeedRate: 3,
+                    startTime: Date.now()
+                },
+                attack: {}
+            },
+            up: {
+                move: {
+                    srcRect: [
+                        {
+                            x: 60,
+                            y: 0,
+                            width: 17,
+                            height: 17
+                        },
+                        {
+                            x: 60,
+                            y: 30,
+                            width: 17,
+                            height: 17
+                        }
+                    ], 
+                    currentFrame: 0,
+                    numFrames: 2,
+                    frameSpeedRate: 3,
+                    startTime: Date.now()
+                },
+                attack: {}
+            },
+            right: {
+                move: {
+                    srcRect: [
+                        {
+                            x: 90,
+                            y: 0,
+                            width: 17,
+                            height: 17
+                        },
+                        {
+                            x: 90,
+                            y: 30,
+                            width: 17,
+                            height: 17
+                        }
+                    ], 
+                    currentFrame: 0,
+                    numFrames: 2,
+                    frameSpeedRate: 3,
+                    startTime: Date.now()
+                },
+                attack: {}
+            }
+        }
+    }
+}
+
+export {LINK_ANIMATIONS, FIRE_ANIMATIONS,LINK_WEAPON_PICKUP,SWORD,RED_OCKOTOK }

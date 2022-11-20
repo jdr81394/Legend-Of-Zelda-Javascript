@@ -255,9 +255,31 @@ class AnimationSystem extends System {
                   
                     
 
+                } else {
+                    
+                    if(facing) {
+                        const mode =  entity.components["Animation"].isAttacking ? "attack" : "move";
+
+                        const currentFrame = 
+                            Math.floor(
+                            ( gameTime - entity.components["Animation"]["currentTimeOfAnimation"] ) 
+                            * 
+                            entity.components["Animation"]["frames"][facing][mode]["frameSpeedRate"] / 1000 ) 
+                            % entity.components["Animation"]["frames"][facing][mode]["numFrames"];
+        
+
+                        if(currentFrame < 0 ) currentFrame = 0;
+
+                        entity.components["Sprite"]["srcRect"] = entity.components["Animation"]["frames"][facing][mode]["srcRect"][currentFrame]
+                        
+                        entity.components["Animation"]["frames"][facing][mode]["currentFrame"] = currentFrame
+                
+                    }
+
                 }
             }
             else {
+
                 entity.components["Sprite"]["srcRect"] = entity.components["Animation"]["frames"][facing]["move"]["srcRect"][0];
 
            }
