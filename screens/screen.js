@@ -124,7 +124,7 @@ const screenC = {
     audioObject: undefined,
     assetPath: "overworld/",
     transitionSpaces: {
-        door: [{ screen: "screen1", coX: 9, coY: 1 }, { screen: "screenB", coX:16, coY: 5 }, { screen: "screenD", coX:2, coY: 5 }],
+        door: [{ screen: "screen1", coX: 9, coY: 1 }, { screen: "screenB", coX:16, coY: 5 }, { screen: "screenD", coX:1, coY: 5 }],
         space: []
     },
     screen: [
@@ -133,7 +133,7 @@ const screenC = {
         [o,"1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1",o],
         [o,"1","2",0,0, 0,0,0,0,0,"3","2",0,0,0,"3","1",o],
         [o,"2",0,0,"10",0,"10",0,0,0,0,0,0,"10",0,0,"3",o],
-        [{type: "door", index: 1, tile: undefined},0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,o],
+        [{type: "door", index: 1, tile: undefined},0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,{type: "door", index: 2, tile: undefined}],
         [{type: "door", index: 1, tile: undefined},0,0,0,"10",0,"10",0,0,0,0,0,0,"10",0,0,0,{type: "door", index: 2, tile: undefined}],
         [{type: "door", index: 1, tile: undefined},0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,{type: "door", index: 2, tile: undefined}],
         [{type: "door", index: 1, tile: undefined},0,0,0,"10",0,"10",0,0,0,0,0,0,"10",0,0,0,{type: "door", index: 2, tile: undefined}],

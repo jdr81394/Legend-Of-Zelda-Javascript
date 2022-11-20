@@ -123,6 +123,8 @@ class Game {
                 }
                 else if (typeOf === "number") {
                     path = "tiles/"
+
+                    // Add the node for the AI to path here.
                 }
                 else if (typeOf === "object") {
                     const {type, index} = tile; 
