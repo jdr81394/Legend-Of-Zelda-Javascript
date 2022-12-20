@@ -176,6 +176,17 @@ class RenderSystem extends System {
                     positionComponent.x, positionComponent.y, positionComponent.width,positionComponent.height)
             }
 
+            if(isDebug && entity.components["Node"]) {
+                const {x, y } = entity.components["Position"];
+                const {nodeId} = entity.components["Node"].nodeId;
+                c.globalCompositeOperation="source-over";
+
+                c.beginPath();
+                c.font = "12px Arial"
+                c.fillStyle = "black";
+                c.fillText(nodeId, x,y + 70,50);
+                c.stroke();
+            }
 
             if(isDebug 
                 && (

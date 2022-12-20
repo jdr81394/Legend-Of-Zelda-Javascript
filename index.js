@@ -5,6 +5,9 @@ import { LINK_ANIMATIONS , RED_OCKOTOK, FIRE_ANIMATIONS, LINK_WEAPON_PICKUP} fro
 import { INVENTORY_SWORD_1 } from "./items/weapons.js";
 import PriorityQueue from "./utilities/PriorityQueue.js";
 import BinarySearch from "./utilities/BinarySearch.js";
+import StateMachine from "./ai/StateMachine.js";
+import { SEARCH_STATE } from "./ai/OctorokStates.js";
+import Graph from "./utilities/Graph.js";
 var canvas = document.querySelector('canvas')
 var c = canvas.getContext('2d')
 
@@ -30,8 +33,7 @@ class Game {
         this.audioObject = undefined;
         this.audioPath = undefined;
         this.enemies = []
-        this.graph = {};
-        this.nodeOrderedForGraph = {}            // associative 2 dimensional array, x is mapped to y, y is mapped to nodeId
+        this.graph = null;
 
         // this.nodeOrderedByX = []            // associative x array, key is x, value is node 
         // this.nodeOrderedByY = []            // associative x array, key is y, value is node 
@@ -75,7 +77,7 @@ class Game {
             this.registry.getSystem("ActionableSystem").update(this.player, this.eventBus);
             this.registry.getSystem("HitboxSystem").update();
 
-            this.registry.update(this.graph);
+            this.registry.update();
 
             // console.log(this.registry.getSystem("ActionableSystem"))
             this.updateAI();
@@ -103,37 +105,49 @@ class Game {
 
     }
 
+
     updateAI = () => {
-        for(let i = 0; i < this.enemies.length; i++) {
-
-            const enemy = this.enemies[i];
-            // const enemyId = CharacterComponent.initNodeY * 18 + CharacterComponent.initNodeX + 1; // add plus one because array starts at 0
-            const {Position : EnemyPosition } = enemy.components;
-            const {x: enemyX, y: enemyY} = EnemyPosition;
 
 
-            // Get player X and Y;
-            const { Position: PositionComponent} = this.player.components;
-            const {x, y} = PositionComponent;
-
-            const enemyNodeX = BinarySearch(this.nodeOrderedForGraph, enemyX);
-            const playerNodeX = BinarySearch(this.nodeOrderedForGraph, x);
-
-            const playerNodeY = BinarySearch(this.nodeOrderedForGraph[playerNodeX], y);
-            const enemyNodeY = BinarySearch(this.nodeOrderedForGraph[enemyNodeX], enemyY);
-
-            const playerNodeId = this.nodeOrderedForGraph[playerNodeX][playerNodeY];
-            const enemyNodeId = this.nodeOrderedForGraph[enemyNodeX][enemyNodeY];
-
-            const path = this.dijkstrasAlgorithm(enemyNodeId, playerNodeId)
-
-
-
+        for(let i = 0 ; i < this.enemies.length; i++) {
+            this.enemies[i].stateMachine.update();
         }
+
+
+        // for(let i = 0; i < this.enemies.length; i++) {
+
+        //     const enemy = this.enemies[i];
+        //     // const enemyId = CharacterComponent.initNodeY * 18 + CharacterComponent.initNodeX + 1; // add plus one because array starts at 0
+        //     const {Position : EnemyPosition } = enemy.components;
+        //     const {x: enemyX, y: enemyY} = EnemyPosition;
+
+
+        //     // Get player X and Y;
+        //     const { Position: PositionComponent} = this.player.components;
+        //     const {x, y} = PositionComponent;
+
+        //     const enemyNodeX = BinarySearch(this.nodeOrderedForGraph, enemyX);
+        //     const playerNodeX = BinarySearch(this.nodeOrderedForGraph, x);
+
+        //     const playerNodeY = BinarySearch(this.nodeOrderedForGraph[playerNodeX], y);
+        //     const enemyNodeY = BinarySearch(this.nodeOrderedForGraph[enemyNodeX], enemyY);
+
+        //     const playerNodeId = this.nodeOrderedForGraph[playerNodeX][playerNodeY];
+        //     const enemyNodeId = this.nodeOrderedForGraph[enemyNodeX][enemyNodeY];
+
+        //     const path = this.dijkstrasAlgorithm(enemyNodeId, playerNodeId)
+
+
+
+        // }
     }
 
 
     loadScreen = (screenObject) => {
+
+        this.createPlayer();
+        this.graph = new Graph(this.player)
+
         this.screenObject = screenObject;
         let numOfTiles = 0;     // this will be used to give the correct id to the node
         for(let i = 0; i < this.numRows; i++) {
@@ -165,6 +179,8 @@ class Game {
                 else if (typeOf === "number") {
                     path = "tiles/"
 
+                    this.graph.generateNodeOrderedGraph(numOfTiles, positionDummyComponent);
+
                     // Add the node for the AI to path here.
                     // If it is a tile, then we want our current AI to have access to it
                     // Build the Navigatable Graph 
@@ -176,32 +192,7 @@ class Game {
                         }
                     };
 
-                    // Put value of id into the graph for fast access
-                    this.graph[numOfTiles] = {
-                        edges: undefined,           // We will set the edges here shortly,
-                        position: positionDummyComponent.value
-                    }       
-
-                    if(this.nodeOrderedForGraph[positionDummyComponent.value.x] === undefined) {
-                        this.nodeOrderedForGraph[positionDummyComponent.value.x] = {}
-                    }
-
-
-                    this.nodeOrderedForGraph[positionDummyComponent.value.x][positionDummyComponent.value.y] =  numOfTiles;
-
-                    // this.nodeOrderedForGraph[positionDummyComponent.value.x].push([positionDummyComponent.value.y, numOfTiles]);
-
-                    // console.log(positionDummyComponent.value.x, positionDummyComponent.value.y)
-                    // console.log(this.nodeOrderedForGraph)
-                    // This data structure holds the x as a key, then the y as a key to the id. 
-                    // We need this in order to search for where the player is in relation to the enemy
-                    // I need to change this data structure because an objects keys gets overridden
-                    // this.nodeOrderedForGraph[positionDummyComponent.value.x] = {}
-                    // this.nodeOrderedForGraph[positionDummyComponent.value.x][positionDummyComponent.value.y] = numOfTiles;
-
-                    // console.log(this.graph)
                 
-
 
 
                     // console.log(this.graph)
@@ -331,9 +322,19 @@ class Game {
                         path: "overworld/" + "enemies/" + "enemies.png"
                     }
                 }
-                components.push(positionDummyComponent,characterDummyComponent,dummySpriteComponent, RED_OCKOTOK);
+
+                const movementComponent = {
+                    name: "Movement",
+                    "value": {
+                        vX: 0,
+                        vY: 0
+                    }
+                }
+                components.push(positionDummyComponent,characterDummyComponent,dummySpriteComponent, movementComponent, RED_OCKOTOK);
                 
                 const enemy = this.registry.createEntity(components);
+                enemy.stateMachine = new StateMachine(enemy, this.graph);
+                enemy.stateMachine.setCurrentState(SEARCH_STATE);
 
 
                 this.enemies.push(enemy);
@@ -354,9 +355,7 @@ class Game {
 
 
 
-        this.createPlayer();
-
-        this.buildAiGraph();
+        this.graph.buildAiGraph();
 
     }
 
@@ -415,105 +414,6 @@ class Game {
 
     }
 
-    buildAiGraph = () => {
-        // We are going to check to the left, right, up and down of each indice to build the value 
-        Object.entries(this.graph).forEach((entry) => {
-            const id = entry[0] * 1;        // multiply by 1 to coerce a string type to a number      
-
-            // entry[1] has position, and edges
-            // We can use the id to compare
-            // Is there a value to the left that we should make an edge for? 
-            entry[1]["edges"] = [];
-
-            if(this.graph[id - 1]) {
-                entry[1]["edges"].push(id - 1);
-            }
-            if(this.graph[id + 1]) {
-                entry[1]["edges"].push(id + 1);
-            }
-            if(this.graph[id + 18]) {
-                entry[1]["edges"].push( id + 18);
-            }
-            if(this.graph[id - 18]) {
-                entry[1]["edges"].push(id - 18);
-            }
-        })
-
-    }
-
-    dijkstrasAlgorithm = (startId, finishId) => {
-        const nodes = new PriorityQueue();
-        const distances = {};
-        const previous = {};
-        let currentNodeId;
-        let path = [];
-
-        for(let vertex in this.graph) {
-
-            if(vertex == startId) {
-                // console.log(vertex)
-                distances[vertex] = 0;
-                nodes.enqueue(vertex,0);
-            } else {
-                distances[vertex] = Infinity;
-                nodes.enqueue(vertex,Infinity);
-            }
-
-            previous[vertex] = null;
-        }
-
-
-        // console.log(nodes);
-        while(nodes.values.length) {
-            currentNodeId = nodes.dequeue().val;
-
-            if(currentNodeId === finishId) {
-
-                while(previous[currentNodeId]) {
-
-                    path.push(currentNodeId);
-                    currentNodeId = previous[currentNodeId];
-                }
-                break;
-
-            }
-
-            if(currentNodeId || this.graph[currentNodeId] !== Infinity) {
-
-                for(let edgeOrPosition in this.graph[currentNodeId]) {
-                    if(edgeOrPosition === "edges") {
-                        for(let i = 0; i < this.graph[currentNodeId][edgeOrPosition].length; i++) {
-                            const neighborId = this.graph[currentNodeId][edgeOrPosition][i];
-                            
-                            const combinedWeight = 1 + distances[currentNodeId];
-                            // console.log('combined weight: ' ,distances)
-
-                            if(combinedWeight < distances[neighborId]) {
-                                distances[neighborId] = combinedWeight;
-                                previous[neighborId] = currentNodeId;
-                                nodes.enqueue(neighborId, combinedWeight);
-                            }
-
-                        }
-                       
-                    }
-                 
-
-                    // console.log("graph:" , this.graph , "currentNode id: " , currentNodeId, "Neighbor: " , neighbor, "vertecxtindicve:  " , vertexIndice);
-                }
-            }
-
-            // Need to get which approximate 
-            // Find the closest Node
-        }
-
-
-        console.log("path: " , path);
-        return path.concat(startId).reverse();
-
-
-    }
-
     createPlayer = (coX, coY) => {
 
         if(this.player) {
@@ -526,8 +426,8 @@ class Game {
         // We will use a grid to determine where the player loads up
         // gridCoX is a grid coefficient
         // gridCoY is a gridcoffiecien
-        const gridCoX = coX !==undefined ? coX : 5;
-        const gridCoY = coY !=undefined ? coY: 8;
+        const gridCoX = coX !==undefined ? coX : 8;
+        const gridCoY = coY !=undefined ? coY: 1;
         const playerDummyComponent = { "name": "Player" };
         const characterDummyComponent = {name: "Character", value: {facing : "down"}};
         const positionDummyComponent = {"name": "Position", "value": {x: gridCoX * TILE_SIZE, y: gridCoY * TILE_SIZE, height: TILE_SIZE - 10, width: TILE_SIZE - 10}};
