@@ -6,18 +6,23 @@ function BinarySearch(arr, elem) {
     let middle = Math.floor((start + end) / 2);
     let closestNode = Infinity;
 
-    console.log("element: " ,elem ,  " arr" , arr)
+    // console.log("element: " ,elem ,  " arr" , arr)
 
     while(start <= end) {
-        if(closestNode > Math.abs(elem - arr[middle]) ) {
+        if(Math.abs(elem - closestNode) > Math.abs(elem - arr[middle]) ) {
+            // console.log("closest node: " , closestNode, "absolute amount: " , Math.abs(elem - arr[middle]), "arr middle: " , arr[middle])
+
             closestNode = arr[middle];
+            // console.log("new closest node: " , closestNode);
+
         }
 
         if(elem < arr[middle]) end = middle - 1;
         else start = middle + 1;
         middle = Math.floor((start + end) / 2);
     }
-    return arr[middle] === elem ? middle : closestNode;
+    // console.log("closest node: " , closestNode, "absolute amount: " , Math.abs(elem - arr[middle]), "arr middle: " , arr[middle])
+    return arr[middle] === elem ? arr[middle] : closestNode;
 }
 
 

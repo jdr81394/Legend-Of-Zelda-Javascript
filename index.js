@@ -114,24 +114,33 @@ class Game {
 
             const {Position : EnemyPosition } = enemy.components;
             const {x: enemyX, y: enemyY} = EnemyPosition;
+            // console.log(enemyX, enemyY)
             // console.log(enemy.components.Position)
 
             // Get player X and Y;
             const { Position: PositionComponent} = this.player.components;
             const {x, y} = PositionComponent;
 
-            console.log(this.nodeOrderedForGraph)
-            console.log("this for x")
+            // console.log(this.nodeOrderedForGraph)
+            // console.log("this for x")
 
-            // const enemyNodeX = BinarySearch(this.nodeOrderedForGraph, enemyX);
+            const enemyNodeX = BinarySearch(this.nodeOrderedForGraph, enemyX);
+            // console.log(this.nodeOrderedForGraph, enemyNodeX);
             const playerNodeX = BinarySearch(this.nodeOrderedForGraph, x);
-            console.log("player node x: " , this.nodeOrderedForGraph[playerNodeX]);
+            // // console.log("player node x: " ,playerNodeX);
 
-            console.log("this for y")
+            // // console.log("this for y")
 
-            const playerNodeId = BinarySearch(this.nodeOrderedForGraph[playerNodeX], y);
+            const playerNodeY = BinarySearch(this.nodeOrderedForGraph[playerNodeX], y);
+            const enemyNodeY = BinarySearch(this.nodeOrderedForGraph[enemyNodeX], enemyY);
 
-            console.log("player node id: " , playerNodeId)
+            const playerNodeId = this.nodeOrderedForGraph[playerNodeX][playerNodeY];
+            const enemyNodeId = this.nodeOrderedForGraph[enemyNodeX][enemyNodeY];
+
+            this.dijkstrasAlgorithm(enemyNodeId, playerNodeId)
+
+
+            // console.log("player node id: " , plaxyerNodeId)
 
             // console.log(playerNodeId);
 
@@ -147,10 +156,9 @@ class Game {
 
 
 
-            // console.log(enemyNode)
-            // console.log(playerNode)
+            // console.log(enemyNodeId)
+            // console.log(this.nodeOrderedForGraph, playerNodeX, playerNodeY, this.nodeOrderedForGraph[playerNodeX][playerNodeY])
             // console.log(playersNode);
-            // this.dijkstrasAlgorithm(enemyNodeX, playerNodeX)
 
             // The enemy is targeting the player through the node that the player is standing over
             // We must get the current node the player is on
@@ -217,6 +225,8 @@ class Game {
                     if(this.nodeOrderedForGraph[positionDummyComponent.value.x] === undefined) {
                         this.nodeOrderedForGraph[positionDummyComponent.value.x] = {}
                     }
+
+
                     this.nodeOrderedForGraph[positionDummyComponent.value.x][positionDummyComponent.value.y] =  numOfTiles;
 
                     // this.nodeOrderedForGraph[positionDummyComponent.value.x].push([positionDummyComponent.value.y, numOfTiles]);
@@ -471,15 +481,17 @@ class Game {
 
     }
 
-    dijkstrasAlgorithm = (start, finish) => {
+    dijkstrasAlgorithm = (startId, finishId) => {
         const nodes = new PriorityQueue();
         const distances = {};
         const previous = {};
-        let smallest;
+        let currentNodeId;
         let path = [];
 
-        for(let vertex in this.adjacencyList) {
-            if(vertex === start) {
+        for(let vertex in this.graph) {
+
+            if(vertex == startId) {
+                // console.log(vertex)
                 distances[vertex] = 0;
                 nodes.enqueue(vertex,0);
             } else {
@@ -490,12 +502,53 @@ class Game {
             previous[vertex] = null;
         }
 
+
         // console.log(nodes);
         while(nodes.values.length) {
-            let smallest = nodes.dequeue().val;
+            currentNodeId = nodes.dequeue().val;
+
+            if(currentNodeId === finishId) {
+                while(previous[currentNodeId]) {
+                    console.log('path: ' , path);
+
+                    path.push(currentNodeId);
+                    currentNodeId = previous[currentNodeId];
+                }
+                break;
+
+            }
+
+            if(currentNodeId || this.graph[currentNodeId] !== Infinity) {
+
+                for(let edgeOrPosition in this.graph[currentNodeId]) {
+                    if(edgeOrPosition === "edges") {
+                        for(let i = 0; i < this.graph[currentNodeId][edgeOrPosition].length; i++) {
+                            const neighborId = this.graph[currentNodeId][edgeOrPosition][i];
+                            
+                            const combinedWeight = 1 + distances[currentNodeId];
+                            // console.log('combined weight: ' ,distances)
+
+                            if(combinedWeight < distances[neighborId]) {
+                                distances[neighborId] = combinedWeight;
+                                previous[neighborId] = currentNodeId;
+                                nodes.enqueue(neighborId, combinedWeight);
+                            }
+
+                        }
+                       
+                    }
+                 
+
+                    // console.log("graph:" , this.graph , "currentNode id: " , currentNodeId, "Neighbor: " , neighbor, "vertecxtindicve:  " , vertexIndice);
+                }
+            }
+
             // Need to get which approximate 
             // Find the closest Node
         }
+
+
+        return path.concat(startId).reverse();
 
 
     }
