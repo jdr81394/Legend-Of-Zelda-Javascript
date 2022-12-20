@@ -106,30 +106,18 @@ class Game {
     updateAI = () => {
         for(let i = 0; i < this.enemies.length; i++) {
 
-            // console.log(this.nodeOrderedForGraph)
             const enemy = this.enemies[i];
-            // const {Character : CharacterComponent } = enemy.components;
-            // get id of node enemy exists at, y * 18, + x
             // const enemyId = CharacterComponent.initNodeY * 18 + CharacterComponent.initNodeX + 1; // add plus one because array starts at 0
-
             const {Position : EnemyPosition } = enemy.components;
             const {x: enemyX, y: enemyY} = EnemyPosition;
-            // console.log(enemyX, enemyY)
-            // console.log(enemy.components.Position)
+
 
             // Get player X and Y;
             const { Position: PositionComponent} = this.player.components;
             const {x, y} = PositionComponent;
 
-            // console.log(this.nodeOrderedForGraph)
-            // console.log("this for x")
-
             const enemyNodeX = BinarySearch(this.nodeOrderedForGraph, enemyX);
-            // console.log(this.nodeOrderedForGraph, enemyNodeX);
             const playerNodeX = BinarySearch(this.nodeOrderedForGraph, x);
-            // // console.log("player node x: " ,playerNodeX);
-
-            // // console.log("this for y")
 
             const playerNodeY = BinarySearch(this.nodeOrderedForGraph[playerNodeX], y);
             const enemyNodeY = BinarySearch(this.nodeOrderedForGraph[enemyNodeX], enemyY);
@@ -137,38 +125,10 @@ class Game {
             const playerNodeId = this.nodeOrderedForGraph[playerNodeX][playerNodeY];
             const enemyNodeId = this.nodeOrderedForGraph[enemyNodeX][enemyNodeY];
 
-            this.dijkstrasAlgorithm(enemyNodeId, playerNodeId)
-
-
-            // console.log("player node id: " , plaxyerNodeId)
-
-            // console.log(playerNodeId);
-
-            // console.log(playerNodeX)
-
-            // Get the Id of each node to then pass it to the algorithm
-            // const enemyNodeId = Object.values(this.nodeOrderedForGraph[enemyNodeX])[0]
-            // const playerNodeId = Object.values(this.nodeOrderedForGraph[playerNodeX])[1][1]
-
-            // console.log(playerNodeId)
-            // const enemyNode = this.graph[enemyNodeId];
-            // const playerNode = this.graph[playerNodeId];
+            const path = this.dijkstrasAlgorithm(enemyNodeId, playerNodeId)
 
 
 
-            // console.log(enemyNodeId)
-            // console.log(this.nodeOrderedForGraph, playerNodeX, playerNodeY, this.nodeOrderedForGraph[playerNodeX][playerNodeY])
-            // console.log(playersNode);
-
-            // The enemy is targeting the player through the node that the player is standing over
-            // We must get the current node the player is on
-
-            // Determine which tile is closer
-            // console.log(this.graph)
-            // console.log(this.nodeOrderedForGraph)
-   
-
-            // console.log(this.graph)
         }
     }
 
@@ -508,8 +468,8 @@ class Game {
             currentNodeId = nodes.dequeue().val;
 
             if(currentNodeId === finishId) {
+
                 while(previous[currentNodeId]) {
-                    console.log('path: ' , path);
 
                     path.push(currentNodeId);
                     currentNodeId = previous[currentNodeId];
@@ -548,6 +508,7 @@ class Game {
         }
 
 
+        console.log("path: " , path);
         return path.concat(startId).reverse();
 
 
