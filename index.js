@@ -3,6 +3,8 @@ import {screenA, screenB, screenC, screenD, screenE, screenOneObject, shop1} fro
 import { InventoryScreen } from "./classes/Inventory.js";
 import { LINK_ANIMATIONS , RED_OCKOTOK, FIRE_ANIMATIONS, LINK_WEAPON_PICKUP} from "./animations/animations.js";
 import { INVENTORY_SWORD_1 } from "./items/weapons.js";
+import PriorityQueue from "./utilities/PriorityQueue.js";
+import BinarySearch from "./utilities/BinarySearch.js";
 var canvas = document.querySelector('canvas')
 var c = canvas.getContext('2d')
 
@@ -29,6 +31,11 @@ class Game {
         this.audioPath = undefined;
         this.enemies = []
         this.graph = {};
+        this.nodeOrderedForGraph = {}            // associative 2 dimensional array, x is mapped to y, y is mapped to nodeId
+
+        // this.nodeOrderedByX = []            // associative x array, key is x, value is node 
+        // this.nodeOrderedByY = []            // associative x array, key is y, value is node 
+
     }
 
     initialize = () => {
@@ -71,7 +78,7 @@ class Game {
             this.registry.update(this.graph);
 
             // console.log(this.registry.getSystem("ActionableSystem"))
-    
+            this.updateAI();
     
 
         }
@@ -94,6 +101,67 @@ class Game {
 
         requestAnimationFrame(this.render);
 
+    }
+
+    updateAI = () => {
+        for(let i = 0; i < this.enemies.length; i++) {
+
+            // console.log(this.nodeOrderedForGraph)
+            const enemy = this.enemies[i];
+            // const {Character : CharacterComponent } = enemy.components;
+            // get id of node enemy exists at, y * 18, + x
+            // const enemyId = CharacterComponent.initNodeY * 18 + CharacterComponent.initNodeX + 1; // add plus one because array starts at 0
+
+            const {Position : EnemyPosition } = enemy.components;
+            const {x: enemyX, y: enemyY} = EnemyPosition;
+            // console.log(enemy.components.Position)
+
+            // Get player X and Y;
+            const { Position: PositionComponent} = this.player.components;
+            const {x, y} = PositionComponent;
+
+            console.log(this.nodeOrderedForGraph)
+            console.log("this for x")
+
+            // const enemyNodeX = BinarySearch(this.nodeOrderedForGraph, enemyX);
+            const playerNodeX = BinarySearch(this.nodeOrderedForGraph, x);
+            console.log("player node x: " , this.nodeOrderedForGraph[playerNodeX]);
+
+            console.log("this for y")
+
+            const playerNodeId = BinarySearch(this.nodeOrderedForGraph[playerNodeX], y);
+
+            console.log("player node id: " , playerNodeId)
+
+            // console.log(playerNodeId);
+
+            // console.log(playerNodeX)
+
+            // Get the Id of each node to then pass it to the algorithm
+            // const enemyNodeId = Object.values(this.nodeOrderedForGraph[enemyNodeX])[0]
+            // const playerNodeId = Object.values(this.nodeOrderedForGraph[playerNodeX])[1][1]
+
+            // console.log(playerNodeId)
+            // const enemyNode = this.graph[enemyNodeId];
+            // const playerNode = this.graph[playerNodeId];
+
+
+
+            // console.log(enemyNode)
+            // console.log(playerNode)
+            // console.log(playersNode);
+            // this.dijkstrasAlgorithm(enemyNodeX, playerNodeX)
+
+            // The enemy is targeting the player through the node that the player is standing over
+            // We must get the current node the player is on
+
+            // Determine which tile is closer
+            // console.log(this.graph)
+            // console.log(this.nodeOrderedForGraph)
+   
+
+            // console.log(this.graph)
+        }
     }
 
 
@@ -132,7 +200,7 @@ class Game {
                     // Add the node for the AI to path here.
                     // If it is a tile, then we want our current AI to have access to it
                     // Build the Navigatable Graph 
-                    // Store by map using an ID. This id can be used to determine what is next to it. +/- 1 for left right, +/- for top/bottom
+                    // Store by map using an ID. This id can be used to determine what is next to it. +/- 1 for left right, +/- for top/bottom  ( 18 not sure?)
                     const nodeComponent = {
                         name: "Node",
                         value: {
@@ -146,6 +214,27 @@ class Game {
                         position: positionDummyComponent.value
                     }       
 
+                    if(this.nodeOrderedForGraph[positionDummyComponent.value.x] === undefined) {
+                        this.nodeOrderedForGraph[positionDummyComponent.value.x] = {}
+                    }
+                    this.nodeOrderedForGraph[positionDummyComponent.value.x][positionDummyComponent.value.y] =  numOfTiles;
+
+                    // this.nodeOrderedForGraph[positionDummyComponent.value.x].push([positionDummyComponent.value.y, numOfTiles]);
+
+                    // console.log(positionDummyComponent.value.x, positionDummyComponent.value.y)
+                    // console.log(this.nodeOrderedForGraph)
+                    // This data structure holds the x as a key, then the y as a key to the id. 
+                    // We need this in order to search for where the player is in relation to the enemy
+                    // I need to change this data structure because an objects keys gets overridden
+                    // this.nodeOrderedForGraph[positionDummyComponent.value.x] = {}
+                    // this.nodeOrderedForGraph[positionDummyComponent.value.x][positionDummyComponent.value.y] = numOfTiles;
+
+                    // console.log(this.graph)
+                
+
+
+
+                    // console.log(this.graph)
                     components.push(nodeComponent);
                 }
                 else if (typeOf === "object") {
@@ -276,7 +365,6 @@ class Game {
                 
                 const enemy = this.registry.createEntity(components);
 
-                console.log(enemy)
 
                 this.enemies.push(enemy);
 
@@ -380,6 +468,35 @@ class Game {
                 entry[1]["edges"].push(id - 18);
             }
         })
+
+    }
+
+    dijkstrasAlgorithm = (start, finish) => {
+        const nodes = new PriorityQueue();
+        const distances = {};
+        const previous = {};
+        let smallest;
+        let path = [];
+
+        for(let vertex in this.adjacencyList) {
+            if(vertex === start) {
+                distances[vertex] = 0;
+                nodes.enqueue(vertex,0);
+            } else {
+                distances[vertex] = Infinity;
+                nodes.enqueue(vertex,Infinity);
+            }
+
+            previous[vertex] = null;
+        }
+
+        // console.log(nodes);
+        while(nodes.values.length) {
+            let smallest = nodes.dequeue().val;
+            // Need to get which approximate 
+            // Find the closest Node
+        }
+
 
     }
 
@@ -693,3 +810,6 @@ game.render();
 
 
 export {TILE_SIZE,c, canvas, ASSET_PATH}
+
+
+
