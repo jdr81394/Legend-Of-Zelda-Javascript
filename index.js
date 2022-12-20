@@ -27,6 +27,7 @@ class Game {
         this.inventoryScreen = new InventoryScreen();
         this.audioObject = undefined;
         this.audioPath = undefined;
+        this.enemies = []
         this.graph = {};
     }
 
@@ -67,7 +68,7 @@ class Game {
             this.registry.getSystem("ActionableSystem").update(this.player, this.eventBus);
             this.registry.getSystem("HitboxSystem").update();
 
-            this.registry.update();
+            this.registry.update(this.graph);
 
             // console.log(this.registry.getSystem("ActionableSystem"))
     
@@ -81,6 +82,7 @@ class Game {
         
 
     }
+
 
 
     render = () => {
@@ -262,7 +264,7 @@ class Game {
                 const {x,y} = enemies[i];
 
                 const positionDummyComponent = {name: "Position", value: {x: x * TILE_SIZE, y: y * TILE_SIZE, width: TILE_SIZE, height: TILE_SIZE}};
-                const characterDummyComponent = {name: "Character", value: {facing: "left"}};
+                const characterDummyComponent = {name: "Character", value: {facing: "left", initNodeX: x, initNodeY: y}};
                 const dummySpriteComponent = {
                     name: "Sprite",
                     value: {
@@ -271,7 +273,12 @@ class Game {
                     }
                 }
                 components.push(positionDummyComponent,characterDummyComponent,dummySpriteComponent, RED_OCKOTOK);
-                console.log(this.registry.createEntity(components));
+                
+                const enemy = this.registry.createEntity(components);
+
+                console.log(enemy)
+
+                this.enemies.push(enemy);
 
             }
         }
@@ -684,6 +691,5 @@ game.render();
 //     ]
 // )
 
-// console.log(game.graph)
 
 export {TILE_SIZE,c, canvas, ASSET_PATH}

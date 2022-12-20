@@ -201,8 +201,8 @@ const screenE = {
     npcs: {
         enemies: [
             {
-                x: 5,           // x coefficient of tile
-                y: 5
+                x: 4,           // x coefficient of tile
+                y: 1
             }
         ]
     },

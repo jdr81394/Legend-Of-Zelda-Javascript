@@ -131,9 +131,12 @@ class CharacterComponent extends Component {
     constructor(componentType, componentObj) {
         super(componentType);
         this.facing = componentObj.facing;
+        this.initNodeX = componentObj.initNodeX;        // InitNode allow us to tie enemies to a node immediately upon creation
+        this.initNodeY = componentObj.initNodeY;
     }
 
 }
+
 
 class ActionableComponent extends Component {
     constructor(componentType, componentObj) {
