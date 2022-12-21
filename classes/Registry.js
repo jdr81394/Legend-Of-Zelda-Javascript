@@ -1,6 +1,6 @@
 import {Entity} from "./Entity.js";
-import {TransitionComponent, CharacterComponent, PositionComponent, SpriteComponent, MovementComponent, AnimationComponent, CollisionComponent, PlayerComponent, ActionableComponent, HitboxComponent, NodeComponent} from "./Component.js";
-import {AnimationSystem, ActionableSystem,  CollisionSystem, MovementSystem, RenderSystem, TransitionSystem, HitboxSystem} from "./System.js"
+import {TransitionComponent, CharacterComponent, PositionComponent, SpriteComponent, MovementComponent, AnimationComponent, CollisionComponent, PlayerComponent, ActionableComponent, HitboxComponent, NodeComponent, HealthComponent, AttackComponent} from "./Component.js";
+import {AnimationSystem, ActionableSystem,  CollisionSystem, MovementSystem, RenderSystem, TransitionSystem, HitboxSystem, DamageSystem} from "./System.js"
 
 
 
@@ -96,6 +96,11 @@ class Registry {
                     newEntityComponents["Collision"] = new CollisionComponent(component["name"], componentObj);
                     break;
                 }
+                case "Attack": {
+                    const componentObj = component["value"];
+                    newEntityComponents["Attack"] = new AttackComponent(component["name"], componentObj)
+                    break;
+                }
                 case "Transition": {
                     const componentObj = component["value"];
                     newEntityComponents["Transition"] = new TransitionComponent(component["name"], componentObj);
@@ -116,7 +121,11 @@ class Registry {
                     const componentObj = component["value"];
                     newEntityComponents["Hitbox"] = new HitboxComponent(component["name"], componentObj);
                     break;
-
+                }
+                case "Health": {
+                    const componentObj = component["value"];
+                    newEntityComponents["Health"] = new HealthComponent(component["name"], componentObj);
+                    break;
                 }
 
                 case "Node" : {
@@ -165,12 +174,14 @@ class Registry {
                 break;
             }
             case "ActionableSystem": {
-                console.log("System type: " ,systemType)
                 newSystem = new ActionableSystem(systemType);
                 break;
             }
+            case "DamageSystem": {
+                newSystem = new DamageSystem(systemType);
+                break;
+            }
             case "HitboxSystem" : {
-                console.log(systemType)
                 newSystem = new HitboxSystem(systemType);
                 break;
             }

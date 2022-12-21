@@ -20,6 +20,15 @@ class InventoryScreen {
         this.lifeText = new Image();
         this.lifeText.src = `${PATH}life.png`;
 
+        this.fullHeart = new Image();
+        this.fullHeart.src = `${PATH}fullHeart.png`;
+
+        this.halfHeart = new Image();
+        this.halfHeart.src = `${PATH}halfHeart.png`;
+
+        this.emptyHeart = new Image();
+        this.emptyHeart.src = `${PATH}emptyHeart.png`;
+
 
         this.initialize();
     }
@@ -68,6 +77,63 @@ class InventoryScreen {
             0,0, 250,200,
             210,115,50,50
         )
+
+
+        // draw hearts
+        if(player && player["components"]["Health"]["totalHealth"]) {
+            const totalHealth = player["components"]["Health"]["totalHealth"];      // integer
+            const currentHealth = player["components"]["Health"]["remainingHealth"]
+            let arrHealth = [];
+            for(let i = 0; i < totalHealth; i++) {
+                // current health 2.5
+                // total 4
+                // H-H-h-0
+
+                if(currentHealth >= i + 1) {
+                    //  full heart
+                    arrHealth[i] = 1;
+                }
+                else if ( currentHealth >= i + .5) {
+                    // half heart
+                    arrHealth[i] = 0.5;
+                } else {
+                    // empty heart
+                    arrHealth[i] = 0;
+                }
+            }
+
+            console.log("health: " , arrHealth)
+            // heart placement, 1st heart
+            const x = 210;
+            const y = 130;
+            const w = 40;
+            const h = 20;
+
+            // Now render hearts
+            for(let i = 0; i < arrHealth.length; i++) {
+                const coX = 15 * i;
+                if(arrHealth[i] === 1) {
+                    console.log("FULL HEALTH")
+                    this.c.drawImage(
+                        this.fullHeart,
+                        0,0,550,550, 
+                        x + coX,y,w,h
+                    )
+                }
+                else if (arrHealth[i] === .5) {
+                    this.c.drawImage(
+                        this.halfHeart,
+                        0,0,550,550,
+                        x + coX,y,60,30)
+                } 
+                else {
+                    this.c.drawImage(this.emptyHeart,
+                        0,0,550,550,
+                        x + coX,y,60,30
+                        )
+                }
+            }
+        }
 
 
         // If player has sword, render sword in A button

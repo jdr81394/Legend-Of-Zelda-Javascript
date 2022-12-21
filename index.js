@@ -49,6 +49,7 @@ class Game {
         this.registry.addSystem("TransitionSystem");
         this.registry.addSystem("ActionableSystem");
         this.registry.addSystem("HitboxSystem");
+        this.registry.addSystem("DamageSystem");
 
         document.addEventListener("keyup", this.handleUserInput);
         document.addEventListener("keydown", this.handleUserInput);
@@ -458,9 +459,16 @@ class Game {
             }
         }
 
+        const healthComponent = {
+            "name": "Health",
+            "value": {
+                totalHealth: 3
+            }
+        }
 
 
-        this.player = this.registry.createEntity([playerDummyComponent,positionDummyComponent, characterDummyComponent, movementComponent, collisionComponent,spriteDummyComponent, 
+
+        this.player = this.registry.createEntity([playerDummyComponent,positionDummyComponent, characterDummyComponent, movementComponent, collisionComponent,spriteDummyComponent, healthComponent,
             LINK_ANIMATIONS
         ])
 

@@ -127,6 +127,21 @@ class PlayerComponent extends Component {
    
 }
 
+class AttackComponent extends Component {
+    constructor(componentType, componentObj) {
+        super(componentType);
+        this.damage = componentObj.damage;
+    }
+}
+
+class HealthComponent extends Component {
+    constructor(componentType, componentObj) {
+        super(componentType);
+        this.totalHealth = componentObj.totalHealth;
+        this.remainingHealth = this.totalHealth;
+    }
+}
+
 class CharacterComponent extends Component {
     constructor(componentType, componentObj) {
         super(componentType);
@@ -152,4 +167,19 @@ class ActionableComponent extends Component {
 
 
 
-export {Component,CharacterComponent,HitboxComponent,NodeComponent, ActionableComponent, PositionComponent, MovementComponent, TransitionComponent, SpriteComponent,AnimationComponent, CollisionComponent,PlayerComponent}
+export {
+    Component,
+    CharacterComponent,
+    HitboxComponent,
+    NodeComponent, 
+    ActionableComponent, 
+    PositionComponent, 
+    MovementComponent, 
+    TransitionComponent, 
+    HealthComponent,
+    SpriteComponent,
+    AnimationComponent, 
+    CollisionComponent,
+    PlayerComponent,
+    AttackComponent
+}

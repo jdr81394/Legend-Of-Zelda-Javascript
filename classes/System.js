@@ -14,6 +14,13 @@ class System {
     }
 }
 
+class DamageSystem extends System {
+    constructor(systemType) {
+        super(systemType);
+        this.componentRequirements = ["Attack"];
+    }
+}
+
 
 class RenderSystem extends System {
     constructor(systemType) {
@@ -492,4 +499,4 @@ class HitboxSystem extends System {
     }
 }
 
-export {System, RenderSystem,HitboxSystem, AnimationSystem, TransitionSystem,CollisionSystem,MovementSystem, ActionableSystem}
+export {System, RenderSystem,HitboxSystem, AnimationSystem, TransitionSystem,CollisionSystem,MovementSystem, DamageSystem, ActionableSystem}

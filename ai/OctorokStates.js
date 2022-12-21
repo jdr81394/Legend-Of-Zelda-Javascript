@@ -5,7 +5,7 @@ class DelayState {
     }
 
     enter(enemy) {
-        this.delayTime = 300000;
+        this.delayTime = 230000;
     }
 
     execute(enemy, gameGraph) {
