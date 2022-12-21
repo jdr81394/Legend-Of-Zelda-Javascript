@@ -334,7 +334,8 @@ class Game {
                 
                 const enemy = this.registry.createEntity(components);
                 enemy.stateMachine = new StateMachine(enemy, this.graph);
-                enemy.stateMachine.setCurrentState(SEARCH_STATE);
+                enemy.stateMachine.setGlobalState(SEARCH_STATE);
+                // enemy.stateMachine.setCurrentState(SEARCH_STATE);
 
 
                 this.enemies.push(enemy);

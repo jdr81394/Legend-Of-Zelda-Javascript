@@ -1,3 +1,25 @@
+
+class DelayState {
+    constructor(){
+        this.delayTime = undefined;
+    }
+
+    enter(enemy) {
+        this.delayTime = 300000;
+    }
+
+    execute(enemy, gameGraph) {
+        if(this.delayTime <= 0) {
+            enemy.stateMachine.setGlobalState(SEARCH_STATE)
+        }
+        this.delayTime = this.delayTime - 1000;
+    }
+
+    exit(enemy) {
+    }
+}
+
+
 // Get the path they need to travel to the player
 class SearchForPlayerState {
     constructor() {}
@@ -15,6 +37,7 @@ class SearchForPlayerState {
             enemy.stateMachine.changeState(WANDER_STATE)         // wander
         } else {
             enemy.stateMachine.changeState(RUN_AT_STATE)
+            enemy.stateMachine.changeGlobalState(DELAY_STATE);
         }
     }
 
@@ -66,10 +89,8 @@ class RunAtPlayerState {
             // }
             // must be 1, go vertically
             // else {
-                console.log(enemyX - x)
 
                 if(enemyX - x > 0) {
-                    console.log("H")
                     enemy.components["Movement"].vX = -1;
                 }
                 else if (enemyX  - x < 0) {
@@ -77,7 +98,6 @@ class RunAtPlayerState {
 
                 }
                 else {
-                    console.log("WHAT IS GOING ON")
                     enemy.components["Movement"].vX = 0;
                 }
                 // console.log(enemyY, y);
@@ -103,7 +123,6 @@ class RunAtPlayerState {
 
           
             
-            console.log(nextNodeId, enemyX , x, enemyY , y)
             if(enemyX === x && enemyY === y) {
                 path.pop();
                 if(path.length > 0) {
@@ -131,3 +150,4 @@ class RunAtPlayerState {
 export const SEARCH_STATE = new SearchForPlayerState();
 export const WANDER_STATE = new WanderState();
 export const RUN_AT_STATE = new RunAtPlayerState();
+export const DELAY_STATE = new DelayState();

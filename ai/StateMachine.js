@@ -6,6 +6,7 @@ class StateMachine {
         this.previousState = null;
         this.currentState = null;
         this.globalState = null;
+        this.previousGlobalState = null;
     }
 
     setPreviousState(previousState) {
@@ -29,11 +30,18 @@ class StateMachine {
     // takes telegram as argument but havent implemented this yet
     handleMessage() {}
 
+    changeGlobalState(newState) {
+        this.previousGlobalState = this.globalState;
+        if(this.globalState) this.globalState.exit(this.owner);
+        this.globalState = newState;
+        if(this.currentState) this.globalState.enter(this.owner, this.gameGraph)
+    }
+
     changeState(newState) {
         this.previousState = this.currentState;
-        this.currentState.exit(this.owner);
+        if(this.currentState) this.currentState.exit(this.owner);
         this.currentState = newState;
-        this.currentState.enter(this.owner, this.gameGraph);
+        if(this.currentState) this.currentState.enter(this.owner, this.gameGraph);
     }
 
     revertToPreviousState() {

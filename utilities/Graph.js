@@ -152,10 +152,8 @@ class Graph {
         }
 
 
-        console.log(this.values)
-        console.log("path: " , path);
-        return path.concat(startId)     // dont reverse it because were going to start from the end so we can pop it easily
-
+        // return path.concat(startId)     // dont reverse it because were going to start from the end so we can pop it easily
+        return path;
 
     }
 
