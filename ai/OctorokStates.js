@@ -25,7 +25,7 @@ class SearchForPlayerState {
     constructor() {}
 
     enter(enemy) {
-        console.log("Enemy is searching for player");
+        // console.log("Enemy is searching for player");
     }
 
     execute(enemy, gameGraph) {
@@ -42,7 +42,7 @@ class SearchForPlayerState {
     }
 
     exit(enemy) {
-        console.log("Leaving Search for Player State, State being entered is: " , enemy.currentState);
+        // console.log("Leaving Search for Player State, State being entered is: " , enemy.currentState);
     }
 };
 
@@ -52,7 +52,7 @@ class RunAtPlayerState {
     constructor() {}
 
     enter(enemy) {
-        console.log("Enemy is running at the player")
+        // console.log("Enemy is running at the player")
     }
 
     execute(enemy, gameGraph) {
@@ -143,7 +143,7 @@ class RunAtPlayerState {
     }
 
     exit(enemy) {
-        console.log("Enemy state is changing from: ", enemy.previousState , " State being entered is: " , enemy.currentState);
+        // console.log("Enemy state is changing from: ", enemy.previousState , " State being entered is: " , enemy.currentState);
     }
 }
 

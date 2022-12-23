@@ -109,6 +109,8 @@ class HitboxComponent extends Component {
         this.y = componentObj.y;
         this.width = componentObj.width;
         this.height = componentObj.height;
+        this.owner = componentObj.owner;            //  2 = enemyAttack , 1 = linkattack, 4 = enemy, 3 = Link
+        this.damage = componentObj.damage;
     }
 }
 
@@ -127,12 +129,12 @@ class PlayerComponent extends Component {
    
 }
 
-class AttackComponent extends Component {
-    constructor(componentType, componentObj) {
-        super(componentType);
-        this.damage = componentObj.damage;
-    }
-}
+// class AttackComponent extends Component {
+//     constructor(componentType, componentObj) {
+//         super(componentType);
+//         this.damage = componentObj.damage;
+//     }
+// }
 
 class HealthComponent extends Component {
     constructor(componentType, componentObj) {
@@ -181,5 +183,5 @@ export {
     AnimationComponent, 
     CollisionComponent,
     PlayerComponent,
-    AttackComponent
+    // AttackComponent
 }

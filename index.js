@@ -331,7 +331,18 @@ class Game {
                         vY: 0
                     }
                 }
-                components.push(positionDummyComponent,characterDummyComponent,dummySpriteComponent, movementComponent, RED_OCKOTOK);
+
+                const dummyHitboxComponent = {
+                    name: "Hitbox",
+                    value: {
+                        x: x,
+                        y: y,
+                        width: TILE_SIZE,
+                        height: TILE_SIZE,
+                        owner: 4
+                    }
+                }
+                components.push(positionDummyComponent,characterDummyComponent,dummySpriteComponent, movementComponent, RED_OCKOTOK, dummyHitboxComponent);
                 
                 const enemy = this.registry.createEntity(components);
                 enemy.stateMachine = new StateMachine(enemy, this.graph);
@@ -466,9 +477,21 @@ class Game {
             }
         }
 
+        const hitboxDummyComponent = {
+            "name": "Hitbox",
+            "value": {
+                x: undefined,   // not important
+                y: undefined,
+                width: positionDummyComponent.value.width,
+                height: positionDummyComponent.value.height,
+                owner: 3,
+                damage: 0.5
+            }
+        }
 
 
-        this.player = this.registry.createEntity([playerDummyComponent,positionDummyComponent, characterDummyComponent, movementComponent, collisionComponent,spriteDummyComponent, healthComponent,
+
+        this.player = this.registry.createEntity([playerDummyComponent,positionDummyComponent, characterDummyComponent, movementComponent, hitboxDummyComponent, collisionComponent, spriteDummyComponent, healthComponent,
             LINK_ANIMATIONS
         ])
 

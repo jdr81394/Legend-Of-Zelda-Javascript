@@ -102,7 +102,6 @@ class InventoryScreen {
                 }
             }
 
-            console.log("health: " , arrHealth)
             // heart placement, 1st heart
             const x = 210;
             const y = 130;
@@ -113,7 +112,6 @@ class InventoryScreen {
             for(let i = 0; i < arrHealth.length; i++) {
                 const coX = 15 * i;
                 if(arrHealth[i] === 1) {
-                    console.log("FULL HEALTH")
                     this.c.drawImage(
                         this.fullHeart,
                         0,0,550,550, 
