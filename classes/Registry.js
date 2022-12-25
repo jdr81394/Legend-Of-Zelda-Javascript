@@ -1,5 +1,5 @@
 import {Entity} from "./Entity.js";
-import {TransitionComponent, CharacterComponent, PositionComponent, SpriteComponent, MovementComponent, AnimationComponent, CollisionComponent, PlayerComponent, ActionableComponent, HitboxComponent, NodeComponent, HealthComponent, AttackComponent} from "./Component.js";
+import {TransitionComponent, CharacterComponent, PositionComponent, SpriteComponent, MovementComponent, AnimationComponent, CollisionComponent, PlayerComponent, ActionableComponent, HitboxComponent, NodeComponent, HealthComponent} from "./Component.js";
 import {AnimationSystem, ActionableSystem,  CollisionSystem, MovementSystem, RenderSystem, TransitionSystem, HitboxSystem, DamageSystem} from "./System.js"
 
 
@@ -96,11 +96,11 @@ class Registry {
                     newEntityComponents["Collision"] = new CollisionComponent(component["name"], componentObj);
                     break;
                 }
-                case "Attack": {
-                    const componentObj = component["value"];
-                    newEntityComponents["Attack"] = new AttackComponent(component["name"], componentObj)
-                    break;
-                }
+                // case "Attack": {
+                //     const componentObj = component["value"];
+                //     newEntityComponents["Attack"] = new AttackComponent(component["name"], componentObj)
+                //     break;
+                // }
                 case "Transition": {
                     const componentObj = component["value"];
                     newEntityComponents["Transition"] = new TransitionComponent(component["name"], componentObj);
@@ -211,8 +211,8 @@ class Registry {
             }
             if(addToSystem) {
                 if(system.systemType === "ActionableSystem") {
-                    console.log(system)
-                    console.log(entity)
+                    // console.log(system)
+                    // console.log(entity)
                 }
                 system.entities.push(entity);  
             }

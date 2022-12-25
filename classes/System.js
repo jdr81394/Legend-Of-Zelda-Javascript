@@ -49,6 +49,8 @@ class RenderSystem extends System {
                         let xPosition = entity.components["Position"].x;
                         let yPosition = entity.components["Position"].y;
                         let value = {};
+                        const damage = 2;
+
                         if(facing === "up") {
                             xPosition = entity.components["Position"].x - 8;
                             yPosition -= 50
@@ -66,7 +68,9 @@ class RenderSystem extends System {
                                     x: xPosition + 10,
                                     y: yPosition + 5,
                                     width: 20,
-                                    height: 65
+                                    height: 65,
+                                    owner: 1,
+                                    damage
                                 }
                             }
 
@@ -86,7 +90,9 @@ class RenderSystem extends System {
                                     x: xPosition,
                                     y: yPosition + 17,
                                     width: 65,
-                                    height: 20
+                                    height: 20,
+                                    owner: 1,
+                                    damage
                                 }
                             }
                         }
@@ -105,7 +111,9 @@ class RenderSystem extends System {
                                     x: xPosition,
                                     y: yPosition + 17,
                                     width: 65,
-                                    height: 20
+                                    height: 20,
+                                    owner: 1,
+                                    damage
                                 }
                             }
                         }
@@ -124,7 +132,9 @@ class RenderSystem extends System {
                                     x: xPosition + 10,
                                     y: yPosition,
                                     width: 20,
-                                    height: 65
+                                    height: 65,
+                                    owner: 1,
+                                    damage
                                 }
                             }
                         }
@@ -169,9 +179,7 @@ class RenderSystem extends System {
                 }
 
                 const {x,y,width, height} = srcRect;
-                // if(entity.components["Player"]){
-                    c.globalCompositeOperation="source-over";
-                // }
+                c.globalCompositeOperation="source-over";
                 c.drawImage(
                     sprite,
                     x,y,width,height,
@@ -316,27 +324,43 @@ class MovementSystem extends System {
     update = (facing) => {
         for(let i = 0; i < this.entities.length; i++) {
 
+            const entity = this.entities[i];
 
-            if(this.entities[i].components["Movement"].collisionX) {
-                this.entities[i].components["Movement"].vX = 0;
-                if(facing === "left") this.entities[i].components["Position"].x += 5
-                if(facing === "right") this.entities[i].components["Position"].x -= 5
+
+            if(entity.components["Movement"].collisionX) {
+                entity.components["Movement"].vX = 0;
+                if(facing === "left") entity.components["Position"].x += 5
+                if(facing === "right") entity.components["Position"].x -= 5
             }
 
-            if( this.entities[i].components["Movement"].collisionY) {
-                this.entities[i].components["Movement"].vY = 0;
+            if( entity.components["Movement"].collisionY) {
+                entity.components["Movement"].vY = 0;
 
-                if(facing === "up") this.entities[i].components["Position"].y += 5
-                if(facing === "down") this.entities[i].components["Position"].y -= 5
+                if(facing === "up") entity.components["Position"].y += 5
+                if(facing === "down") entity.components["Position"].y -= 5
             }
 
     
-            this.entities[i].components["Movement"].collisionX = false;
-            this.entities[i].components["Movement"].collisionY = false;
+            entity.components["Movement"].collisionX = false;
+            entity.components["Movement"].collisionY = false;
 
 
-            this.entities[i].components["Position"].x +=  this.entities[i].components["Movement"].vX;
-            this.entities[i].components["Position"].y +=  this.entities[i].components["Movement"].vY;
+            entity.components["Position"].x +=  entity.components["Movement"].vX;
+            entity.components["Position"].y +=  entity.components["Movement"].vY;
+
+            if(entity.components["Animation"].shouldAnimate === false) {
+                if(entity.components["Movement"].vX !== 0 && entity.components["Movement"].vX !== 1) entity.components["Movement"].vX -= 0.1
+                if(entity.components["Movement"].vY !== 0 && entity.components["Movement"].vY !== 1) entity.components["Movement"].vY -= 0.1
+            }
+
+
+            if(entity.components["Character"] && !entity.components["Player"]) {
+                if(entity.components["Movement"].vY < 0) entity.components["Character"].facing = "up"
+                if(entity.components["Movement"].vY > 0) entity.components["Character"].facing = "down"
+                if(entity.components["Movement"].vX < 0) entity.components["Character"].facing = "left"
+                if(entity.components["Movement"].vX > 0) entity.components["Character"].facing = "right"
+
+            }
 
         }
     }
@@ -489,11 +513,81 @@ class TransitionSystem extends System {
 class HitboxSystem extends System {
     constructor(systemType) {
         super(systemType);
-        this.componentRequirements = ["Hitbox"];
+        this.componentRequirements = ["Hitbox", "Position"];
     }
 
     update = () => {
-        for ( let i = 0; i < this.entities.length; i++) {
+        for ( let i = this.entities.length - 1; i > 0 ; i-- ) {
+            for(let j = 0; j < this.entities.length; j++) {
+                // console.log(this.entities[i], this.entities[j])
+                const entityI = this.entities[i];
+                const entityJ = this.entities[j];
+                if(entityI.id === entityJ.id) {
+                    continue;
+                }
+
+                const {Position: positionI,Hitbox: hitboxI} = entityI.components
+                const {Position: positionJ, Hitbox: hitboxJ} = entityJ.components
+
+                // console.log( positionI)
+
+                // console.log(  positionI.x < positionJ.x + positis
+
+                if(
+                    positionI.x < positionJ.x + positionJ.width &&
+                    positionI.x + positionI.width > positionJ.x &&
+                    positionI.y < positionJ.y + positionJ.height &&
+                    positionI.y + positionI.height > positionJ.y
+                ) {
+                    // Multiple scenarios could happen here
+                    // First thing, if an enemy projectile or an enemy body hits the player, damage the player
+
+                    // if hitboxI is enemy/enemyAttacxk and hitboxJ is link
+                    // or if hitboxJ is enemy/enemyAttack and hitboxI is link
+                    if(
+                       (
+                            hitboxI.owner % 2 === 0
+                            &&
+                            hitboxJ.owner === 3
+                        ) ||
+                        (
+                            hitboxJ.owner % 2 === 0
+                            &&
+                            hitboxI.owner === 3
+
+                        )
+                    ) {
+                        // do damage to link
+                        const link = hitboxI.owner === 3 ? entityI : entityJ;
+                        const enemy = hitboxI.owner % 2 === 0 ? entityI : entityJ;
+                        
+                        link.components["Health"].remainingHealth = link.components["Health"].remainingHealth - 0.5;
+
+
+                    }
+
+                    // if hitboxI is enemy and hitboxJ is link attack
+                    // if hitboxI is link attack and hitboxJ is enemy
+                    else if(
+                       (
+                           hitboxI.owner % 2 === 0
+                            &&
+                            hitboxJ.owner === 1
+                        ) ||
+                        (
+                            hitboxI.owner === 1 
+                            &&
+                            hitboxJ.owner % 2 ===0
+                        )
+                    ) {
+                        // do damage to enemy
+                        console.log("damange to enemy")
+                    }
+                }
+
+                
+            }
+
 
         }
     }
