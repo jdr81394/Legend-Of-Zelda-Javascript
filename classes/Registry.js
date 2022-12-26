@@ -1,6 +1,6 @@
 import {Entity} from "./Entity.js";
 import {TransitionComponent, CharacterComponent, PositionComponent, SpriteComponent, MovementComponent, AnimationComponent, CollisionComponent, PlayerComponent, ActionableComponent, HitboxComponent, NodeComponent, HealthComponent} from "./Component.js";
-import {AnimationSystem, ActionableSystem,  CollisionSystem, MovementSystem, RenderSystem, TransitionSystem, HitboxSystem, DamageSystem} from "./System.js"
+import {AnimationSystem, ActionableSystem,  CollisionSystem, MovementSystem, RenderSystem, TransitionSystem, HitboxSystem, HealthSystem} from "./System.js"
 
 
 
@@ -177,8 +177,8 @@ class Registry {
                 newSystem = new ActionableSystem(systemType);
                 break;
             }
-            case "DamageSystem": {
-                newSystem = new DamageSystem(systemType);
+            case "HealthSystem": {
+                newSystem = new HealthSystem(systemType);
                 break;
             }
             case "HitboxSystem" : {

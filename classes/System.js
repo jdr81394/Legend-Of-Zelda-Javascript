@@ -14,11 +14,21 @@ class System {
     }
 }
 
-class DamageSystem extends System {
+class HealthSystem extends System {
     constructor(systemType) {
         super(systemType);
-        this.componentRequirements = ["Attack"];
+        this.componentRequirements = ["Health"];
     }
+    
+    update = (registry) => {
+        for (let entity of this.entities) {
+            const {remainingHealth} = entity.components["Health"];
+            if(remainingHealth <= 0) {
+                registry.entitiesToBeKilled.push(entity);
+            }
+        }
+    }
+
 }
 
 
@@ -580,8 +590,16 @@ class HitboxSystem extends System {
                             hitboxJ.owner % 2 ===0
                         )
                     ) {
+                        const linkAttack = hitboxI.owner === 3 ? entityI : entityJ;
+                        const enemy = hitboxI.owner % 2 === 0 ? entityI : entityJ;
                         // do damage to enemy
-                        console.log("damange to enemy")
+                        // console.log(linkAttack.components["Hitbox"].damage)
+                        if(linkAttack.components["Hitbox"].damage) {
+                            console.log("damange to enemy: " , linkAttack , enemy)
+                            enemy.components["Health"].remainingHealth -= linkAttack.components["Hitbox"].damage;
+                        }
+
+
                     }
                 }
 
@@ -593,4 +611,4 @@ class HitboxSystem extends System {
     }
 }
 
-export {System, RenderSystem,HitboxSystem, AnimationSystem, TransitionSystem,CollisionSystem,MovementSystem, DamageSystem, ActionableSystem}
+export {System, RenderSystem,HitboxSystem, AnimationSystem, TransitionSystem,CollisionSystem,MovementSystem, HealthSystem, ActionableSystem}

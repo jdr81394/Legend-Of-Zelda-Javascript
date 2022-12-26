@@ -49,7 +49,7 @@ class Game {
         this.registry.addSystem("TransitionSystem");
         this.registry.addSystem("ActionableSystem");
         this.registry.addSystem("HitboxSystem");
-        this.registry.addSystem("DamageSystem");
+        this.registry.addSystem("HealthSystem");
 
         document.addEventListener("keyup", this.handleUserInput);
         document.addEventListener("keydown", this.handleUserInput);
@@ -77,6 +77,7 @@ class Game {
             this.registry.getSystem("TransitionSystem").update(this.player,this.eventBus, this.reloadNewScreen);
             this.registry.getSystem("ActionableSystem").update(this.player, this.eventBus);
             this.registry.getSystem("HitboxSystem").update();
+            this.registry.getSystem("HealthSystem").update(this.registry);
 
             this.registry.update();
 
@@ -304,6 +305,7 @@ class Game {
                 
 
             }
+            this.addItemToInventory(INVENTORY_SWORD_1); // Jake remove this 
         }
 
 
@@ -342,7 +344,14 @@ class Game {
                         owner: 4
                     }
                 }
-                components.push(positionDummyComponent,characterDummyComponent,dummySpriteComponent, movementComponent, RED_OCKOTOK, dummyHitboxComponent);
+
+                const dummyHealthComponent = {
+                    "name": "Health",
+                    "value": {
+                        totalHealth: 3
+                    }
+                }
+                components.push(positionDummyComponent,characterDummyComponent,dummySpriteComponent, dummyHealthComponent, movementComponent, RED_OCKOTOK, dummyHitboxComponent);
                 
                 const enemy = this.registry.createEntity(components);
                 enemy.stateMachine = new StateMachine(enemy, this.graph);
