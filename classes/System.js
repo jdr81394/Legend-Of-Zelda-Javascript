@@ -20,9 +20,15 @@ class HealthSystem extends System {
         this.componentRequirements = ["Health"];
     }
     
-    update = (registry) => {
+    update = (registry, gameTime) => {
         for (let entity of this.entities) {
-            const {remainingHealth} = entity.components["Health"];
+            const {remainingHealth, invulnerableTime} = entity.components["Health"];
+
+            if(gameTime >= invulnerableTime) {
+                entity.components["Health"].invulnerableTime = 0;
+            }
+            
+
             if(remainingHealth <= 0) {
                 registry.entitiesToBeKilled.push(entity);
             }
@@ -358,10 +364,11 @@ class MovementSystem extends System {
             entity.components["Position"].x +=  entity.components["Movement"].vX;
             entity.components["Position"].y +=  entity.components["Movement"].vY;
 
-            if(entity.components["Animation"].shouldAnimate === false) {
-                if(entity.components["Movement"].vX !== 0 && entity.components["Movement"].vX !== 1) entity.components["Movement"].vX -= 0.1
-                if(entity.components["Movement"].vY !== 0 && entity.components["Movement"].vY !== 1) entity.components["Movement"].vY -= 0.1
-            }
+            // Jake below is used for potential pushback mechanic
+            // if(entity.components["Animation"].shouldAnimate === false) {
+            //     if(entity.components["Movement"].vX !== 0 && entity.components["Movement"].vX !== 1) entity.components["Movement"].vX -= 0.1
+            //     if(entity.components["Movement"].vY !== 0 && entity.components["Movement"].vY !== 1) entity.components["Movement"].vY -= 0.1
+            // }
 
 
             if(entity.components["Character"] && !entity.components["Player"]) {
@@ -571,7 +578,11 @@ class HitboxSystem extends System {
                         const link = hitboxI.owner === 3 ? entityI : entityJ;
                         const enemy = hitboxI.owner % 2 === 0 ? entityI : entityJ;
                         
-                        link.components["Health"].remainingHealth = link.components["Health"].remainingHealth - 0.5;
+                        if(link.components["Health"].invulnerableTime  === 0) {
+                            link.components["Health"].remainingHealth = link.components["Health"].remainingHealth - 0.5;
+                            link.components["Health"].invulnerableTime = Date.now() + 1000;
+                        }
+
 
 
                     }
@@ -596,7 +607,11 @@ class HitboxSystem extends System {
                         // console.log(linkAttack.components["Hitbox"].damage)
                         if(linkAttack.components["Hitbox"].damage) {
                             console.log("damange to enemy: " , linkAttack , enemy)
-                            enemy.components["Health"].remainingHealth -= linkAttack.components["Hitbox"].damage;
+                            if(enemy.components["Health"].invulnerableTime === 0) {
+                                enemy.components["Health"].remainingHealth -= linkAttack.components["Hitbox"].damage;
+                                enemy.components["Health"].invulnerableTime = Date.now() + 500;
+                            }
+
                         }
 
 

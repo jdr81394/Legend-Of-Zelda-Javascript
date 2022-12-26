@@ -77,7 +77,7 @@ class Game {
             this.registry.getSystem("TransitionSystem").update(this.player,this.eventBus, this.reloadNewScreen);
             this.registry.getSystem("ActionableSystem").update(this.player, this.eventBus);
             this.registry.getSystem("HitboxSystem").update();
-            this.registry.getSystem("HealthSystem").update(this.registry);
+            this.registry.getSystem("HealthSystem").update(this.registry, this.gameTime);
 
             this.registry.update();
 

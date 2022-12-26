@@ -141,6 +141,7 @@ class HealthComponent extends Component {
         super(componentType);
         this.totalHealth = componentObj.totalHealth;
         this.remainingHealth = this.totalHealth;
+        this.invulnerableTime = 0;
     }
 }
 

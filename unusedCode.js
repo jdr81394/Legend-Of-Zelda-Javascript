@@ -46,3 +46,59 @@
                         //     // add discoloration 
     
                         //     // console.log("damage to link")s
+
+
+
+                    //                         // Multiple scenarios could happen here
+                    // // First thing, if an enemy projectile or an enemy body hits the player, damage the player
+
+                    // // if hitboxI is enemy/enemyAttacxk and hitboxJ is link
+                    // // or if hitboxJ is enemy/enemyAttack and hitboxI is link
+                    // if(
+                    //     (
+                    //          hitboxI.owner % 2 === 0
+                    //          &&
+                    //          hitboxJ.owner === 3
+                    //      ) ||
+                    //      (
+                    //          hitboxJ.owner % 2 === 0
+                    //          &&
+                    //          hitboxI.owner === 3
+ 
+                    //      )
+                    //  ) {
+                    //      // do damage to link
+                    //      const link = hitboxI.owner === 3 ? entityI : entityJ;
+                    //      const enemy = hitboxI.owner % 2 === 0 ? entityI : entityJ;
+                         
+                    //      link.components["Health"].remainingHealth = link.components["Health"].remainingHealth - 0.5;
+ 
+ 
+                    //  }
+ 
+                    //  // if hitboxI is enemy and hitboxJ is link attack
+                    //  // if hitboxI is link attack and hitboxJ is enemy
+                    //  else if(
+                    //     (
+                    //         hitboxI.owner % 2 === 0
+                    //          &&
+                    //          hitboxJ.owner === 1
+                    //      ) ||
+                    //      (
+                    //          hitboxI.owner === 1 
+                    //          &&
+                    //          hitboxJ.owner % 2 ===0
+                    //      )
+                    //  ) {
+                    //      // do damage to enemy
+                    //      // const linkAttack = hitboxI.owner === 3 ? entityI : entityJ;
+                    //      // const enemy = hitboxI.owner % 2 === 0 ? entityI : entityJ;
+ 
+                    //      console.log("Enemy: " , enemy)
+                    //      // if(linkAttack) {
+                    //      //     enemy.components["Health"].remainingHealth = enemy.components["Health"].remainingHealth - linkAttack.components["Hitbox"].damage;
+                    //      //     console.log("damange to enemy :" , linkAttack, linkAttack.components["Hitbox"].damage)
+                    //      //     console.log(enemy.components["Health"].remainingHealth);
+                    //      // }
+ 
+                    //  }
