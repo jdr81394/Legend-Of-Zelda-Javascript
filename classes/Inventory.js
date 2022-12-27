@@ -78,6 +78,17 @@ class InventoryScreen {
             210,115,50,50
         )
 
+        // draw rupies & key count
+        if(player && player["components"]["Player"]["inventory"]) {
+
+            const {keys, rupies} = player["components"]["Player"]["inventory"];
+            this.c.font = "12px Arial";
+            this.c.fillStyle = "white";
+            this.c.fillText(`x ${rupies}`, 115.5, 125, 15);
+            this.c.fillText(`x ${keys}`, 115.5, 137, 15);
+
+        }
+
 
         // draw hearts
         if(player && player["components"]["Health"]["totalHealth"]) {

@@ -440,9 +440,14 @@ class Game {
 
         if(this.player) {
 
+
             this.player.components["Position"].x = coX * TILE_SIZE;
             this.player.components["Position"].y = coY * TILE_SIZE;
             this.registry.entitiesToBeAdded.push(this.player);
+
+
+
+            console.log("Player dummy component: " , playerDummyComponent);
             return;
         };
         // We will use a grid to determine where the player loads up
@@ -450,7 +455,11 @@ class Game {
         // gridCoY is a gridcoffiecien
         const gridCoX = coX !==undefined ? coX : 8;
         const gridCoY = coY !=undefined ? coY: 1;
-        const playerDummyComponent = { "name": "Player" };
+        
+ 
+
+        const playerDummyComponent = { "name": "Player", value:{ inventory: { keys: 0, rupies: 0 }} };
+
         const characterDummyComponent = {name: "Character", value: {facing : "down"}};
         const positionDummyComponent = {"name": "Position", "value": {x: gridCoX * TILE_SIZE, y: gridCoY * TILE_SIZE, height: TILE_SIZE - 10, width: TILE_SIZE - 10}};
         const collisionComponent = {
@@ -711,7 +720,6 @@ class Game {
             item.img.src = item.path;
             this.player.components["Player"].inventory.sword = item;
             this.player.components["Player"].activeA = item;
-            console.log(this.player)
         }
     }
 }
