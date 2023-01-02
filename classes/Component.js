@@ -1,5 +1,4 @@
 import {ASSET_PATH} from "../index.js";
-import StateMachine from "../ai/StateMachine.js";
 class Component {
     constructor(componentType) {
         this.componentType = componentType  // string
@@ -60,7 +59,6 @@ class AnimationComponent extends Component {
     constructor(componentType, componentObj) {
         super(componentType);
         this.isStatic = componentObj.isStatic;      // determines if there are other directions to the image
-        this.isLoop = componentObj.isLoop;          // loops
         this.frames = componentObj.frames;          
         this.isAttacking = componentObj.isAttacking;
         this.currentTimeOfAnimation = componentObj.currentTimeOfAnimation;
@@ -96,7 +94,7 @@ class AnimationComponent extends Component {
 }
 
 class CollisionComponent extends Component {
-    constructor(componentType, componentObj) {
+    constructor(componentType) {
         super(componentType);
     }
 }
@@ -129,12 +127,6 @@ class PlayerComponent extends Component {
    
 }
 
-// class AttackComponent extends Component {
-//     constructor(componentType, componentObj) {
-//         super(componentType);
-//         this.damage = componentObj.damage;
-//     }
-// }
 
 class HealthComponent extends Component {
     constructor(componentType, componentObj) {
@@ -184,5 +176,4 @@ export {
     AnimationComponent, 
     CollisionComponent,
     PlayerComponent,
-    // AttackComponent
 }

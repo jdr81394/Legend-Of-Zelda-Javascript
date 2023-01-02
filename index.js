@@ -6,6 +6,8 @@ import StateMachine from "./ai/StateMachine.js";
 import { SEARCH_STATE } from "./ai/OctorokStates.js";
 import Graph from "./dataStructures/Graph.js";
 import {swordPickupAnimation} from "./animations/eventAnimations.js";
+import { INVENTORY_SWORD_1 } from "./items/weapons.js";
+import addItemToInventory from "./utilities/addItemToInventory.js";
 
 var canvas = document.querySelector('canvas')
 var c = canvas.getContext('2d')
@@ -465,7 +467,7 @@ class Game {
             LINK_ANIMATIONS
         ])
 
-        // this.addItemToInventory(INVENTORY_SWORD_1);
+        addItemToInventory(this.player, INVENTORY_SWORD_1);
     }
 
     handleUserInput = (e) => {
@@ -477,34 +479,22 @@ class Game {
                     case "w": {
                         this.player.components["Movement"].vY = -2
                         this.player.components["Movement"].vX = 0;
-                        this.player.components["Animation"].shouldAnimate = true;
-                        this.player.components["Animation"].isAttacking = false;
-                        this.player.components["Animation"].currentTimeOfAnimation = 0;
                         break;
                     }
                     case "a": {
                         this.player.components["Movement"].vX = -2
                         this.player.components["Movement"].vY = 0;
-                        this.player.components["Animation"].shouldAnimate = true;
-                        this.player.components["Animation"].isAttacking = false;
-                        this.player.components["Animation"].currentTimeOfAnimation = 0;
 
                         break;
                     }
                     case "s": {
                         this.player.components["Movement"].vY = 2
                         this.player.components["Movement"].vX = 0;
-                        this.player.components["Animation"].shouldAnimate = true;
-                        this.player.components["Animation"].isAttacking = false;
-                        this.player.components["Animation"].currentTimeOfAnimation = 0;
                         break;
                     }
                     case "d": {
                         this.player.components["Movement"].vX = 2
                         this.player.components["Movement"].vY = 0;
-                        this.player.components["Animation"].shouldAnimate = true;
-                        this.player.components["Animation"].isAttacking = false;
-                        this.player.components["Animation"].currentTimeOfAnimation = 0;
                         break;
                     }
                     case "v": {
@@ -560,49 +550,17 @@ class Game {
 
 const game = new Game();
 game.initialize();
-game.loadScreen(screenOneObject);
+// game.loadScreen(screenOneObject);
 // game.loadScreen(shop1);
 // game.loadScreen(screenA);
 // game.loadScreen(screenB);
 // game.loadScreen(screenC);
 // game.loadScreen(screenD);
-// game.loadScreen(screenE);
+game.loadScreen(screenE);
 
 
 game.update();
 game.render();
-
-
-
-
-
-
-
-
-
-// game.registry.addSystem("RenderSystem");
-// game.registry.addSystem("AnimationSystem");
-// game.registry.createEntity(
-//     [
-//         {"name": "Position", "value": {x: 0, y: 0}}, 
-        // {"name": "Sprite", "value": { 
-        //     srcRect: {x: 0, y: 0, width: 19, height: 19}, 
-        //     path: "link.png" ,
-        //     pixelsBetween: 30
-        //     }
-        // },
-        // {
-        //     "name": "Animation", 
-        //     "value": {
-        //         numFrames: 2,
-        //         currentFrame: 0,
-        //         frameSpeedRate: 3,
-        //         isLoop: true,
-        //         startTime: Date.now()
-        //     }
-        // }
-//     ]
-// )
 
 
 export {TILE_SIZE,c, canvas, ASSET_PATH}

@@ -2,7 +2,6 @@ const LINK_ANIMATIONS = {
     "name": "Animation", 
     "value": {
         isStatic: false,        // determines if the unit turns
-        isLoop: false,
         isAttacking: false,
         currentTimeOfAnimation: 0,
         frames:                // object { facing: "up", move: {x, y, width, height} }
@@ -192,7 +191,6 @@ const FIRE_ANIMATIONS = {
     name: "Animation",
     value: {
         isStatic: true,
-        isLoop: true,
         isAttacking: false,
         shouldAnimate: true,
         currentTimeOfAnimation: 0,
@@ -224,7 +222,6 @@ const LINK_WEAPON_PICKUP = {
     name: "Animation",
     value: {
         isStatic: true,
-        isLoop: true,
         isAttacking: false,
         shouldAnimate: true,
         currentTimeOfAnimation: 0,
@@ -271,7 +268,6 @@ const RED_OCKOTOK = {
     name: "Animation",
     value: {
         isStatic: false,
-        isLoop: false,
         isAttacking: false,
         currentTimeOfAnimation: 0,
         frames: {
