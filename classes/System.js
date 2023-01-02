@@ -344,15 +344,15 @@ class MovementSystem extends System {
 
             if(entity.components["Movement"].collisionX) {
                 entity.components["Movement"].vX = 0;
-                if(facing === "left") entity.components["Position"].x += 5
-                if(facing === "right") entity.components["Position"].x -= 5
+                if(facing === "left") entity.components["Position"].x += 2
+                if(facing === "right") entity.components["Position"].x -= 2
             }
 
             if( entity.components["Movement"].collisionY) {
                 entity.components["Movement"].vY = 0;
 
-                if(facing === "up") entity.components["Position"].y += 5
-                if(facing === "down") entity.components["Position"].y -= 5
+                if(facing === "up") entity.components["Position"].y += 2
+                if(facing === "down") entity.components["Position"].y -= 2
             }
 
     
@@ -364,13 +364,11 @@ class MovementSystem extends System {
             entity.components["Position"].y +=  entity.components["Movement"].vY;
 
 
-            if(entity.components["Character"] && !entity.components["Player"]) {
-                if(entity.components["Movement"].vY < 0) entity.components["Character"].facing = "up"
-                if(entity.components["Movement"].vY > 0) entity.components["Character"].facing = "down"
-                if(entity.components["Movement"].vX < 0) entity.components["Character"].facing = "left"
-                if(entity.components["Movement"].vX > 0) entity.components["Character"].facing = "right"
+            if(entity.components["Movement"].vY < 0) entity.components["Character"].facing = "up"
+            if(entity.components["Movement"].vY > 0) entity.components["Character"].facing = "down"
+            if(entity.components["Movement"].vX < 0) entity.components["Character"].facing = "left"
+            if(entity.components["Movement"].vX > 0) entity.components["Character"].facing = "right"
 
-            }
 
         }
     }

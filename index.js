@@ -1,10 +1,7 @@
 import {Registry} from "./classes/Registry.js"
 import {screenA, screenB, screenC, screenD, screenE, screenOneObject, shop1} from "./screens/screen.js"
 import { InventoryScreen } from "./classes/Inventory.js";
-import { LINK_ANIMATIONS , RED_OCKOTOK, FIRE_ANIMATIONS, LINK_WEAPON_PICKUP} from "./animations/animations.js";
-import { INVENTORY_SWORD_1 } from "./items/weapons.js";
-import PriorityQueue from "./dataStructures/PriorityQueue.js";
-import BinarySearch from "./utilities/BinarySearch.js";
+import { LINK_ANIMATIONS , RED_OCKOTOK, FIRE_ANIMATIONS} from "./animations/animations.js";
 import StateMachine from "./ai/StateMachine.js";
 import { SEARCH_STATE } from "./ai/OctorokStates.js";
 import Graph from "./dataStructures/Graph.js";
@@ -478,38 +475,34 @@ class Game {
             if(type === "keydown") {
                 switch(key) {
                     case "w": {
-                        this.player.components["Movement"].vY = -5
+                        this.player.components["Movement"].vY = -2
                         this.player.components["Movement"].vX = 0;
-                        this.player.components["Character"].facing = "up";
                         this.player.components["Animation"].shouldAnimate = true;
                         this.player.components["Animation"].isAttacking = false;
                         this.player.components["Animation"].currentTimeOfAnimation = 0;
                         break;
                     }
                     case "a": {
-                        this.player.components["Movement"].vX = -5
+                        this.player.components["Movement"].vX = -2
                         this.player.components["Movement"].vY = 0;
                         this.player.components["Animation"].shouldAnimate = true;
-                        this.player.components["Character"].facing = "left";
                         this.player.components["Animation"].isAttacking = false;
                         this.player.components["Animation"].currentTimeOfAnimation = 0;
 
                         break;
                     }
                     case "s": {
-                        this.player.components["Movement"].vY = 5
+                        this.player.components["Movement"].vY = 2
                         this.player.components["Movement"].vX = 0;
                         this.player.components["Animation"].shouldAnimate = true;
-                        this.player.components["Character"].facing = "down";
                         this.player.components["Animation"].isAttacking = false;
                         this.player.components["Animation"].currentTimeOfAnimation = 0;
                         break;
                     }
                     case "d": {
-                        this.player.components["Movement"].vX =5
+                        this.player.components["Movement"].vX = 2
                         this.player.components["Movement"].vY = 0;
                         this.player.components["Animation"].shouldAnimate = true;
-                        this.player.components["Character"].facing = "right";
                         this.player.components["Animation"].isAttacking = false;
                         this.player.components["Animation"].currentTimeOfAnimation = 0;
                         break;
@@ -528,7 +521,6 @@ class Game {
                     }
                     case "p": {
                         this.isPaused = !this.isPaused;
-                        console.log(this.isPaused)
                         break;
                     }
     
@@ -539,7 +531,6 @@ class Game {
             }
     
             else if(type === "keyup") {
-                const facing = this.player.components["Character"].facing;
                 if(key === "w" || key === "s" ) {
                     this.player.components["Movement"].vY = 0
                     this.player.components["Animation"].shouldAnimate = false;
