@@ -533,7 +533,7 @@ class HitboxSystem extends System {
                         const enemy = hitboxI.owner % 2 === 0 ? entityI : entityJ;
                         
                         if(link.components["Health"].invulnerableTime  === 0) {
-                            link.components["Health"].remainingHealth = link.components["Health"].remainingHealth - 0.5;
+                            link.components["Health"].remainingHealth = link.components["Health"].remainingHealth - enemy.components["Hitbox"].damage;
                             link.components["Health"].invulnerableTime = Date.now() + 1000;
                         }
 

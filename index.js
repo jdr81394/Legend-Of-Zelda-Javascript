@@ -298,7 +298,8 @@ class Game {
                 const dummyHitboxComponent = {
                     name: "Hitbox",
                     value: {
-                        owner: 4
+                        owner: 4,
+                        damage: 1
                     }
                 }
 
@@ -540,13 +541,13 @@ class Game {
 
 const game = new Game();
 game.initialize();
-game.loadScreen(screenOneObject);
+// game.loadScreen(screenOneObject);
 // game.loadScreen(shop1);
 // game.loadScreen(screenA);
 // game.loadScreen(screenB);
 // game.loadScreen(screenC);
 // game.loadScreen(screenD);
-// game.loadScreen(screenE);
+game.loadScreen(screenE);
 
 
 game.update();
