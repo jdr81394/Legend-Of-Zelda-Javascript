@@ -366,7 +366,7 @@ class MovementSystem extends System {
 
             if(entity.components["Movement"].vY < 0) entity.components["Character"].facing = "up"
             if(entity.components["Movement"].vY > 0) entity.components["Character"].facing = "down"
-            if(entity.components["Movements"].vX < 0) entity.components["Character"].facing = "left"
+            if(entity.components["Movement"].vX < 0) entity.components["Character"].facing = "left"
             if(entity.components["Movement"].vX > 0) entity.components["Character"].facing = "right"
 
             if((entity.components["Movement"].vX !== 0 || entity.components["Movement"].vY !== 0 )
