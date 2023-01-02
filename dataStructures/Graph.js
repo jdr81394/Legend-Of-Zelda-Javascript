@@ -1,4 +1,4 @@
-import BinarySearch from "./BinarySearch.js";
+import BinarySearch from "../utilities/BinarySearch.js";
 import PriorityQueue from "./PriorityQueue.js";
 
 class Graph {

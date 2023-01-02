@@ -15,8 +15,7 @@ class Registry {
 
     //3
     update = () => {
-        // console.log(this.systems["ActionableSystem"].entities);
-        // console.log(this.systems["RenderSystem"].entities);
+
 
         for(let entity of this.entitiesToBeAdded) {
             this.addEntityToSystem(entity);

@@ -1,6 +1,5 @@
 
 import {TILE_SIZE, c , canvas} from "../index.js";
-import {LINK_WEAPON_PICKUP} from "../animations/animations.js";
 import { INVENTORY_SWORD_1 } from "../items/weapons.js";
 class System {
     constructor(systemType) {
@@ -364,12 +363,6 @@ class MovementSystem extends System {
             entity.components["Position"].x +=  entity.components["Movement"].vX;
             entity.components["Position"].y +=  entity.components["Movement"].vY;
 
-            // Jake below is used for potential pushback mechanic
-            // if(entity.components["Animation"].shouldAnimate === false) {
-            //     if(entity.components["Movement"].vX !== 0 && entity.components["Movement"].vX !== 1) entity.components["Movement"].vX -= 0.1
-            //     if(entity.components["Movement"].vY !== 0 && entity.components["Movement"].vY !== 1) entity.components["Movement"].vY -= 0.1
-            // }
-
 
             if(entity.components["Character"] && !entity.components["Player"]) {
                 if(entity.components["Movement"].vY < 0) entity.components["Character"].facing = "up"
@@ -389,7 +382,7 @@ class ActionableSystem extends System {
         this.componentRequirements = ["Actionable"]
     }
 
-    update = (player) => {
+    update = (player, audioObject, registry, handleUserInput ) => {
 
         if(player) {
             for(let i = 0; i < this.entities.length; i++) {
@@ -408,12 +401,10 @@ class ActionableSystem extends System {
                     Position.y + Movement.vY + Position.height > actionableTilePosition.y 
                 ) {
                     
-                    // eventBus.push({
-                    //     func: actionableTile.components["Actionable"].action,
-                    //     args: actionableTile
-                    // }) ;
+                    
                     const {index} = actionableTile.components["Actionable"];
-                    actionableTile.components["Actionable"].action(actionableTile);
+                    console.log(actionableTile);
+                    audioObject = actionableTile.components["Actionable"].action(player, actionableTile, audioObject, registry, handleUserInput);
                     actionableTile.components["Actionable"]["screenObject"]["actTile"][index]["remove"] = true;
                 }
             }

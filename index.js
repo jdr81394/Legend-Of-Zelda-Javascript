@@ -3,11 +3,13 @@ import {screenA, screenB, screenC, screenD, screenE, screenOneObject, shop1} fro
 import { InventoryScreen } from "./classes/Inventory.js";
 import { LINK_ANIMATIONS , RED_OCKOTOK, FIRE_ANIMATIONS, LINK_WEAPON_PICKUP} from "./animations/animations.js";
 import { INVENTORY_SWORD_1 } from "./items/weapons.js";
-import PriorityQueue from "./utilities/PriorityQueue.js";
+import PriorityQueue from "./dataStructures/PriorityQueue.js";
 import BinarySearch from "./utilities/BinarySearch.js";
 import StateMachine from "./ai/StateMachine.js";
 import { SEARCH_STATE } from "./ai/OctorokStates.js";
-import Graph from "./utilities/Graph.js";
+import Graph from "./dataStructures/Graph.js";
+import {swordPickupAnimation} from "./animations/eventAnimations.js";
+
 var canvas = document.querySelector('canvas')
 var c = canvas.getContext('2d')
 
@@ -35,9 +37,6 @@ class Game {
         this.enemies = []
         this.graph = null;
 
-        // this.nodeOrderedByX = []            // associative x array, key is x, value is node 
-        // this.nodeOrderedByY = []            // associative x array, key is y, value is node 
-
     }
 
     initialize = () => {
@@ -53,8 +52,6 @@ class Game {
 
         document.addEventListener("keyup", this.handleUserInput);
         document.addEventListener("keydown", this.handleUserInput);
-
-        // Set up inventory screen
 
     }
     
@@ -75,13 +72,12 @@ class Game {
             this.registry.getSystem("MovementSystem").update(this.player.components["Character"].facing);
             this.registry.getSystem("CollisionSystem").update(this.player);
             this.registry.getSystem("TransitionSystem").update(this.player,this.eventBus, this.reloadNewScreen);
-            this.registry.getSystem("ActionableSystem").update(this.player, this.eventBus);
+            this.registry.getSystem("ActionableSystem").update(this.player, this.audioObject, this.registry, this.handleUserInput);
             this.registry.getSystem("HitboxSystem").update();
             this.registry.getSystem("HealthSystem").update(this.registry, this.gameTime);
 
             this.registry.update();
 
-            // console.log(this.registry.getSystem("ActionableSystem"))
             this.updateAI();
     
 
@@ -115,33 +111,6 @@ class Game {
             this.enemies[i].stateMachine.update();
         }
 
-
-        // for(let i = 0; i < this.enemies.length; i++) {
-
-        //     const enemy = this.enemies[i];
-        //     // const enemyId = CharacterComponent.initNodeY * 18 + CharacterComponent.initNodeX + 1; // add plus one because array starts at 0
-        //     const {Position : EnemyPosition } = enemy.components;
-        //     const {x: enemyX, y: enemyY} = EnemyPosition;
-
-
-        //     // Get player X and Y;
-        //     const { Position: PositionComponent} = this.player.components;
-        //     const {x, y} = PositionComponent;
-
-        //     const enemyNodeX = BinarySearch(this.nodeOrderedForGraph, enemyX);
-        //     const playerNodeX = BinarySearch(this.nodeOrderedForGraph, x);
-
-        //     const playerNodeY = BinarySearch(this.nodeOrderedForGraph[playerNodeX], y);
-        //     const enemyNodeY = BinarySearch(this.nodeOrderedForGraph[enemyNodeX], enemyY);
-
-        //     const playerNodeId = this.nodeOrderedForGraph[playerNodeX][playerNodeY];
-        //     const enemyNodeId = this.nodeOrderedForGraph[enemyNodeX][enemyNodeY];
-
-        //     const path = this.dijkstrasAlgorithm(enemyNodeId, playerNodeId)
-
-
-
-        // }
     }
 
 
@@ -195,9 +164,6 @@ class Game {
                     };
 
                 
-
-
-                    // console.log(this.graph)
                     components.push(nodeComponent);
                 }
                 else if (typeOf === "object") {
@@ -254,7 +220,7 @@ class Game {
                                 const actionableDummyComponent = {
                                     name: "Actionable",
                                     value: {
-                                        action: this.weaponPickupAnimation,
+                                        action: swordPickupAnimation,
                                         screenObject,
                                         index,
                                         audioPath 
@@ -290,7 +256,6 @@ class Game {
                         { 
                             srcRect,
                             path: assetPath + path + tile + ".png",
-                            // pixelsBetween: 30
                         }
                     };
                     components.push(spriteDummyComponent);
@@ -305,7 +270,7 @@ class Game {
                 
 
             }
-            this.addItemToInventory(INVENTORY_SWORD_1); // Jake remove this 
+            // this.addItemToInventory(INVENTORY_SWORD_1); // NOTE - This will put the sword immediately into the inventory of link upon load. s
         }
 
 
@@ -356,7 +321,6 @@ class Game {
                 const enemy = this.registry.createEntity(components);
                 enemy.stateMachine = new StateMachine(enemy, this.graph);
                 enemy.stateMachine.setGlobalState(SEARCH_STATE);
-                // enemy.stateMachine.setCurrentState(SEARCH_STATE);
 
 
                 this.enemies.push(enemy);
@@ -599,138 +563,24 @@ class Game {
 
     }
 
-    weaponPickupAnimation = (actionableTile) => {
 
 
-        // Pause any current music thats being played - Later
-
-        // Extract music from actionable component
-        const {audioPath} = actionableTile.components["Actionable"];
-
-        // Create tile to replace the tile that is going to be killed
-        let dummyPositionComponent = {
-            name: "Position",
-            value: {
-                ...actionableTile.components["Position"]
-            }
-        };
-        let dummySpriteComponent = {
-            name: "Sprite",
-            value: {
-                path: "shop/" + "tiles/" + "0.png"
-            }
-        }
-
-        this.registry.createEntity([dummyPositionComponent, dummySpriteComponent]);
-
-        this.registry.entitiesToBeKilled.push(actionableTile);
-
-
-        // Create sword entity
-        let endTime = Date.now() + 3000;
-
-        // Set up for creating the sword
-        const facing = this.player.components["Character"].facing;
-        const mode = this.player.components["Animation"].isAttacking ? "attack" : "move";
-        const originalSrcRect = LINK_ANIMATIONS["value"]["frames"][facing][mode]["srcRect"]
- 
-        dummyPositionComponent = {
-            name: "Position", 
-            value: {
-                x: this.player.components["Position"].x - 7,
-                y: this.player.components["Position"].y - 48,
-                height: this.player.components["Position"].height ,
-                width: this.player.components["Position"].width
-            } 
-        }
-
-        dummySpriteComponent = {
-            name: "Sprite",
-            value: {
-                srcRect: {
-                    x: 58,
-                    y: 192,
-                    width: 30,
-                    height: 20
-                },
-                path: "link.png"
-            }
-        }
-
-        const swordEntity = this.registry.createEntity([dummyPositionComponent, dummySpriteComponent]);
-
-        this.player.components["Animation"]["frames"][facing][mode]["srcRect"] = LINK_WEAPON_PICKUP.value.frames.srcRect;
-        
-        document.removeEventListener("keyup", this.handleUserInput);
-        document.removeEventListener("keydown", this.handleUserInput);
-
-        let oldAudioObject = this.audioObject;
-        // Start music
-        if(audioPath) {
-            if(this.audioObject) this.audioObject.pause();
-            
-            this.audioObject = new Audio(audioPath);
-            this.audioObject.play();
-        }
-
-
-        // Recursion to waste time
-        const recursion = () => {
-            let currentTime = Date.now();
-            if(endTime > currentTime) {
-                currentTime = Date.now();
-                requestAnimationFrame(recursion);
-                this.player.components["Movement"].vY = 0
-                this.player.components["Movement"].vX = 0
-
-            } 
-            else {
-                // return everything to normal
-                document.addEventListener("keyup", this.handleUserInput);
-                document.addEventListener("keydown", this.handleUserInput);
-                this.player.components["Animation"]["frames"][facing][mode]["srcRect"] = originalSrcRect;
-                this.player.components["Animation"].shouldAnimate = false;
-                // remove sword entity
-                this.registry.entitiesToBeKilled.push(swordEntity);
-                this.addItemToInventory(INVENTORY_SWORD_1);
-                this.audioObject = oldAudioObject;
-                this.audioObject.play();
-            }
-        }
-
-        recursion();
-       
-
-    }
-
-    addItemToInventory = (item) => {
-
-
-        if(item.name === "Sword_1") {
-            item.img = new Image();
-            item.img.src = item.path;
-            this.player.components["Player"].inventory.sword = item;
-            this.player.components["Player"].activeA = item;
-            console.log(this.player)
-        }
-    }
 }
 
 const game = new Game();
 game.initialize();
-// game.loadScreen(screenOneObject);
+game.loadScreen(screenOneObject);
 // game.loadScreen(shop1);
 // game.loadScreen(screenA);
 // game.loadScreen(screenB);
 // game.loadScreen(screenC);
 // game.loadScreen(screenD);
-game.loadScreen(screenE);
+// game.loadScreen(screenE);
 
 
 game.update();
 game.render();
 
-// game.weaponPickupAnimation();
 
 
 
