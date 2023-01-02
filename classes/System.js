@@ -256,75 +256,42 @@ class AnimationSystem extends System {
 
     update = (gameTime) => {
         for(let entity of this.entities) {
+
+            if(entity.components["Animation"].shouldAnimate === true || ( entity.components["Player"]  &&  entity.components["Animation"].isAttacking === true )) {
     
-            const {facing} = entity.components["Character"];
+                const {facing} = entity.components["Character"];
 
-            if( entity.components["Player"] && ( entity.components["Animation"].shouldAnimate === true ||  entity.components["Animation"].isAttacking === true)) {
+                const mode =  entity.components["Animation"].isAttacking ? "attack" : "move";
 
-                if(facing) {
-                    const mode =  entity.components["Animation"].isAttacking ? "attack" : "move";
+                const currentFrame = 
+                    Math.floor(
+                    ( gameTime - entity.components["Animation"]["currentTimeOfAnimation"] ) 
+                    * 
+                    entity.components["Animation"]["frames"][facing][mode]["frameSpeedRate"] / 1000 ) 
+                    % entity.components["Animation"]["frames"][facing][mode]["numFrames"];
 
-                    const currentFrame = 
-                        Math.floor(
-                        ( gameTime - entity.components["Animation"]["currentTimeOfAnimation"] ) 
-                        * 
-                        entity.components["Animation"]["frames"][facing][mode]["frameSpeedRate"] / 1000 ) 
-                        % entity.components["Animation"]["frames"][facing][mode]["numFrames"];
-    
 
-                    if(currentFrame < 0 ) currentFrame = 0;
+                if(currentFrame < 0 ) currentFrame = 0;
 
-                    entity.components["Sprite"]["srcRect"] = entity.components["Animation"]["frames"][facing][mode]["srcRect"][currentFrame]
-                    
-                    entity.components["Animation"]["frames"][facing][mode]["currentFrame"] = currentFrame
-               
-                }
-            } 
-            // If not player and it is a character
-            else if (!entity.components["Player"] && entity.components["Character"]) {  
-                if(entity.components["Animation"].isStatic ) {
-                    const currentFrame = 
-                        Math.floor(
-                            (Date.now() - entity.components["Animation"]["frames"]["startTime"] ) 
-                            *
-                            entity.components["Animation"]["frames"]["frameSpeedRate"] / 1000 
-                        )  % entity.components["Animation"]["frames"]["numFrames"];
-                    
-                        
-
-                    entity.components["Sprite"]["srcRect"] = entity.components["Animation"]["frames"]["srcRect"][currentFrame];
-                  
-                    
-
-                } else {
-                    
-                    if(facing) {
-                        const mode =  entity.components["Animation"].isAttacking ? "attack" : "move";
-
-                        const currentFrame = 
-                            Math.floor(
-                            ( gameTime - entity.components["Animation"]["currentTimeOfAnimation"] ) 
-                            * 
-                            entity.components["Animation"]["frames"][facing][mode]["frameSpeedRate"] / 1000 ) 
-                            % entity.components["Animation"]["frames"][facing][mode]["numFrames"];
-        
-
-                        if(currentFrame < 0 ) currentFrame = 0;
-
-                        entity.components["Sprite"]["srcRect"] = entity.components["Animation"]["frames"][facing][mode]["srcRect"][currentFrame]
-                        
-                        entity.components["Animation"]["frames"][facing][mode]["currentFrame"] = currentFrame
+                entity.components["Sprite"]["srcRect"] = entity.components["Animation"]["frames"][facing][mode]["srcRect"][currentFrame]
                 
-                    }
-
-                }
+                entity.components["Animation"]["frames"][facing][mode]["currentFrame"] = currentFrame
             }
-            else {
 
-                entity.components["Sprite"]["srcRect"] = entity.components["Animation"]["frames"][facing]["move"]["srcRect"][0];
+            else if(entity.components["Animation"].isStatic ) {
+                const currentFrame = 
+                    Math.floor(
+                        (Date.now() - entity.components["Animation"]["frames"]["startTime"] ) 
+                        *
+                        entity.components["Animation"]["frames"]["frameSpeedRate"] / 1000 
+                    )  % entity.components["Animation"]["frames"]["numFrames"];
+                
+                    
 
-           }
-            
+                entity.components["Sprite"]["srcRect"] = entity.components["Animation"]["frames"]["srcRect"][currentFrame];
+              
+
+            } 
 
         }
     }
@@ -369,6 +336,7 @@ class MovementSystem extends System {
             if(entity.components["Movement"].vX < 0) entity.components["Character"].facing = "left"
             if(entity.components["Movement"].vX > 0) entity.components["Character"].facing = "right"
 
+            // He is running
             if((entity.components["Movement"].vX !== 0 || entity.components["Movement"].vY !== 0 )
                 && entity.components["Animation"]) {
                 entity.components["Animation"].shouldAnimate = true;
@@ -377,12 +345,11 @@ class MovementSystem extends System {
                     entity.components["Animation"].currentTimeOfAnimation = 0;
                     entity.components["Animation"].isAttacking = false;
                 }
-            } 
-            else {
-                entity.components["Animation"].shouldAnimate = false;
-
             }
-
+            // If the playeris not attacking then we should set the animate to false
+            else if(entity.components["Player"] && entity.components["Animation"].isAttacking === false ) {
+                    entity.components["Animation"].shouldAnimate = false;
+            }
 
         }
     }

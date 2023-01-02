@@ -499,6 +499,7 @@ class Game {
                     }
                     case "v": {
                         if(!this.player.components["Animation"].isAttacking) {
+                            this.player.components["Animation"].shouldAnimate = true;
                             this.player.components["Animation"].isAttacking = true;
                             this.player.components["Animation"].currentTimeOfAnimation = Date.now();
                         }
@@ -531,7 +532,7 @@ class Game {
                     this.player.components["Animation"].shouldAnimate = false;
                 }
                 else if (key === "v") {
-
+                    // this.player.components["Animation"].shouldAnimate = false;
                     this.player.components["Animation"].isAttacking = false;
                     this.player.components["Animation"].currentTimeOfAnimation = 0;
 
