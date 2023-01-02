@@ -103,10 +103,6 @@ class CollisionComponent extends Component {
 class HitboxComponent extends Component {
     constructor(componentType, componentObj) {
         super(componentType);
-        this.x = componentObj.x;
-        this.y = componentObj.y;
-        this.width = componentObj.width;
-        this.height = componentObj.height;
         this.owner = componentObj.owner;            //  2 = enemyAttack , 1 = linkattack, 4 = enemy, 3 = Link
         this.damage = componentObj.damage;
     }

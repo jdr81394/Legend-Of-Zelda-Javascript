@@ -260,9 +260,6 @@ class Game {
                     components.push(spriteDummyComponent);
                }
 
-   
-       
-        
 
                 
                 this.registry.createEntity(components);
@@ -301,10 +298,6 @@ class Game {
                 const dummyHitboxComponent = {
                     name: "Hitbox",
                     value: {
-                        x: x,
-                        y: y,
-                        width: TILE_SIZE,
-                        height: TILE_SIZE,
                         owner: 4
                     }
                 }
@@ -412,7 +405,7 @@ class Game {
         // gridCoX is a grid coefficient
         // gridCoY is a gridcoffiecien
         const gridCoX = coX !==undefined ? coX : 8;
-        const gridCoY = coY !=undefined ? coY: 1;
+        const gridCoY = coY !=undefined ? coY: 8;
         const playerDummyComponent = { "name": "Player" };
         const characterDummyComponent = {name: "Character", value: {facing : "down"}};
         const positionDummyComponent = {"name": "Position", "value": {x: gridCoX * TILE_SIZE, y: gridCoY * TILE_SIZE, height: TILE_SIZE - 10, width: TILE_SIZE - 10}};
@@ -452,10 +445,6 @@ class Game {
         const hitboxDummyComponent = {
             "name": "Hitbox",
             "value": {
-                x: undefined,   // not important
-                y: undefined,
-                width: positionDummyComponent.value.width,
-                height: positionDummyComponent.value.height,
                 owner: 3,
                 damage: 0.5
             }
@@ -551,13 +540,13 @@ class Game {
 
 const game = new Game();
 game.initialize();
-// game.loadScreen(screenOneObject);
+game.loadScreen(screenOneObject);
 // game.loadScreen(shop1);
 // game.loadScreen(screenA);
 // game.loadScreen(screenB);
 // game.loadScreen(screenC);
 // game.loadScreen(screenD);
-game.loadScreen(screenE);
+// game.loadScreen(screenE);
 
 
 game.update();

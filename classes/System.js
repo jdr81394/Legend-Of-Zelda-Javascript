@@ -80,10 +80,6 @@ class RenderSystem extends System {
                             dummyHitboxComponent = {
                                 name: "Hitbox",
                                 value: {
-                                    x: xPosition + 10,
-                                    y: yPosition + 5,
-                                    width: 20,
-                                    height: 65,
                                     owner: 1,
                                     damage
                                 }
@@ -102,10 +98,6 @@ class RenderSystem extends System {
                             dummyHitboxComponent = {
                                 name: "Hitbox",
                                 value: {
-                                    x: xPosition,
-                                    y: yPosition + 17,
-                                    width: 65,
-                                    height: 20,
                                     owner: 1,
                                     damage
                                 }
@@ -123,10 +115,6 @@ class RenderSystem extends System {
                             dummyHitboxComponent = {
                                 name: "Hitbox",
                                 value: {
-                                    x: xPosition,
-                                    y: yPosition + 17,
-                                    width: 65,
-                                    height: 20,
                                     owner: 1,
                                     damage
                                 }
@@ -144,10 +132,6 @@ class RenderSystem extends System {
                             dummyHitboxComponent = {
                                 name: "Hitbox",
                                 value: {
-                                    x: xPosition + 10,
-                                    y: yPosition,
-                                    width: 20,
-                                    height: 65,
                                     owner: 1,
                                     damage
                                 }
