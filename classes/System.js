@@ -37,13 +37,13 @@ class HealthSystem extends System {
 
                     for(let key in itemDropTable) {
                         const value = itemDropTable[key];
-                            console.log("key: " , key)
 
                         // Math.random will return a value between 0 and 1, if it is less than,
                         // then will have that true. so a value of 1 will always be true
                         if(Math.random() < value) {
                             const { x,y }= entity.components["Position"];
                             ITEM_TABLE[key].onDrop(registry, x,y);
+                            break;
                         }
                     }
                 }
