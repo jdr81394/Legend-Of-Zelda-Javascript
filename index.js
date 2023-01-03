@@ -278,7 +278,7 @@ class Game {
                 const {x,y} = enemies[i];
 
                 const positionDummyComponent = {name: "Position", value: {x: x * TILE_SIZE, y: y * TILE_SIZE, width: TILE_SIZE, height: TILE_SIZE}};
-                const characterDummyComponent = {name: "Character", value: {facing: "left", initNodeX: x, initNodeY: y}};
+                const characterDummyComponent = {name: "Character", value: {facing: "left" }};
                 const dummySpriteComponent = {
                     name: "Sprite",
                     value: {
