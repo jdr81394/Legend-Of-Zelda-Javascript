@@ -40,6 +40,8 @@ class MovementComponent extends Component {
         super(componentType);
         this.vX = componentObj.vX;
         this.vY = componentObj.vY;
+        this.knockBackVx = 0;
+        this.knockBackVy = 0;
         this.collisionX = false;
         this.collisionY = false;
     }

@@ -320,11 +320,6 @@ class MovementSystem extends System {
             entity.components["Movement"].collisionY = false;
 
 
-            entity.components["Position"].x +=  entity.components["Movement"].vX;
-            entity.components["Position"].y +=  entity.components["Movement"].vY;
-
-
-
             if(entity.components["Movement"].vY < 0) {
                 entity.components["Character"].facing = "up"
             }
@@ -337,6 +332,25 @@ class MovementSystem extends System {
             if(entity.components["Movement"].vX > 0) {
                 entity.components["Character"].facing = "right"
             }
+
+            entity.components["Position"].x +=  (entity.components["Movement"].vX + entity.components["Movement"].knockBackVx);
+            entity.components["Position"].y +=  (entity.components["Movement"].vY + entity.components["Movement"].knockBackVy);
+
+            if(entity.components["Movement"].knockBackVx < 0) {
+                entity.components["Movement"].knockBackVx = 0.95 * Math.ceil(entity.components["Movement"].knockBackVx);
+            } else {
+                entity.components["Movement"].knockBackVx = 0.95 * Math.floor(entity.components["Movement"].knockBackVx);
+
+            }
+
+
+            if(entity.components["Movement"].knockBackVy < 0) {
+                entity.components["Movement"].knockBackVy = 0.95 * Math.ceil(entity.components["Movement"].knockBackVy);
+            } else {
+                entity.components["Movement"].knockBackVy = .95 * Math.floor(entity.components["Movement"].knockBackVy);
+
+            }
+
 
             // He is running, make hiim animate
             if((entity.components["Movement"].vX !== 0 || entity.components["Movement"].vY !== 0 )
@@ -578,19 +592,25 @@ class HitboxSystem extends System {
                                 // Left or right?
                                 if(differenceX < 0) {
                                     side = "Right";
+                                    link.components["Movement"].knockBackVx = -10;
+
                                 } else {
+                                    link.components["Movement"].knockBackVx = 10;
                                     side = "Left";
                                 }
                             }
                             else {
                                 if(differenceY < 0) {
+                                    link.components["Movement"].knockBackVy = -10;
                                     side = "Bottom";
                                 } else {
+                                    console.log("TOP")
                                     side = "Top";
+                                    link.components["Movement"].knockBackVy = 10;
                                 }
                             }
 
-                            console.log("Side: " , side);
+                            // console.log("Side: " , side);
 
                         
                         }
