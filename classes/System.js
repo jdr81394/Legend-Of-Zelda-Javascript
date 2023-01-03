@@ -1,5 +1,5 @@
 
-import {TILE_SIZE, c , canvas} from "../index.js";
+import { c , canvas} from "../index.js";
 import { INVENTORY_SWORD_1 } from "../items/weapons.js";
 class System {
     constructor(systemType) {
@@ -60,17 +60,22 @@ class RenderSystem extends System {
                     let dummyHitboxComponent = undefined;
 
                     const facing = entity.components["Character"]["facing"];
+                    // This is for swinging the sword
+                    // If player has item, they are attacking, and the current frame is 0. We want currentFrame to be 0 because we only want to show the sword on the very first frame which is when the motion starts
                     if(entity.components["Player"]["activeA"] && entity.components["Animation"]["isAttacking"] && entity.components["Animation"]["frames"][facing]["attack"]["currentFrame"] === 0) {
+                        
+                        // xPosition and yPosition are to display the sword
                         let xPosition = entity.components["Position"].x;
                         let yPosition = entity.components["Position"].y;
                         let value = {};
                         const damage = 2;
+                        const owner = 1;
 
                         if(facing === "up") {
                             xPosition = entity.components["Position"].x - 8;
                             yPosition -= 50
 
-                            // width and height are for the srcRect
+                            // width and height are for the srcRect of the sword
                             value = {
                                 x: xPosition,
                                 y: yPosition,
@@ -80,7 +85,7 @@ class RenderSystem extends System {
                             dummyHitboxComponent = {
                                 name: "Hitbox",
                                 value: {
-                                    owner: 1,
+                                    owner,
                                     damage
                                 }
                             }
@@ -98,7 +103,7 @@ class RenderSystem extends System {
                             dummyHitboxComponent = {
                                 name: "Hitbox",
                                 value: {
-                                    owner: 1,
+                                    owner,
                                     damage
                                 }
                             }
@@ -115,7 +120,7 @@ class RenderSystem extends System {
                             dummyHitboxComponent = {
                                 name: "Hitbox",
                                 value: {
-                                    owner: 1,
+                                    owner,
                                     damage
                                 }
                             }
@@ -132,7 +137,7 @@ class RenderSystem extends System {
                             dummyHitboxComponent = {
                                 name: "Hitbox",
                                 value: {
-                                    owner: 1,
+                                    owner,
                                     damage
                                 }
                             }
@@ -162,7 +167,10 @@ class RenderSystem extends System {
                          
                         }
 
-                        if(!entity.components["Player"]["activeA"]["weaponEntity"]) entity.components["Player"]["activeA"]["weaponEntity"] = registry.createEntity([dummyPositionComponent,dummySpriteComponent, dummyHitboxComponent]);
+                        // If the weapon entity doesn't already exist
+                        if(!entity.components["Player"]["activeA"]["weaponEntity"]) {
+                            entity.components["Player"]["activeA"]["weaponEntity"] = registry.createEntity([dummyPositionComponent,dummySpriteComponent, dummyHitboxComponent]);
+                        }
 
                         
                         // console.log(entity.components["Player"]["activeA"]["weaponEntity"])
@@ -190,45 +198,46 @@ class RenderSystem extends System {
                     positionComponent.x, positionComponent.y, positionComponent.width,positionComponent.height)
             }
 
-            if(isDebug && entity.components["Node"]) {
-                const {x, y } = entity.components["Position"];
-                const {nodeId} = entity.components["Node"].nodeId;
-                c.globalCompositeOperation="source-over";
-
-                c.beginPath();
-                c.font = "12px Arial"
-                c.fillStyle = "black";
-                c.fillText(nodeId, x,y + 70,50);
-                c.stroke();
-            }
-
-            if(isDebug 
-                && (
-                    entity.components["Collision"] 
-                    ||
-                    entity.components["Transition"]
-                    )
-                ) {
-
-                c.beginPath();
-                c.rect(positionComponent.x,positionComponent.y, positionComponent.width, positionComponent.height);
-                c.lineWidth = 3;
-                c.strokeStyle = "red";
-                c.stroke();
-            }
-
-            if(isDebug && entity.components["Hitbox"]) {
-                const {x,y,width,height} = entity.components["Hitbox"];
-                c.beginPath();
-                c.rect(x,y, width, height);
-                c.lineWidth = 3;
-                c.strokeStyle = "orange";
-                c.stroke();
+            if(isDebug) {
+                this.renderDebug(entity, positionComponent);
             }
 
 
 
         }
+    }
+
+    renderDebug = (entity, positionComponent) => {
+            
+        if(entity.components["Node"]) {
+            const {x, y } = entity.components["Position"];
+            const {nodeId} = entity.components["Node"].nodeId;
+            c.globalCompositeOperation="source-over";
+
+            c.beginPath();
+            c.font = "12px Arial"
+            c.fillStyle = "black";
+            c.fillText(nodeId, x,y + 70,50);
+            c.stroke();
+        }
+
+        if(entity.components["Collision"] || entity.components["Transition"]) {
+            c.beginPath();
+            c.rect(positionComponent.x,positionComponent.y, positionComponent.width, positionComponent.height);
+            c.lineWidth = 3;
+            c.strokeStyle = "red";
+            c.stroke();
+        }
+
+        if(entity.components["Hitbox"]) {
+            const {x,y,width,height} = entity.components["Hitbox"];
+            c.beginPath();
+            c.rect(x,y, width, height);
+            c.lineWidth = 3;
+            c.strokeStyle = "orange";
+            c.stroke();
+        }
+
     }
 }
 
@@ -366,7 +375,6 @@ class ActionableSystem extends System {
                     
                     
                     const {index} = actionableTile.components["Actionable"];
-                    console.log(actionableTile);
                     audioObject = actionableTile.components["Actionable"].action(player, actionableTile, audioObject, registry, handleUserInput);
                     actionableTile.components["Actionable"]["screenObject"]["actTile"][index]["remove"] = true;
                 }
@@ -474,11 +482,6 @@ class TransitionSystem extends System {
         }
     }
 
-    // transitionSpace object with coX, coY, screen (string), type
-    enterTransitionSpace = ({coX, coY, screen}) => {
-        // console.log("Transition Space: " , game);
-        game.unloadScreen();
-    }
 }
 
 class HitboxSystem extends System {
@@ -490,9 +493,11 @@ class HitboxSystem extends System {
     update = () => {
         for ( let i = this.entities.length - 1; i > 0 ; i-- ) {
             for(let j = 0; j < this.entities.length; j++) {
-                // console.log(this.entities[i], this.entities[j])
+
                 const entityI = this.entities[i];
                 const entityJ = this.entities[j];
+
+                // If theyre the same entities, continue
                 if(entityI.id === entityJ.id) {
                     continue;
                 }
@@ -500,9 +505,7 @@ class HitboxSystem extends System {
                 const {Position: positionI,Hitbox: hitboxI} = entityI.components
                 const {Position: positionJ, Hitbox: hitboxJ} = entityJ.components
 
-                // console.log( positionI)
-
-                // console.log(  positionI.x < positionJ.x + positis
+    
 
                 if(
                     positionI.x < positionJ.x + positionJ.width &&
@@ -541,7 +544,7 @@ class HitboxSystem extends System {
 
                     }
 
-                    // if hitboxI is enemy and hitboxJ is link attack
+                    // if hitboxI is enemy and hitboxJ is link attack OR
                     // if hitboxI is link attack and hitboxJ is enemy
                     else if(
                        (
@@ -557,10 +560,8 @@ class HitboxSystem extends System {
                     ) {
                         const linkAttack = hitboxI.owner === 3 ? entityI : entityJ;
                         const enemy = hitboxI.owner % 2 === 0 ? entityI : entityJ;
-                        // do damage to enemy
-                        // console.log(linkAttack.components["Hitbox"].damage)
+                        
                         if(linkAttack.components["Hitbox"].damage) {
-                            console.log("damange to enemy: " , linkAttack , enemy)
                             if(enemy.components["Health"].invulnerableTime === 0) {
                                 enemy.components["Health"].remainingHealth -= linkAttack.components["Hitbox"].damage;
                                 enemy.components["Health"].invulnerableTime = Date.now() + 500;
