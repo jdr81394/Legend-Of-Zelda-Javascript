@@ -23,6 +23,14 @@ class ItemDropComponent extends Component {
     }
 }
 
+class ItemComponent extends Component {
+    constructor(componentType, componentObj) {
+        super(componentType);
+        this.itemType = componentObj.itemType
+    }
+
+}
+
 class TransitionComponent extends Component {
     constructor(componentType, componentObj) {
         super(componentType);
@@ -181,5 +189,6 @@ export {
     AnimationComponent, 
     CollisionComponent,
     PlayerComponent,
-    ItemDropComponent
+    ItemDropComponent,
+    ItemComponent
 }

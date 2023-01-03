@@ -48,6 +48,7 @@ class Game {
         this.registry.addSystem("ActionableSystem");
         this.registry.addSystem("HitboxSystem");
         this.registry.addSystem("HealthSystem");
+        this.registry.addSystem("ItemSystem");
 
         document.addEventListener("keyup", this.handleUserInput);
         document.addEventListener("keydown", this.handleUserInput);
@@ -74,7 +75,7 @@ class Game {
             this.registry.getSystem("ActionableSystem").update(this.player, this.audioObject, this.registry, this.handleUserInput);
             this.registry.getSystem("HitboxSystem").update();
             this.registry.getSystem("HealthSystem").update(this.registry, this.gameTime);
-
+            this.registry.getSystem("ItemSystem").update(this.player);
             this.registry.update();
 
             this.updateAI();
@@ -314,8 +315,8 @@ class Game {
                     name: "ItemDrop",
                     value: {
                         itemDropTable: {
-                            ONE_RUPIE: 1,
-                            FIVE_RUPIES: .15
+                            ONE_RUPIE: .5,
+                            FIVE_RUPIES: .1
                         }
                     }
                 }

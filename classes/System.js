@@ -34,10 +34,10 @@ class HealthSystem extends System {
 
                 if(entity.components["ItemDrop"]) {
                     const {itemDropTable} = entity.components["ItemDrop"];
-                    console.log(entity.components["ItemDrop"])
 
                     for(let key in itemDropTable) {
                         const value = itemDropTable[key];
+                            console.log("key: " , key)
 
                         // Math.random will return a value between 0 and 1, if it is less than,
                         // then will have that true. so a value of 1 will always be true
@@ -53,6 +53,32 @@ class HealthSystem extends System {
         }
     }
 
+}
+
+class ItemSystem extends System {
+    constructor(systemType) {
+        super(systemType);
+        this.componentRequirements = ["Item"];
+    }
+
+    update = (player) => {
+
+        for(let entity of this.entities) {
+        
+            const {x: playerX, y: playerY, height: playerHeight, width: playerWidth } = player.components["Position"];
+            const {x: itemX, y: itemY, height: itemHeight, width: itemWidth} = entity.components["Position"] 
+            if(
+                playerX < itemX + itemWidth &&
+                playerX + playerWidth > itemX &&
+                playerY < itemY + itemHeight &&
+                playerY + playerHeight > itemY
+            ) {
+                const { itemType } = entity.components["Item"];
+
+                ITEM_TABLE[itemType].onPickup(entity);      // pass entity to kill itself
+            }
+        }
+    }
 }
 
 
@@ -741,4 +767,4 @@ class HitboxSystem extends System {
     }
 }
 
-export {System, RenderSystem,HitboxSystem, AnimationSystem, TransitionSystem,CollisionSystem,MovementSystem, HealthSystem, ActionableSystem}
+export {System, ItemSystem, RenderSystem,HitboxSystem, AnimationSystem, TransitionSystem,CollisionSystem,MovementSystem, HealthSystem, ActionableSystem}

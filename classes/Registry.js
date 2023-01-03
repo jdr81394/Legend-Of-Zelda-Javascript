@@ -1,6 +1,7 @@
 import {Entity} from "./Entity.js";
-import {TransitionComponent, CharacterComponent, PositionComponent, SpriteComponent, MovementComponent, AnimationComponent, CollisionComponent, PlayerComponent, ActionableComponent, HitboxComponent, NodeComponent, HealthComponent, ItemDropComponent} from "./Component.js";
-import {AnimationSystem, ActionableSystem,  CollisionSystem, MovementSystem, RenderSystem, TransitionSystem, HitboxSystem, HealthSystem} from "./System.js"
+import {TransitionComponent, CharacterComponent, PositionComponent, SpriteComponent, MovementComponent, AnimationComponent, CollisionComponent, PlayerComponent, ActionableComponent, HitboxComponent, NodeComponent, HealthComponent, ItemDropComponent, ItemComponent} from "./Component.js";
+import {AnimationSystem, ActionableSystem,  CollisionSystem, MovementSystem, RenderSystem, TransitionSystem, HitboxSystem, HealthSystem, ItemSystem} from "./System.js"
+import { ITEM_TABLE } from "../items/itemDropTable.js";
 
 
 
@@ -25,6 +26,13 @@ class Registry {
 
 
         for(let entityToBeKilled of this.entitiesToBeKilled) {
+
+            if(entityToBeKilled.components["Item"]) {
+                const { itemType } = entityToBeKilled.components["Item"];
+                ITEM_TABLE[itemType].onDisappear();
+            }
+
+            
             // remove entities from systenm
             // Go through each component it has
 
@@ -135,8 +143,12 @@ class Registry {
 
                 case "ItemDrop": {
                     const componentObj = component["value"];
-                    console.log(componentObj)
                     newEntityComponents["ItemDrop"] = new ItemDropComponent(component["name"], componentObj);
+                    break;
+                }
+                case "Item": {
+                    const componentObj = component["value"];
+                    newEntityComponents["Item"] = new ItemComponent(component["name"], componentObj);
                     break;
                 }
 
@@ -188,6 +200,10 @@ class Registry {
             }
             case "HitboxSystem" : {
                 newSystem = new HitboxSystem(systemType);
+                break;
+            }
+            case "ItemSystem": {
+                newSystem = new ItemSystem(systemType);
                 break;
             }
             default: {
