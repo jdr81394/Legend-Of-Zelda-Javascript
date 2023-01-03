@@ -1,5 +1,5 @@
 import {Entity} from "./Entity.js";
-import {TransitionComponent, CharacterComponent, PositionComponent, SpriteComponent, MovementComponent, AnimationComponent, CollisionComponent, PlayerComponent, ActionableComponent, HitboxComponent, NodeComponent, HealthComponent} from "./Component.js";
+import {TransitionComponent, CharacterComponent, PositionComponent, SpriteComponent, MovementComponent, AnimationComponent, CollisionComponent, PlayerComponent, ActionableComponent, HitboxComponent, NodeComponent, HealthComponent, ItemDropComponent} from "./Component.js";
 import {AnimationSystem, ActionableSystem,  CollisionSystem, MovementSystem, RenderSystem, TransitionSystem, HitboxSystem, HealthSystem} from "./System.js"
 
 
@@ -129,8 +129,14 @@ class Registry {
 
                 case "Node" : {
                     const componentObj = component["value"];
-
                     newEntityComponents["Node"] = new NodeComponent(component["name"], componentObj);
+                    break;
+                }
+
+                case "ItemDrop": {
+                    const componentObj = component["value"];
+                    console.log(componentObj)
+                    newEntityComponents["ItemDrop"] = new ItemDropComponent(component["name"], componentObj);
                     break;
                 }
 

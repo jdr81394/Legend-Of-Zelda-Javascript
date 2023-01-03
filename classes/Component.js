@@ -16,6 +16,13 @@ class PositionComponent extends Component {
     }
 }
 
+class ItemDropComponent extends Component {
+    constructor(componentType, componentObj) {
+        super(componentType);
+        this.itemDropTable = componentObj.itemDropTable; 
+    }
+}
+
 class TransitionComponent extends Component {
     constructor(componentType, componentObj) {
         super(componentType);
@@ -126,6 +133,8 @@ class PlayerComponent extends Component {
 }
 
 
+
+
 class HealthComponent extends Component {
     constructor(componentType, componentObj) {
         super(componentType);
@@ -172,4 +181,5 @@ export {
     AnimationComponent, 
     CollisionComponent,
     PlayerComponent,
+    ItemDropComponent
 }

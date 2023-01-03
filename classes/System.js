@@ -1,5 +1,6 @@
 
 import { c , canvas} from "../index.js";
+import { ITEM_TABLE } from "../items/itemDropTable.js";
 import { INVENTORY_SWORD_1 } from "../items/weapons.js";
 class System {
     constructor(systemType) {
@@ -29,6 +30,24 @@ class HealthSystem extends System {
             
 
             if(remainingHealth <= 0) {
+                // Drop items if applicable
+
+                if(entity.components["ItemDrop"]) {
+                    const {itemDropTable} = entity.components["ItemDrop"];
+                    console.log(entity.components["ItemDrop"])
+
+                    for(let key in itemDropTable) {
+                        const value = itemDropTable[key];
+
+                        // Math.random will return a value between 0 and 1, if it is less than,
+                        // then will have that true. so a value of 1 will always be true
+                        if(Math.random() < value) {
+                            const { x,y }= entity.components["Position"];
+                            ITEM_TABLE[key].onDrop(registry, x,y);
+                        }
+                    }
+                }
+
                 registry.entitiesToBeKilled.push(entity);
             }
         }
@@ -68,7 +87,7 @@ class RenderSystem extends System {
                         let xPosition = entity.components["Position"].x;
                         let yPosition = entity.components["Position"].y;
                         let value = {};
-                        const damage = 1;
+                        const damage = 5;
                         const owner = 1;
 
                         if(facing === "up") {

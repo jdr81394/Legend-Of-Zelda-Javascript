@@ -309,7 +309,18 @@ class Game {
                         totalHealth: 4
                     }
                 }
-                components.push(positionDummyComponent,characterDummyComponent,dummySpriteComponent, dummyHealthComponent, movementComponent, RED_OCKOTOK, dummyHitboxComponent);
+
+                const dummyItemDropComponent = {
+                    name: "ItemDrop",
+                    value: {
+                        itemDropTable: {
+                            ONE_RUPIE: 1,
+                            FIVE_RUPIES: .15
+                        }
+                    }
+                }
+
+                components.push(positionDummyComponent,characterDummyComponent,dummySpriteComponent, dummyHealthComponent, movementComponent, RED_OCKOTOK, dummyHitboxComponent, dummyItemDropComponent);
                 
                 const enemy = this.registry.createEntity(components);
                 enemy.stateMachine = new StateMachine(enemy, this.graph);
