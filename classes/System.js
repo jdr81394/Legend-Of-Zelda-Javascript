@@ -68,7 +68,7 @@ class RenderSystem extends System {
                         let xPosition = entity.components["Position"].x;
                         let yPosition = entity.components["Position"].y;
                         let value = {};
-                        const damage = 2;
+                        const damage = 1;
                         const owner = 1;
 
                         if(facing === "up") {
@@ -145,6 +145,8 @@ class RenderSystem extends System {
                         // Now create the weapon    
                         let dummyPositionComponent = undefined;
                         let dummySpriteComponent = undefined;
+
+
     
                         if(entity.components["Player"]["activeA"]["name"] === "Sword_1") {
                             dummyPositionComponent = {
@@ -169,6 +171,8 @@ class RenderSystem extends System {
 
                         // If the weapon entity doesn't already exist
                         if(!entity.components["Player"]["activeA"]["weaponEntity"]) {
+                            const swordSwing = new Audio("./assets/audio/swordSlash.mp3");
+                            swordSwing.play();
                             entity.components["Player"]["activeA"]["weaponEntity"] = registry.createEntity([dummyPositionComponent,dummySpriteComponent, dummyHitboxComponent]);
                         }
 
@@ -347,9 +351,10 @@ class MovementSystem extends System {
             if(entity.components["Movement"].knockBackVy < 0) {
                 entity.components["Movement"].knockBackVy = 0.95 * Math.ceil(entity.components["Movement"].knockBackVy);
             } else {
-                entity.components["Movement"].knockBackVy = .95 * Math.floor(entity.components["Movement"].knockBackVy);
+                entity.components["Movement"].knockBackVy = 0.95 * Math.floor(entity.components["Movement"].knockBackVy);
 
             }
+            
 
 
             // He is running, make hiim animate
@@ -563,11 +568,11 @@ class HitboxSystem extends System {
                         
                             // find direction of collision
 
-                            const linkCenterX = link.components["Position"].x;
-                            const linkCenterY = link.components["Position"].y;
+                            const linkCenterX = link.components["Position"].x - (link.components["Position"].width/2);
+                            const linkCenterY = link.components["Position"].y - (link.components["Position"].height/2);
 
-                            const enemyCenterX = enemy.components["Position"].x;
-                            const enemyCenterY = enemy.components["Position"].y;
+                            const enemyCenterX = enemy.components["Position"].x - (enemy.components["Position"].width/2);
+                            const enemyCenterY = enemy.components["Position"].y - (enemy.components["Position"].height/2);
 
                             let differenceX = linkCenterX - enemyCenterX;
                             let differenceY = linkCenterY - enemyCenterY;
@@ -598,16 +603,20 @@ class HitboxSystem extends System {
                                     link.components["Movement"].knockBackVx = 10;
                                     side = "Left";
                                 }
+
+                                const linkHurtAudio = new Audio("../assets/audio/linkHurt.mp3")
+                                linkHurtAudio.play(); 
                             }
                             else {
                                 if(differenceY < 0) {
                                     link.components["Movement"].knockBackVy = -10;
                                     side = "Bottom";
                                 } else {
-                                    console.log("TOP")
                                     side = "Top";
                                     link.components["Movement"].knockBackVy = 10;
                                 }
+                                const linkHurtAudio = new Audio("../assets/audio/linkHurt.mp3")
+                                linkHurtAudio.play();
                             }
 
                             // console.log("Side: " , side);
@@ -624,26 +633,80 @@ class HitboxSystem extends System {
                     // if hitboxI is link attack and hitboxJ is enemy
                     else if(
                        (
-                           hitboxI.owner % 2 === 0
+                           hitboxI.owner === 4
                             &&
                             hitboxJ.owner === 1
                         ) ||
                         (
                             hitboxI.owner === 1 
                             &&
-                            hitboxJ.owner % 2 ===0
+                            hitboxJ.owner  ===4
                         )
                     ) {
-                        const linkAttack = hitboxI.owner === 3 ? entityI : entityJ;
-                        const enemy = hitboxI.owner % 2 === 0 ? entityI : entityJ;
+                        const linkAttack = hitboxI.owner === 1 ? entityI : entityJ;
+                        const enemy = hitboxI.owner  === 4 ? entityI : entityJ;
                         
                         if(linkAttack.components["Hitbox"].damage) {
                             if(enemy.components["Health"].invulnerableTime === 0) {
                                 enemy.components["Health"].remainingHealth -= linkAttack.components["Hitbox"].damage;
                                 enemy.components["Health"].invulnerableTime = Date.now() + 500;
+
+                            // find direction of collision
+
+                            const linkAttackCenterX = linkAttack.components["Position"].x - (linkAttack.components["Position"].width/2);
+                            const linkAttackCenterY = linkAttack.components["Position"].y - (linkAttack.components["Position"].height/2);
+
+                            const enemyCenterX = enemy.components["Position"].x - (enemy.components["Position"].width/2);
+                            const enemyCenterY = enemy.components["Position"].y - (enemy.components["Position"].height/2);
+
+                            let differenceX = linkAttackCenterX - enemyCenterX;
+                            let differenceY = linkAttackCenterY - enemyCenterY;
+
+                            let positiveX = 0, positiveY = 0;
+                            let side = null;
+                        
+                            if(differenceX < 0) {
+                                positiveX = differenceX * -1;
+                            } else {
+                                positiveX = differenceX;
+                            }
+
+                            if(differenceY < 0) {
+                                positiveY = differenceY * -1;
+                            } else {
+                                positiveY = differenceY;
+                            }
+
+                            // Find out which side had the collision
+                            if(positiveX > positiveY) {
+                                // Left or right?
+                                if(differenceX < 0) {
+                                    side = "Left";
+                                    enemy.components["Movement"].knockBackVx = 10;
+
+                                } else {
+                                    enemy.components["Movement"].knockBackVx = -10;
+                                    side = "Right";
+                                }
+
+                                const enemyHurtAudio = new Audio("../assets/audio/enemyHurt.mp3")
+                                enemyHurtAudio.play(); 
+                            }
+                            else {
+                                if(differenceY < 0) {
+                                    enemy.components["Movement"].knockBackVy = 10;
+                                    side = "Top";
+                                } else {
+                                    side = "Bottom";
+                                    enemy.components["Movement"].knockBackVy = -10;
+                                }
+                                const enemyHurtAudio = new Audio("../assets/audio/enemyHurt.mp3")
+                                enemyHurtAudio.play();
                             }
 
                         }
+
+                    }
 
 
 

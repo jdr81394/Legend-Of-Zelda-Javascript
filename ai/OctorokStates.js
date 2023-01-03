@@ -63,7 +63,6 @@ class RunAtPlayerState {
         const length = path.length - 1;
         let nextNodeId = path[length];
 
-        // console.log(enemy.components["Character"].path)
 
         if(gameGraph.values[nextNodeId]) {
 
@@ -72,55 +71,43 @@ class RunAtPlayerState {
 
             // To determine if the enemy will go vertically or horizontally first, lets use some good old randomization
             // Depending on if it is 0 or 1, the enemy will go either vertically or horizontally
-            const rand = Math.round(Math.random());     
+            // const rand = Math.round(Math.random());     
 
             // if 0, go horizontally or go x if y has already been determined
-            // if(rand === 0 || enemyY === y) {
-            //     if(enemy.components["Position"].x - x > 0) {
-            //         enemy.components["Movement"].vX = 1;
-            //     }
-            //     else if (enemyX < 0) {
-            //         enemy.components["Movement"].vX = -1;
 
-            //     }
-            //     else {
-            //         enemy.components["Movement"].vX = 0;
-            //     }
-            // }
-            // must be 1, go vertically
-            // else {
+            if(enemyX - x > 0) {
+                enemy.components["Movement"].vX = -1;
+            }
+            else if (enemyX  - x < 0) {
+                enemy.components["Movement"].vX = 1;
 
-                if(enemyX - x > 0) {
-                    enemy.components["Movement"].vX = -1;
-                }
-                else if (enemyX  - x < 0) {
-                    enemy.components["Movement"].vX = 1;
+            }
 
-                }
-                else {
-                    enemy.components["Movement"].vX = 0;
-                }
-                // console.log(enemyY, y);
-                if(enemyY - y > 0) {
-                    enemy.components["Movement"].vY =  -1;
-                }
-                else if (enemyY - y < 0) {
-    
-                    enemy.components["Movement"].vY = 1;
-    
-                }
-                else {
-                    enemy.components["Movement"].vY = 0
-                }
-               
-                // else if (enemyY - y < 0) {
-    
-                //     enemy.components["Movement"].vY = 1;
-    
-                // }
-              
-            // }
+            else {
+                enemy.components["Movement"].vX = 0;
+            }
 
+            if(enemyY - y > 0) {
+                enemy.components["Movement"].vY =  -1;
+            }
+            else if (enemyY - y < 0) {
+                enemy.components["Movement"].vY = 1;
+            }
+ 
+            else {
+                enemy.components["Movement"].vY = 0
+            }
+            
+
+            // These 2 if statements handle the situation where if there is knockback, the enemy can get back onto his track
+            if(Math.abs(enemyX - x) < 1  ) {
+                enemy.components["Position"].x = x;
+
+            }
+
+            if(Math.abs(enemyY - y) < 1 ) {
+                enemy.components["Position"].y = y;
+            }
           
             
             if(enemyX === x && enemyY === y) {

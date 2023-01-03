@@ -306,7 +306,7 @@ class Game {
                 const dummyHealthComponent = {
                     "name": "Health",
                     "value": {
-                        totalHealth: 3
+                        totalHealth: 4
                     }
                 }
                 components.push(positionDummyComponent,characterDummyComponent,dummySpriteComponent, dummyHealthComponent, movementComponent, RED_OCKOTOK, dummyHitboxComponent);
