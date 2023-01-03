@@ -75,7 +75,7 @@ class ItemSystem extends System {
             ) {
                 const { itemType } = entity.components["Item"];
 
-                ITEM_TABLE[itemType].onPickup(entity);      // pass entity to kill itself
+                ITEM_TABLE[itemType].onPickup(entity, player);      // pass entity to kill itself
             }
         }
     }

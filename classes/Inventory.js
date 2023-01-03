@@ -52,7 +52,15 @@ class InventoryScreen {
 
         // render goldicon
         this.c.globalCompositeOperation="source-over";
+
+        // render number of rupies
         this.c.drawImage(this.goldIcon, 100, 115 ,15,15)
+
+        const rupiesNum = player ? player.components["Player"].inventory.rupies : 0; 
+        this.c.font = "10px Arial";
+        this.c.fillStyle = "white";
+        this.c.fillText(`x${rupiesNum}`, 117.5,123, 30);
+        // this.c.fillText()
       
         // render keys and bomb
         this.c.drawImage(this.keysAndBomb, 100, 130 ,15,15)

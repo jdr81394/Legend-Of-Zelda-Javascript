@@ -42,7 +42,8 @@ export const ITEM_TABLE = {
 
             registry.createEntity([dummyPositionComponent, dummySpriteComponent, dummyItemComponent])
         },            // render item and any animation. Needs x and y to appear
-        onPickup: (entity) => {
+        onPickup: (entity, player) => {
+            player.components["Player"].inventory.rupies += 1;
             entity.registry.entitiesToBeKilled.push(entity);
         },         // Add to inventory, add to money count, heal
         onDisappear: () => {
@@ -57,16 +58,15 @@ export const ITEM_TABLE = {
 
             registry.createEntity([dummyPositionComponent, dummyItemComponent, dummySpriteComponent])
         },
-        onPickup: (entity) => {
+        onPickup: (entity,player) => {
+            player.components["Player"].inventory.rupies += 5;
             entity.registry.entitiesToBeKilled.push(entity);
         },
         onDisappear: () => {
-            new Audio("../assets/audio/pickupRupie.mp3").play();
-            new Audio("../assets/audio/pickupRupie.mp3").play();
-            new Audio("../assets/audio/pickupRupie.mp3").play();
-            new Audio("../assets/audio/pickupRupie.mp3").play();
-            new Audio("../assets/audio/pickupRupie.mp3").play();
-
+            for(let i = 0; i < 5; i++) {
+                new Audio("../assets/audio/pickupRupie.mp3").play();
+            }
+ 
         }
     },
     BOMB: {}
