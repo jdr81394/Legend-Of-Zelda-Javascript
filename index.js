@@ -299,7 +299,7 @@ class Game {
                     name: "Hitbox",
                     value: {
                         owner: 4,
-                        damage: 1
+                        damage: .5
                     }
                 }
 

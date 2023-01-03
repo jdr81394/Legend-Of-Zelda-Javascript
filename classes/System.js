@@ -324,12 +324,21 @@ class MovementSystem extends System {
             entity.components["Position"].y +=  entity.components["Movement"].vY;
 
 
-            if(entity.components["Movement"].vY < 0) entity.components["Character"].facing = "up"
-            if(entity.components["Movement"].vY > 0) entity.components["Character"].facing = "down"
-            if(entity.components["Movement"].vX < 0) entity.components["Character"].facing = "left"
-            if(entity.components["Movement"].vX > 0) entity.components["Character"].facing = "right"
 
-            // He is running
+            if(entity.components["Movement"].vY < 0) {
+                entity.components["Character"].facing = "up"
+            }
+            if(entity.components["Movement"].vY > 0) {
+                entity.components["Character"].facing = "down"
+            }
+            if(entity.components["Movement"].vX < 0) {
+                entity.components["Character"].facing = "left"
+            }
+            if(entity.components["Movement"].vX > 0) {
+                entity.components["Character"].facing = "right"
+            }
+
+            // He is running, make hiim animate
             if((entity.components["Movement"].vX !== 0 || entity.components["Movement"].vY !== 0 )
                 && entity.components["Animation"]) {
                 entity.components["Animation"].shouldAnimate = true;
@@ -505,7 +514,6 @@ class HitboxSystem extends System {
                 const {Position: positionI,Hitbox: hitboxI} = entityI.components
                 const {Position: positionJ, Hitbox: hitboxJ} = entityJ.components
 
-    
 
                 if(
                     positionI.x < positionJ.x + positionJ.width &&
@@ -538,7 +546,55 @@ class HitboxSystem extends System {
                         if(link.components["Health"].invulnerableTime  === 0) {
                             link.components["Health"].remainingHealth = link.components["Health"].remainingHealth - enemy.components["Hitbox"].damage;
                             link.components["Health"].invulnerableTime = Date.now() + 1000;
+                        
+                            // find direction of collision
+
+                            const linkCenterX = link.components["Position"].x;
+                            const linkCenterY = link.components["Position"].y;
+
+                            const enemyCenterX = enemy.components["Position"].x;
+                            const enemyCenterY = enemy.components["Position"].y;
+
+                            let differenceX = linkCenterX - enemyCenterX;
+                            let differenceY = linkCenterY - enemyCenterY;
+
+                            let positiveX = 0, positiveY = 0;
+                            let side = null;
+                        
+                            if(differenceX < 0) {
+                                positiveX = differenceX * -1;
+                            } else {
+                                positiveX = differenceX;
+                            }
+
+                            if(differenceY < 0) {
+                                positiveY = differenceY * -1;
+                            } else {
+                                positiveY = differenceY;
+                            }
+
+                            // Find out which side had the collision
+                            if(positiveX > positiveY) {
+                                // Left or right?
+                                if(differenceX < 0) {
+                                    side = "Right";
+                                } else {
+                                    side = "Left";
+                                }
+                            }
+                            else {
+                                if(differenceY < 0) {
+                                    side = "Bottom";
+                                } else {
+                                    side = "Top";
+                                }
+                            }
+
+                            console.log("Side: " , side);
+
+                        
                         }
+
 
 
 
@@ -568,6 +624,8 @@ class HitboxSystem extends System {
                             }
 
                         }
+
+
 
 
                     }
