@@ -481,22 +481,33 @@ class Game {
                     case "w": {
                         this.player.components["Movement"].vY = -2
                         this.player.components["Movement"].vX = 0;
+                        if(this.isPaused) {
+                            this.inventoryScreen.moveCursorUp();
+                        }
                         break;
                     }
                     case "a": {
                         this.player.components["Movement"].vX = -2
                         this.player.components["Movement"].vY = 0;
-
+                        if(this.isPaused) {
+                            this.inventoryScreen.moveCursorLeft();
+                        }
                         break;
                     }
                     case "s": {
                         this.player.components["Movement"].vY = 2
                         this.player.components["Movement"].vX = 0;
+                        if(this.isPaused) {
+                            this.inventoryScreen.moveCursorDown();
+                        }
                         break;
                     }
                     case "d": {
                         this.player.components["Movement"].vX = 2
                         this.player.components["Movement"].vY = 0;
+                        if(this.isPaused) {
+                            this.inventoryScreen.moveCursorRight();
+                        }
                         break;
                     }
                     case "v": {

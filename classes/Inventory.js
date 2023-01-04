@@ -4,6 +4,10 @@ class InventoryScreen {
         this.canvas = document.getElementById("inventoryScreen");
         this.c = this.canvas.getContext("2d");
 
+        this.itemsSheet = new Image();
+        this.itemsSheet.src = `../assets/link.png`   // Jake - must make bomb transparent
+        this.bombSrcRect = { x: 350, y: 225, width: 25, height:25}
+
         this.goldIcon = new Image();
         this.goldIcon.src = `${PATH}goldIcon.png`;
 
@@ -29,6 +33,10 @@ class InventoryScreen {
         this.emptyHeart = new Image();
         this.emptyHeart.src = `${PATH}emptyHeart.png`;
 
+        this.cursorPositionX = 157.5;
+        this.cursorPositionY = 12.5;
+        this.selectedItem = 0;  // int
+        this.itemLayout = [];
 
         this.initialize();
     }
@@ -38,6 +46,68 @@ class InventoryScreen {
          
         this.render();
 
+    }
+    
+
+    fillInventory = (player) => {
+        const {inventory} = player.components["Player"];
+        const initialX = 145;
+        const initialY = 12.5;
+
+        const keys = Object.keys(inventory);
+
+        let count = 0;
+        for(let i = 0; i < keys.length; i++) {
+            const item = keys[i];
+            if(item === "bombs" && inventory[item] > 0) {
+                this.c.drawImage(
+                    this.itemsSheet,
+                    this.bombSrcRect.x, this.bombSrcRect.y, this.bombSrcRect.width, this.bombSrcRect.height,  
+                    initialX + (25 * count),initialY,30,25
+                )
+                count++;
+            }
+
+
+            // First item is always the first item
+            this.itemLayout.push(item);
+        }
+
+ 
+    }
+
+    moveCursorLeft = () => {
+        if(this.selectedItem === 0 || this.selectedItem === 5) {
+            return
+        }
+
+        this.selectedItem -= 1;
+        this.cursorPositionX -= 25
+    }
+
+    moveCursorRight = () => {
+        
+        if(this.selectedItem === 4 || this.selectedItem === 9) {
+            return
+        }
+
+        
+        this.selectedItem += 1;
+        this.cursorPositionX += 25
+    }
+
+    moveCursorDown = () => {
+        if(this.selectedItem >= 5) return;
+
+        this.selectedItem += 5
+        this.cursorPositionY += 25
+
+    }
+
+    moveCursorUp = () => {
+        if(this.selectedItem <= 4) return;
+        this.selectedItem -= 5
+        this.cursorPositionY -= 25
     }
 
 
@@ -153,14 +223,14 @@ class InventoryScreen {
         // If player has sword, render sword in A button
 
         if(player && player["components"]["Player"]["inventory"]["sword"]) {
-            player["components"]["Player"]["inventory"]["activeA"] = player["components"]["Player"]["inventory"]["sword"];
+            player["components"]["Player"]["activeA"] = player["components"]["Player"]["inventory"]["sword"];
         }
 
 
 
         // If active A, render it
-        if(player && player["components"]["Player"]["inventory"]["activeA"]) {
-            const {img, srcRect} = player["components"]["Player"]["inventory"]["activeA"];
+        if(player && player["components"]["Player"]["activeA"]) {
+            const {img, srcRect} = player["components"]["Player"]["activeA"];
 
             const {up} = srcRect;
             // render A button
@@ -191,6 +261,16 @@ class InventoryScreen {
             this.c.font = "12px Arial";
             this.c.fillStyle = "red";
             this.c.fillText("Inventory", 20, 20, 100);
+
+            // Fill inventory with items that link has
+            this.fillInventory(player);
+
+            // Draw selected item
+            this.c.beginPath();
+            this.c.rect(this.cursorPositionX, this.cursorPositionY, 20,15.5);
+            this.c.lineWidth = 1.75;
+            this.c.strokeStyle = "red";
+            this.c.stroke();
 
 
             // render selected B item
