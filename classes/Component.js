@@ -132,10 +132,11 @@ class PlayerComponent extends Component {
         this.activeB = undefined;           // weapon
         this.inventory = {
             sword: undefined,               // {name (string) , attack (integer), path (string), img (Image), srcRect: {x,y,width,height} , weaponEntity: Entity | undefined
-            bombs: undefined,
+            bombs: 0,
             wand: undefined,
             boomerang: undefined,
-            rupies: 0
+            rupies: 0,
+            keys: 0,
         }
     }
    

@@ -56,14 +56,22 @@ class InventoryScreen {
         // render number of rupies
         this.c.drawImage(this.goldIcon, 100, 115 ,15,15)
 
-        const rupiesNum = player ? player.components["Player"].inventory.rupies : 0; 
-        this.c.font = "10px Arial";
+        let rupiesNum, bombsNum, keysNum;
+
+        if(player) {
+            rupiesNum = player.components["Player"].inventory.rupies
+            bombsNum = player.components["Player"].inventory.bombs
+            keysNum = player.components["Player"].inventory.keys
+        }
+        this.c.font = "9px Arial";
         this.c.fillStyle = "white";
         this.c.fillText(`x${rupiesNum}`, 117.5,123, 30);
         // this.c.fillText()
       
         // render keys and bomb
         this.c.drawImage(this.keysAndBomb, 100, 130 ,15,15)
+        this.c.fillText(`x${keysNum}`, 117.5,136, 30);
+        this.c.fillText(`x${bombsNum}`, 117.5,144, 30);
 
         // render B button
         this.c.drawImage(
