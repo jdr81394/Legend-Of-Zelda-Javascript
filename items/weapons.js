@@ -57,7 +57,7 @@ const BOMB = {
 
 
 const WEAPONS_TABLE = {
-    bombs: BOMB
+    bomb: BOMB
 }
 
 

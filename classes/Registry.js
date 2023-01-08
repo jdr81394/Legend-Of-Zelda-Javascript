@@ -1,6 +1,6 @@
 import {Entity} from "./Entity.js";
 import {TransitionComponent, CharacterComponent, PositionComponent, SpriteComponent, MovementComponent, AnimationComponent, CollisionComponent, PlayerComponent, ActionableComponent, HitboxComponent, NodeComponent, HealthComponent, ItemDropComponent, ItemComponent} from "./Component.js";
-import {AnimationSystem, ActionableSystem,  CollisionSystem, MovementSystem, RenderSystem, TransitionSystem, HitboxSystem, HealthSystem, ItemSystem} from "./System.js"
+import {AnimationSystem, ActionableSystem,  CollisionSystem, MovementSystem, RenderSystem, TransitionSystem, HitboxSystem, HealthSystem, ItemSystem, InventoryManagementSystem} from "./System.js"
 import { ITEM_TABLE } from "../items/itemDropTable.js";
 
 
@@ -202,6 +202,10 @@ class Registry {
             }
             case "ItemSystem": {
                 newSystem = new ItemSystem(systemType);
+                break;
+            }
+            case "InventoryManagementSystem": {
+                newSystem= new InventoryManagementSystem(systemType);
                 break;
             }
             default: {

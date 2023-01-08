@@ -69,7 +69,25 @@ export const ITEM_TABLE = {
  
         }
     },
-    BOMB: {}
+    // Jake  - must make sure picking up bomb is working and the player cannot use bomb if none in inventory
+    BOMB: {
+        onDrop: (registry, x,y) => {
+            const dummyPositionComponent = generateDummyPositionComponent(x,y);
+
+            const dummySpriteComponent = generateDummySpriteComponent(360,225,17.5,17.5); 
+            const dummyItemComponent = generateDummyItemComponent(BOMB);
+
+            registry.createEntity([dummyPositionComponent, dummySpriteComponent, dummyItemComponent])
+        },
+        onPickup: (entity, player) => {
+            player.components["Player"].inventory.bomb += 1;
+            entity.registry.entitiesToBeKilled.push(entity);
+
+        },
+        onDisappear: () => {
+            new Audio("../assets/audio/importantItem.mp3").play();
+        }    
+    }
 };
 
 

@@ -50,27 +50,7 @@ class InventoryScreen {
     
 
     fillInventory = (player) => {
-        const {inventory} = player.components["Player"];
-        const initialX = 145;
-        const initialY = 12.5;
-
-        const keys = Object.keys(inventory);
-
-        let count = 0;
-        for(let i = 0; i < keys.length; i++) {
-            const item = keys[i];
-            if(item === "bombs" && inventory[item] > 0) {
-                this.c.drawImage(
-                    this.itemsSheet,
-                    this.bombSrcRect.x, this.bombSrcRect.y, this.bombSrcRect.width, this.bombSrcRect.height,  
-                    initialX + (25 * count),initialY,30,25
-                )
-                count++;
-                this.itemLayout.push(item);
-            }
-
-
-        }
+  
 
  
     }
@@ -112,6 +92,7 @@ class InventoryScreen {
 
     render = (isPaused, player) => {
 
+
         this.c.imageSmoothingEnabled  =true;
         this.c.imageSmoothingQuality = "high";
         // Render black background
@@ -129,7 +110,7 @@ class InventoryScreen {
 
         if(player) {
             rupiesNum = player.components["Player"].inventory.rupies
-            bombsNum = player.components["Player"].inventory.bombs
+            bombsNum = player.components["Player"].inventory.bomb
             keysNum = player.components["Player"].inventory.keys
         }
         this.c.font = "9px Arial";
@@ -140,7 +121,7 @@ class InventoryScreen {
         // render keys and bomb
         this.c.drawImage(this.keysAndBomb, 100, 130 ,15,15)
         this.c.fillText(`x${keysNum}`, 117.5,136, 30);
-        this.c.fillText(`x${bombsNum}`, 117.5,144, 30);
+        this.c.fillText(`x${bombsNum ? bombsNum : 0}`, 117.5,144, 30);
 
         // render B button
         this.c.drawImage(
@@ -240,6 +221,18 @@ class InventoryScreen {
             )
         }
 
+               // If active B, render it
+            if(player && player["components"]["Player"]["activeB"]) {
+                this.c.drawImage(
+                    this.itemsSheet,
+                    this.bombSrcRect.x, this.bombSrcRect.y, this.bombSrcRect.width, this.bombSrcRect.height, 
+                    140,130,20,20
+                )
+            }
+    
+
+
+
 
 
         // make dropdown
@@ -262,8 +255,47 @@ class InventoryScreen {
             this.c.fillText("Inventory", 20, 20, 100);
 
             // Fill inventory with items that link has
-            if(this.itemLayout.length === 0)
-            this.fillInventory(player);
+            const {inventory} = player.components["Player"];
+            const initialX = 145;
+            const initialY = 12.5;
+    
+            const keys = Object.keys(inventory);
+    
+            let count = 0;
+            for(let i = 0; i < keys.length; i++) {
+                const item = keys[i];
+                if(item === "bomb" && inventory[item] > 0) {
+                    this.c.drawImage(
+                        this.itemsSheet,
+                        this.bombSrcRect.x, this.bombSrcRect.y, this.bombSrcRect.width, this.bombSrcRect.height,  
+                        initialX + (25 * count),initialY,30,25
+                    )
+                   
+    
+    
+                    count++;
+                    this.itemLayout.push(item);
+                }
+    
+    
+            }
+
+
+            if(player["components"]["Player"]["activeB"]) {
+
+                const weaponName = player["components"]["Player"]["activeB"]["name"];
+
+                if(weaponName === "bomb") {
+                    this.c.drawImage(
+                        this.itemsSheet,
+                        this.bombSrcRect.x, this.bombSrcRect.y, this.bombSrcRect.width, this.bombSrcRect.height, 
+                        30,40,25,25
+                    )
+                }
+            }
+            
+               
+            
 
             // Draw selected item
             this.c.beginPath();

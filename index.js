@@ -49,6 +49,7 @@ class Game {
         this.registry.addSystem("HitboxSystem");
         this.registry.addSystem("HealthSystem");
         this.registry.addSystem("ItemSystem");
+        this.registry.addSystem("InventoryManagementSystem");
 
         document.addEventListener("keyup", this.handleUserInput);
         document.addEventListener("keydown", this.handleUserInput);
@@ -83,6 +84,8 @@ class Game {
             this.registry.getSystem("HitboxSystem").update();
             this.registry.getSystem("HealthSystem").update(this.registry, this.gameTime);
             this.registry.getSystem("ItemSystem").update(this.player);
+            this.registry.getSystem("InventoryManagementSystem").update();
+
             this.registry.update();
 
             this.updateAI();
@@ -314,7 +317,7 @@ class Game {
                 const dummyHealthComponent = {
                     "name": "Health",
                     "value": {
-                        totalHealth: 4
+                        totalHealth: 0.1
                     }
                 }
 
@@ -322,8 +325,9 @@ class Game {
                     name: "ItemDrop",
                     value: {
                         itemDropTable: {
-                            ONE_RUPIE: .5,
-                            FIVE_RUPIES: .1
+                            BOMB: 1,
+                            // ONE_RUPIE: .5,
+                            // FIVE_RUPIES: .1
                         }
                     }
                 }
@@ -477,7 +481,7 @@ class Game {
         ])
 
         addItemToInventory(this.player, INVENTORY_SWORD_1);
-        this.player.components["Player"]["activeB"] =  WEAPONS_TABLE["bombs"];
+        // this.player.components["Player"]["activeB"] =  WEAPONS_TABLE["bomb"];
 
     }
 
@@ -525,6 +529,7 @@ class Game {
                             const selIndex = this.inventoryScreen.selectedItem;
                             const selectedItem = this.inventoryScreen.itemLayout[selIndex]
                             this.player.components["Player"]["activeB"] =  WEAPONS_TABLE[selectedItem];
+                            
                         }
                         else {
                             if(this.player.components["Animation"]["isAttackingB"] === false) {

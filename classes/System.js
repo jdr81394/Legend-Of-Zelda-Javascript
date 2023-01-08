@@ -15,6 +15,27 @@ class System {
     }
 }
 
+
+class InventoryManagementSystem extends System {
+    constructor(systemType) {
+        super(systemType);
+        this.componentRequirements = ["Player"];
+    }
+
+    update = () => {
+        for(let player of this.entities) {
+            const { inventory, activeA, activeB} = player.components["Player"];
+            if(activeB) {
+                const currentWeaponB = activeB["name"];
+                if(typeof inventory[currentWeaponB] === "number"  && inventory[currentWeaponB] <= 0) {
+                    player.components["Player"]["activeB"] = undefined;
+                }
+            }
+
+        }
+    }
+}
+
 class HealthSystem extends System {
     constructor(systemType) {
         super(systemType);
@@ -246,6 +267,7 @@ class RenderSystem extends System {
 
 
             if(weapon.name === "bomb") {
+                entity.components["Player"]["inventory"]["bomb"] -= 1;
                 // Each weapon will handle this different and we'll different function for that.
                 // But for now, lets just do it for the bombs
 
@@ -879,4 +901,4 @@ class HitboxSystem extends System {
     }
 }
 
-export {System, ItemSystem,RenderSystem,HitboxSystem, AnimationSystem, TransitionSystem,CollisionSystem,MovementSystem, HealthSystem, ActionableSystem}
+export {System, ItemSystem,InventoryManagementSystem, RenderSystem,HitboxSystem, AnimationSystem, TransitionSystem,CollisionSystem,MovementSystem, HealthSystem, ActionableSystem}
