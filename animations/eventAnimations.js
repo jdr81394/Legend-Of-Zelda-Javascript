@@ -153,7 +153,13 @@ const bombExplosionAnimation = (args) =>  {
             }
         }
 
-        bombEntity.registry.createEntity([dummyPositionComponent, dummySpriteComponent, dummyHitboxComponent,BOMB_CLOUD])
+        let dummyAnimationComponent;
+        dummyAnimationComponent = Object.assign(BOMB_CLOUD, dummyAnimationComponent);
+
+        dummyAnimationComponent["value"]["currentTimeOfAnimation"] = Date.now();
+        
+
+        bombEntity.registry.createEntity([dummyPositionComponent, dummySpriteComponent, dummyHitboxComponent,dummyAnimationComponent])
     }
 
 

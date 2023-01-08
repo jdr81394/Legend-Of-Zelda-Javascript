@@ -389,7 +389,7 @@ const BOMB_CLOUD = {
             startTime: Date.now(),
             currentFrame: 0,
             numFrames: 3,
-            frameSpeedRate: 2,
+            frameSpeedRate: 5,
             removeOnFrame: 2
         }
     }
