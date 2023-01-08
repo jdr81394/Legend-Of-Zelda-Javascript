@@ -369,9 +369,12 @@ class RenderSystem extends System {
                     this.handleSwordSwing(entity)
 
                     this.handleAttackB(entity, eventBus);
+
                 }
 
                 const {x,y,width, height} = srcRect;
+
+                // console.log(srcRect)
                 c.globalCompositeOperation="source-over";
                 c.drawImage(
                     sprite,
@@ -436,11 +439,12 @@ class AnimationSystem extends System {
     update = (gameTime) => {
         for(let entity of this.entities) {
 
-            if(entity.components["Animation"].shouldAnimate === true || ( entity.components["Player"]  &&  entity.components["Animation"].isAttacking === true )) {
+            if(entity.components["Animation"].shouldAnimate === true || ( entity.components["Player"]  && ( entity.components["Animation"].isAttacking === true || entity.components["Animation"].isAttackingB === true) )) {
     
+
                 const {facing} = entity.components["Character"];
 
-                const mode =  entity.components["Animation"].isAttacking ? "attack" : "move";
+                const mode =  entity.components["Animation"].isAttacking || entity.components["Animation"].isAttackingB  ? "attack" : "move";
 
                 const currentFrame = 
                     Math.floor(
