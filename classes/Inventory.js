@@ -93,7 +93,7 @@ class InventoryScreen {
     render = (isPaused, player) => {
 
 
-        this.c.imageSmoothingEnabled  =true;
+        this.c.imageSmoothingEnabled = false;
         this.c.imageSmoothingQuality = "high";
         // Render black background
         this.c.clearRect(0,0, this.canvas.width, this.canvas.height);
@@ -217,7 +217,7 @@ class InventoryScreen {
             this.c.drawImage(
                 img,
                 up.x,up.y,up.width,up.height, 
-                175,127,20,18
+                169,129,37,15
             )
         }
 
@@ -237,6 +237,9 @@ class InventoryScreen {
 
         // make dropdown
         if(isPaused) {
+
+            this.c.imageSmoothingEnabled  =true;
+
             // slide out top
 
             let str = this.canvas.style.top.slice(0, this.canvas.style.top.length - 2);
