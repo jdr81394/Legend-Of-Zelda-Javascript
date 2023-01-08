@@ -248,21 +248,6 @@ const LINK_WEAPON_PICKUP = {
     }
 };
 
-const SWORD = {
-    name: "Animation",
-    value: {
-        frames: {
-            srcRect: [
-                {
-                    x: 200,
-                    y: 200,
-                    width: 100,
-                    height: 100
-                }
-            ]
-        }
-    }
-}
 
 const RED_OCKOTOK = {
     name: "Animation",
@@ -367,4 +352,47 @@ const RED_OCKOTOK = {
     }
 }
 
-export {LINK_ANIMATIONS, FIRE_ANIMATIONS,LINK_WEAPON_PICKUP,SWORD,RED_OCKOTOK }
+const BOMB_CLOUD = { 
+    name: "Animation",
+    value: {
+        isStatic: true,
+        isAttacking: false,
+        shouldAnimate: true,
+        currentTimeOfAnimation: 0,
+        frames: {
+            srcRect: [
+                {
+                    x: 0,
+                    y: 0,
+                    width: 15.5,
+                    height: 15.5,
+                },
+                {
+                    x: 15.5,
+                    y: 0,
+                    width: 15.5,
+                    height: 15.5,
+                },
+                {
+                    x: 31.0,
+                    y: 0,
+                    width: 15.5,
+                    height: 15.5,
+                },
+                {
+                    x: 46.5,
+                    y: 0,
+                    width: 15.5,
+                    height: 15.5,
+                },
+            ],
+            startTime: Date.now(),
+            currentFrame: 0,
+            numFrames: 3,
+            frameSpeedRate: 2,
+            removeOnFrame: 2
+        }
+    }
+}
+
+export {LINK_ANIMATIONS, FIRE_ANIMATIONS,LINK_WEAPON_PICKUP,RED_OCKOTOK,BOMB_CLOUD }

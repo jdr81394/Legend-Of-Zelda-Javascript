@@ -160,9 +160,7 @@ class Registry {
         newEntity.components = newEntityComponents;
         this.entitiesToBeAdded.push(newEntity);
 
-        // if(newEntity.components["Player"]){ 
-            return newEntity;
-        // }
+        return newEntity;
     }
 
     // 2

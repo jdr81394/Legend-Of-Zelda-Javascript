@@ -1,7 +1,7 @@
 const WEAPONS_PATH = "../assets/inventory/"
 const INVENTORY_SWORD_1 = {
     name: "Sword_1",
-    attack: 1,
+    damage: 1,
     path: `../assets/link.png`,
     img: undefined,
     srcRect: {
@@ -32,5 +32,33 @@ const INVENTORY_SWORD_1 = {
     }
 }
 
+const BOMB = {
+    name: "Bomb",
+    damage: 3,
+    path: "../assets/link.png",
+    img: undefined,
+    srcRect: {
+        down: {
+            x: 350, y: 225, width: 25, height:25
+        },
+        left: {
+            x: 350, y: 225, width: 25, height:25
+        },
+        up: {
+            x: 350, y: 225, width: 25, height:25
+        },
+        right: {
+            x: 350, y: 225, width: 25, height:25
+        }
+    },
 
-export {INVENTORY_SWORD_1};
+
+}
+
+
+const WEAPONS_TABLE = {
+    bombs: BOMB
+}
+
+
+export {INVENTORY_SWORD_1, WEAPONS_TABLE};

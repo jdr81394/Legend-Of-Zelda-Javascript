@@ -6,7 +6,7 @@ import StateMachine from "./ai/StateMachine.js";
 import { SEARCH_STATE } from "./ai/OctorokStates.js";
 import Graph from "./dataStructures/Graph.js";
 import {swordPickupAnimation} from "./animations/eventAnimations.js";
-import { INVENTORY_SWORD_1 } from "./items/weapons.js";
+import { INVENTORY_SWORD_1, WEAPONS_TABLE } from "./items/weapons.js";
 import addItemToInventory from "./utilities/addItemToInventory.js";
 
 var canvas = document.querySelector('canvas')
@@ -61,11 +61,18 @@ class Game {
         this.gameTime = Date.now();
         if(!this.isPaused) {
 
-            const event = this.eventBus.pop();
+
+            const event = this.eventBus[this.eventBus.length - 1]
+            
 
             if(event){ 
-                const {func, args } = event;
-                func(args)
+                const { func, args } = event;
+
+                if(Date.now() >= args["eventTime"]) {
+                    func(args)
+                    this.eventBus.pop();
+                }
+
             }
     
             this.registry.getSystem("AnimationSystem").update(this.gameTime);
@@ -94,7 +101,7 @@ class Game {
 
     render = () => {
         if(!this.isPaused) {
-            this.registry.getSystem("RenderSystem").update(this.isDebug, this.registry, this.gameTime);
+            this.registry.getSystem("RenderSystem").update(this.isDebug, this.registry, this.gameTime, this.eventBus);
         }
 
         this.inventoryScreen.render(this.isPaused, this.player)
@@ -355,7 +362,7 @@ class Game {
 
  
 
-        const {coX, coY, screen} = Transition;
+        const {coX, coY, screen, evenTime} = Transition;
 
         this.registry.removeAllEntities();
         
@@ -470,6 +477,8 @@ class Game {
         ])
 
         addItemToInventory(this.player, INVENTORY_SWORD_1);
+        this.player.components["Player"]["activeB"] =  WEAPONS_TABLE["bombs"];
+
     }
 
     handleUserInput = (e) => {
@@ -507,6 +516,20 @@ class Game {
                         this.player.components["Movement"].vY = 0;
                         if(this.isPaused) {
                             this.inventoryScreen.moveCursorRight();
+                        }
+                        break;
+                    }
+                    // B  attack
+                    case "c": {
+                        if(this.isPaused) {
+                            const selIndex = this.inventoryScreen.selectedItem;
+                            const selectedItem = this.inventoryScreen.itemLayout[selIndex]
+                            this.player.components["Player"]["activeB"] =  WEAPONS_TABLE[selectedItem];
+                        }
+                        else {
+                            if(this.player.components["Animation"]["isAttackingB"] === false) {
+                                this.player.components["Animation"]["isAttackingB"] = true;
+                            }
                         }
                         break;
                     }

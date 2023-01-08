@@ -3,28 +3,28 @@ export const FIVE_RUPIES = "FIVE_RUPIES";
 export const BOMB = "BOMB";
 
 
-const generateDummyPositionComponent = (x,y) => {
+export const generateDummyPositionComponent = (x,y, height, width) => {
     return {
         name: "Position",
         value: {
             x,y,
-            height: 70,
-            width: 60
+            height: height ? height: 70,
+            width: width ? width: 60
         }
     }
 }
 
-const generateDummySpriteComponent = (x,y,height,width) => ({
+export const generateDummySpriteComponent = (x,y,height,width, path) => ({
     name: "Sprite",
     value: {
-        path: "link.png",
+        path: path ? path: "link.png",
         srcRect: {
             x,y,height,width
         }
     }
 })
 
-const generateDummyItemComponent = (itemType) => ({
+export const generateDummyItemComponent = (itemType) => ({
     name: "Item", 
     value: {
         itemType

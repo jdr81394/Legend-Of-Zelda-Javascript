@@ -66,11 +66,10 @@ class InventoryScreen {
                     initialX + (25 * count),initialY,30,25
                 )
                 count++;
+                this.itemLayout.push(item);
             }
 
 
-            // First item is always the first item
-            this.itemLayout.push(item);
         }
 
  
@@ -263,6 +262,7 @@ class InventoryScreen {
             this.c.fillText("Inventory", 20, 20, 100);
 
             // Fill inventory with items that link has
+            if(this.itemLayout.length === 0)
             this.fillInventory(player);
 
             // Draw selected item

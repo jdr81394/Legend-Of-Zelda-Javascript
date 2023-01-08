@@ -78,6 +78,7 @@ class AnimationComponent extends Component {
         this.isStatic = componentObj.isStatic;      // determines if there are other directions to the image
         this.frames = componentObj.frames;          
         this.isAttacking = componentObj.isAttacking;
+        this.isAttackingB = false;
         this.currentTimeOfAnimation = componentObj.currentTimeOfAnimation;
         /*
         this.frames = 
@@ -141,9 +142,6 @@ class PlayerComponent extends Component {
     }
    
 }
-
-
-
 
 class HealthComponent extends Component {
     constructor(componentType, componentObj) {

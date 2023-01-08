@@ -7,6 +7,7 @@ const addItemToInventory = (player, item) => {
         player.components["Player"].inventory.sword = item;
         player.components["Player"].activeA = item;
     }
+    
 }
 
 

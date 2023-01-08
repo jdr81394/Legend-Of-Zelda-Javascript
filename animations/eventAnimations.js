@@ -1,6 +1,7 @@
+import { generateDummyPositionComponent, generateDummySpriteComponent } from "../items/itemDropTable.js";
 import { INVENTORY_SWORD_1 } from "../items/weapons.js";
 import addItemToInventory from "../utilities/addItemToInventory.js";
-import { LINK_ANIMATIONS, LINK_WEAPON_PICKUP } from "./animations.js";
+import { BOMB_CLOUD, LINK_ANIMATIONS, LINK_WEAPON_PICKUP } from "./animations.js";
 
 const swordPickupAnimation = (player, actionableTile, audioObject, registry, handleUserInput) => {
 
@@ -106,6 +107,62 @@ const swordPickupAnimation = (player, actionableTile, audioObject, registry, han
 
 }
 
+// bombEntity: Entity, detonateTime: int
+const bombExplosionAnimation = (args) =>  {
+
+    const {entity: bombEntity} = args;
+
+    const {x: bombX,y: bombY} = bombEntity.components["Position"]
+
+    for(let i = 0; i < 9; i++) {
+        let xDisplacement = 0;
+        let yDisplacement = 0;
+
+        /*
+
+            [0] [1] [2]
+            [3] [4] [5]
+            [6] [7] [8]
+        */
+
+        if(i < 3) {
+            yDisplacement = -50;
+        } else if(i < 6) {
+            yDisplacement = 0
+        } else {
+            yDisplacement = 50
+        }
+
+        if(i === 0 || i === 3 || i === 6) {
+            xDisplacement = -20;
+        } else if (i === 1 || i === 4 || i === 7) {
+            xDisplacement = 35;
+        } else {
+            xDisplacement = 90;
+        }
+
+        const dummySpriteComponent = generateDummySpriteComponent(0,0,15.5,15.5, "cloud.png")
+
+        const dummyPositionComponent =  generateDummyPositionComponent(bombX + xDisplacement,bombY+yDisplacement,50,50);
+    
+        const dummyHitboxComponent =  {
+            name: "Hitbox",
+            value: {
+                owner: 1,
+                damage: 1
+            }
+        }
+
+        bombEntity.registry.createEntity([dummyPositionComponent, dummySpriteComponent, dummyHitboxComponent,BOMB_CLOUD])
+    }
 
 
-export {swordPickupAnimation};
+    bombEntity.registry.entitiesToBeKilled.push(bombEntity)
+    
+    
+
+}
+
+
+
+export {swordPickupAnimation, bombExplosionAnimation};

@@ -1,4 +1,5 @@
 
+import {  bombExplosionAnimation } from "../animations/eventAnimations.js";
 import { c , canvas} from "../index.js";
 import { ITEM_TABLE } from "../items/itemDropTable.js";
 import { INVENTORY_SWORD_1 } from "../items/weapons.js";
@@ -82,25 +83,15 @@ class ItemSystem extends System {
 }
 
 
+
+
 class RenderSystem extends System {
     constructor(systemType) {
         super (systemType);
         this.componentRequirements = ["Position", "Sprite"];        // string[]
     }
 
-    update = (isDebug, registry) => {
-        c.clearRect(0,0,canvas.width,canvas.height);
-        for(let entity of this.entities) {
-            const spriteComponent = entity.components["Sprite"];
-            const positionComponent = entity.components["Position"];
-            
-            const {sprite, srcRect} = spriteComponent;
-            c.beginPath();
-
-
-            
-            if(srcRect) {
-                if(entity.components["Player"]) {
+    handleSwordSwing = (entity) => {
                     // render weapon
                     let dummyHitboxComponent = undefined;
 
@@ -113,7 +104,7 @@ class RenderSystem extends System {
                         let xPosition = entity.components["Position"].x;
                         let yPosition = entity.components["Position"].y;
                         let value = {};
-                        const damage = 5;
+                        const damage = entity.components["Player"]["activeA"]["damage"];
                         const owner = 1;
 
                         if(facing === "up") {
@@ -218,7 +209,7 @@ class RenderSystem extends System {
                         if(!entity.components["Player"]["activeA"]["weaponEntity"]) {
                             const swordSwing = new Audio("./assets/audio/swordSlash.mp3");
                             swordSwing.play();
-                            entity.components["Player"]["activeA"]["weaponEntity"] = registry.createEntity([dummyPositionComponent,dummySpriteComponent, dummyHitboxComponent]);
+                            entity.components["Player"]["activeA"]["weaponEntity"] = entity.registry.createEntity([dummyPositionComponent,dummySpriteComponent, dummyHitboxComponent]);
                         }
 
                         
@@ -227,11 +218,130 @@ class RenderSystem extends System {
                     } 
                     // Get rid of the entity
                     else if(entity.components["Player"]["activeA"] && (!entity.components["Animation"]["isAttacking"] || entity.components["Animation"]["frames"][facing]["attack"]["currentFrame"] === 1) && entity.components["Player"]["activeA"]["weaponEntity"] ) {
-                        registry.entitiesToBeKilled.push(entity.components["Player"]["activeA"]["weaponEntity"])
+                        entity.registry.entitiesToBeKilled.push(entity.components["Player"]["activeA"]["weaponEntity"])
                         entity.components["Player"]["activeA"]["weaponEntity"] = undefined;
                         
                     }
                     
+    }
+
+    handleAttackB = (entity, eventBus) => {
+        const facing = entity.components["Character"]["facing"];
+        const weapon = entity.components["Player"]["activeB"] ;
+
+        // console.log(entity.components["Player"]["activeB"] )
+        if(weapon
+        && entity.components["Animation"]["isAttackingB"]
+        && entity.components["Animation"]["frames"][facing]["attack"]["currentFrame"] === 0
+        ) {
+            const owner = 1;
+            const damage = entity.components["Player"]["activeB"]["damage"];
+            const linkX = entity.components["Position"].x;
+            const linkY = entity.components["Position"].y;
+            const linkWidth = entity.components["Position"].width;
+            const linkHeight = entity.components["Position"].height;
+
+            let xPosition = undefined, yPosition = undefined, value = undefined;
+
+            
+            // Each weapon will handle this different and we'll different function for that.
+            // But for now, lets just do it for the bombs
+
+            if(facing === "up") {
+                xPosition = linkX - 20
+                yPosition = linkY + (linkHeight / 2) - 75
+
+                // width and height are for the srcRect of the sword
+                value = {
+                    x: xPosition,
+                    y: yPosition,
+                    width: 70,
+                    height: 60
+                }
+
+            }
+            else if (facing === "left") {
+                xPosition = linkX - 75;
+                yPosition = linkY + ( linkHeight/ 2) - 25;
+                value = {
+                    x: xPosition,
+                    y: yPosition,
+                    width: 80,
+                    height: 60
+                }
+            }
+            else if (facing === "right") {
+                xPosition = linkX + 25;
+                yPosition = linkY + ( linkHeight/ 2) - 25;
+                value = {
+                    x: xPosition,
+                    y: yPosition,
+                    width: 80,
+                    height: 60
+                }
+            }
+            else if (facing === "down") {
+                xPosition = linkX - 20;
+                yPosition = linkY + (linkHeight/2) + 15 ;
+                value = {
+                    x: xPosition,
+                    y: yPosition,
+                    width: 70,
+                    height: 60
+                }
+            }
+
+
+            const dummyPositionComponent = {
+                name: "Position",
+                value
+            }
+
+
+
+            const dummySpriteComponent = {
+                name: "Sprite",
+                value: {
+                    path: "link.png",
+                    srcRect: weapon["srcRect"][facing]
+                }
+            }
+            
+
+            const bombEntity = entity.registry.createEntity([dummyPositionComponent,dummySpriteComponent])
+
+            entity.components["Animation"]["isAttackingB"] = false;
+
+            eventBus.push({
+                func: bombExplosionAnimation,
+                args: {
+                    entity: bombEntity,
+                    eventTime: Date.now() + 1500
+                }
+            })
+            
+
+
+
+        }
+    }
+
+    update = (isDebug, registry, gameTime, eventBus) => {
+        c.clearRect(0,0,canvas.width,canvas.height);
+        for(let entity of this.entities) {
+            const spriteComponent = entity.components["Sprite"];
+            const positionComponent = entity.components["Position"];
+            
+            const {sprite, srcRect} = spriteComponent;
+            c.beginPath();
+
+
+            
+            if(srcRect) {
+                if(entity.components["Player"]) {
+                    this.handleSwordSwing(entity)
+
+                    this.handleAttackB(entity, eventBus);
                 }
 
                 const {x,y,width, height} = srcRect;
@@ -248,7 +358,7 @@ class RenderSystem extends System {
             }
 
             if(isDebug) {
-                this.renderDebug(entity, positionComponent);
+                this.renderDebug(entity);
             }
 
 
@@ -256,10 +366,11 @@ class RenderSystem extends System {
         }
     }
 
-    renderDebug = (entity, positionComponent) => {
+    renderDebug = (entity) => {
+
+        const {x,y,width, height} = entity.components["Position"];
             
         if(entity.components["Node"]) {
-            const {x, y } = entity.components["Position"];
             const {nodeId} = entity.components["Node"].nodeId;
             c.globalCompositeOperation="source-over";
 
@@ -272,14 +383,13 @@ class RenderSystem extends System {
 
         if(entity.components["Collision"] || entity.components["Transition"]) {
             c.beginPath();
-            c.rect(positionComponent.x,positionComponent.y, positionComponent.width, positionComponent.height);
+            c.rect(x,y, width, height);
             c.lineWidth = 3;
             c.strokeStyle = "red";
             c.stroke();
         }
 
         if(entity.components["Hitbox"]) {
-            const {x,y,width,height} = entity.components["Hitbox"];
             c.beginPath();
             c.rect(x,y, width, height);
             c.lineWidth = 3;
@@ -323,16 +433,19 @@ class AnimationSystem extends System {
             else if(entity.components["Animation"].isStatic ) {
                 const currentFrame = 
                     Math.floor(
-                        (Date.now() - entity.components["Animation"]["frames"]["startTime"] ) 
+                        (gameTime - entity.components["Animation"]["currentTimeOfAnimation"]  ) 
                         *
                         entity.components["Animation"]["frames"]["frameSpeedRate"] / 1000 
                     )  % entity.components["Animation"]["frames"]["numFrames"];
                 
                     
-
                 entity.components["Sprite"]["srcRect"] = entity.components["Animation"]["frames"]["srcRect"][currentFrame];
               
 
+                const {removeOnFrame} = entity.components["Animation"]["frames"];
+                if(removeOnFrame && removeOnFrame === currentFrame) {
+                    entity.registry.entitiesToBeKilled.push(entity);
+                }
             } 
 
         }
@@ -543,7 +656,7 @@ class TransitionSystem extends System {
                     eventBus.push(
                         {
                             func: reloadNewScreen, 
-                            args: Transition
+                            args: {...Transition, eventTime: 0}
                         }
                     );
                 }
@@ -767,4 +880,4 @@ class HitboxSystem extends System {
     }
 }
 
-export {System, ItemSystem, RenderSystem,HitboxSystem, AnimationSystem, TransitionSystem,CollisionSystem,MovementSystem, HealthSystem, ActionableSystem}
+export {System, ItemSystem,RenderSystem,HitboxSystem, AnimationSystem, TransitionSystem,CollisionSystem,MovementSystem, HealthSystem, ActionableSystem}
