@@ -33,7 +33,7 @@ const INVENTORY_SWORD_1 = {
 }
 
 const BOMB = {
-    name: "Bomb",
+    name: "bomb",
     damage: 3,
     path: "../assets/link.png",
     img: undefined,
