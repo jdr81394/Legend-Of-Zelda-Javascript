@@ -255,8 +255,6 @@ class RenderSystem extends System {
         && entity.components["Animation"]["isAttackingB"]
         && entity.components["Animation"]["frames"][facing]["attack"]["currentFrame"] === 0
         ) {
-            const owner = 1;
-            const damage = entity.components["Player"]["activeB"]["damage"];
             const linkX = entity.components["Position"].x;
             const linkY = entity.components["Position"].y;
             const linkWidth = entity.components["Position"].width;
@@ -267,79 +265,87 @@ class RenderSystem extends System {
 
 
             if(weapon.name === "bomb") {
-                entity.components["Player"]["inventory"]["bomb"] -= 1;
-                // Each weapon will handle this different and we'll different function for that.
-                // But for now, lets just do it for the bombs
+                const alreadyBombOut = eventBus.find(element => element["type"] === "bombExplosion")
 
-                if(facing === "up") {
-                    xPosition = linkX - 20
-                    yPosition = linkY + (linkHeight / 2) - 75
-
-                    // width and height are for the srcRect of the sword
-                    value = {
-                        x: xPosition,
-                        y: yPosition,
-                        width: 70,
-                        height: 60
+                if(alreadyBombOut === undefined) {
+                    entity.components["Player"]["inventory"]["bomb"] -= 1;
+                    // Each weapon will handle this different and we'll different function for that.
+                    // But for now, lets just do it for the bombs
+    
+                    if(facing === "up") {
+                        xPosition = linkX - 20
+                        yPosition = linkY + (linkHeight / 2) - 75
+    
+                        // width and height are for the srcRect of the sword
+                        value = {
+                            x: xPosition,
+                            y: yPosition,
+                            width: 70,
+                            height: 60
+                        }
+    
                     }
-
+                    else if (facing === "left") {
+                        xPosition = linkX - 75;
+                        yPosition = linkY + ( linkHeight/ 2) - 25;
+                        value = {
+                            x: xPosition,
+                            y: yPosition,
+                            width: 80,
+                            height: 60
+                        }
+                    }
+                    else if (facing === "right") {
+                        xPosition = linkX + 25;
+                        yPosition = linkY + ( linkHeight/ 2) - 25;
+                        value = {
+                            x: xPosition,
+                            y: yPosition,
+                            width: 80,
+                            height: 60
+                        }
+                    }
+                    else if (facing === "down") {
+                        xPosition = linkX - 20;
+                        yPosition = linkY + (linkHeight/2) + 15 ;
+                        value = {
+                            x: xPosition,
+                            y: yPosition,
+                            width: 70,
+                            height: 60
+                        }
+                    }
+    
+    
+                    const dummyPositionComponent = {
+                        name: "Position",
+                        value
+                    }
+    
+                    const dummySpriteComponent = {
+                        name: "Sprite",
+                        value: {
+                            path: "link.png",
+                            srcRect: weapon["srcRect"][facing]
+                        }
+                    } 
+    
+                    const bombEntity = entity.registry.createEntity([dummyPositionComponent,dummySpriteComponent])
+    
+                    entity.components["Animation"]["isAttackingB"] = false;
+    
+                    eventBus.push({
+                        type: "bombExplosion",
+                        func: bombExplosionAnimation,
+                        args: {
+                            entity: bombEntity,
+                            eventTime: Date.now() + 1500
+                        }
+                    })
+                    
                 }
-                else if (facing === "left") {
-                    xPosition = linkX - 75;
-                    yPosition = linkY + ( linkHeight/ 2) - 25;
-                    value = {
-                        x: xPosition,
-                        y: yPosition,
-                        width: 80,
-                        height: 60
-                    }
-                }
-                else if (facing === "right") {
-                    xPosition = linkX + 25;
-                    yPosition = linkY + ( linkHeight/ 2) - 25;
-                    value = {
-                        x: xPosition,
-                        y: yPosition,
-                        width: 80,
-                        height: 60
-                    }
-                }
-                else if (facing === "down") {
-                    xPosition = linkX - 20;
-                    yPosition = linkY + (linkHeight/2) + 15 ;
-                    value = {
-                        x: xPosition,
-                        y: yPosition,
-                        width: 70,
-                        height: 60
-                    }
-                }
+                
 
-
-                const dummyPositionComponent = {
-                    name: "Position",
-                    value
-                }
-
-                const dummySpriteComponent = {
-                    name: "Sprite",
-                    value: {
-                        path: "link.png",
-                        srcRect: weapon["srcRect"][facing]
-                    }
-                } 
-
-                const bombEntity = entity.registry.createEntity([dummyPositionComponent,dummySpriteComponent])
-
-                entity.components["Animation"]["isAttackingB"] = false;
-
-                eventBus.push({
-                    func: bombExplosionAnimation,
-                    args: {
-                        entity: bombEntity,
-                        eventTime: Date.now() + 1500
-                    }
-                })
                 
 
             }

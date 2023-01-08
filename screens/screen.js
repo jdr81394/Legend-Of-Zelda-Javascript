@@ -202,7 +202,12 @@ const screenE = {
         enemies: [
             {
                 x: 4,           // x coefficient of tile
-                y: 1
+                y: 0,
+                itemDropTable: {
+                    BOMB: 1,
+                    // ONE_RUPIE: .5,
+                    // FIVE_RUPIES: .1
+                }
             }
         ]
     },

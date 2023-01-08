@@ -67,9 +67,10 @@ class Game {
             
 
             if(event){ 
+
                 const { func, args } = event;
 
-                if(Date.now() >= args["eventTime"]) {
+                if(this.gameTime >= args["eventTime"]) {
                     func(args)
                     this.eventBus.pop();
                 }
@@ -285,8 +286,9 @@ class Game {
         if(this.screenObject.npcs && this.screenObject.npcs.enemies) {
             const components = []
             const {enemies} = this.screenObject.npcs;
+
             for(let i = 0; i < enemies.length; i++) {
-                const {x,y} = enemies[i];
+                const {x,y, itemDropTable} = enemies[i];
 
                 const positionDummyComponent = {name: "Position", value: {x: x * TILE_SIZE, y: y * TILE_SIZE, width: TILE_SIZE, height: TILE_SIZE}};
                 const characterDummyComponent = {name: "Character", value: {facing: "left" }};
@@ -324,11 +326,7 @@ class Game {
                 const dummyItemDropComponent = {
                     name: "ItemDrop",
                     value: {
-                        itemDropTable: {
-                            BOMB: 1,
-                            // ONE_RUPIE: .5,
-                            // FIVE_RUPIES: .1
-                        }
+                        itemDropTable
                     }
                 }
 
@@ -481,7 +479,7 @@ class Game {
         ])
 
         addItemToInventory(this.player, INVENTORY_SWORD_1);
-        // this.player.components["Player"]["activeB"] =  WEAPONS_TABLE["bomb"];
+        this.player.components["Player"]["activeB"] =  WEAPONS_TABLE["bomb"];
 
     }
 
@@ -577,6 +575,9 @@ class Game {
                     this.player.components["Animation"].isAttacking = false;
                     this.player.components["Animation"].currentTimeOfAnimation = 0;
 
+                }
+                else if (key === "c") {
+                    this.player.components["Animation"]["isAttackingB"] = false;
                 }
 
 
