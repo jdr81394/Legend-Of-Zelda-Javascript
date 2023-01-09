@@ -158,6 +158,7 @@ const bombExplosionAnimation = (args) =>  {
 
         dummyAnimationComponent["value"]["currentTimeOfAnimation"] = Date.now();
         
+        new Audio("../assets/audio/bombExplosion.mp3").play();
 
         bombEntity.registry.createEntity([dummyPositionComponent, dummySpriteComponent, dummyHitboxComponent,dummyAnimationComponent])
     }

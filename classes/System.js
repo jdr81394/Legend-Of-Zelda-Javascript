@@ -330,8 +330,11 @@ class RenderSystem extends System {
                         }
                     } 
     
+
                     const bombEntity = entity.registry.createEntity([dummyPositionComponent,dummySpriteComponent])
-    
+                    
+                    new Audio("../assets/audio/placeBomb.mp3").play();
+
                     entity.components["Animation"]["isAttackingB"] = false;
     
                     eventBus.push({
