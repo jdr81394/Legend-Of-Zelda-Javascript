@@ -36,6 +36,59 @@ class MovementComponent extends Component {
     }
 }
 
+class SpriteComponent extends Component {
+    constructor(componentType, componentObj) {
+        super(componentType);
+        this.sprite = new Image();
+        this.sprite.src = componentObj.path;
+        this.srcRect = componentObj.srcRect;
+        /*
+            {
+                x,
+                y,
+                width,
+                height
+            }
+        */
+    }
+}
+
+class AnimationComponent extends Component {
+    constructor(componentType, componentObj) {
+        super(componentType);
+        this.frames = componentObj.frames;
+        /*
+            {
+                down: {
+                    move: {
+                        srcRect: [
+                            {x,y,width,height},
+                            {x,y,width,height}
+                        ],
+                        currentFrame: 0,
+                        numFrames: 2,
+                        frameSpeedRate: 3,
+                        startTime: Date.now() 
+                    },
+                    attack: {
+                        srcRect: {x,y,width,height}
+                        currentFrame: 0
+                        numFrames: 2,
+                        frameSpeedRate: 3,
+                        startTime: Date.now()
+                    }
+                },
+                up: {},
+                left: {},
+                right: {}
+            }
+        */
+        this.currentTimeOfAnimation = componentObj.currentTimeOfAnimation;
+        this.facing = componentObj.facing;          // string
+        this.shouldAnimate = componentObj.shouldAnimate;
+    }
+}
 
 
-export { MovementComponent, PositionComponent }
+
+export { MovementComponent, PositionComponent, SpriteComponent, AnimationComponent }
