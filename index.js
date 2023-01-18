@@ -1,5 +1,6 @@
 import { LINK_ANIMATION } from "./animations/animations.js";
 import Registry from "./classes/Registry.js";
+import { openingScreen } from "./screens/screen.js";
 
 export const canvas = document.getElementById("gameScreen");
 
@@ -7,6 +8,7 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 export const c = canvas.getContext("2d");
+const TILE_SIZE = 70
 
 
 
@@ -16,6 +18,9 @@ class Game {
         this.player = undefined;
         this.registry = new Registry();
         this.gameTime = Date.now();
+        this.numRows = 13;
+        this.numCols = 18;
+        this.isDebug = true;
     }
 
     initialize = () => {
@@ -24,14 +29,15 @@ class Game {
         this.registry.addSystem("MovementSystem");
         this.registry.addSystem("RenderSystem");
         this.registry.addSystem("AnimationSystem");
+        this.registry.addSystem("CollisionSystem");
 
         const dummyPositionComponent = {
             name: "Position",
             value: {
-                x: 2,
-                y: 0,
-                height: 50,
-                width: 50
+                x: 500,
+                y: 500,
+                height: TILE_SIZE - 15,
+                width: TILE_SIZE - 15
             }
         }
 
@@ -56,23 +62,32 @@ class Game {
             }
         }
 
-        this.player = this.registry.createEntity([dummyMovementComponent, dummyPositionComponent, dummySpriteComponent, LINK_ANIMATION])
+        const dummyCollisionComponent = {
+            name: "Collision"
+        }
 
-        this.registry.addEntityToSystem(this.player)
+        this.player = this.registry.createEntity([dummyMovementComponent, dummyPositionComponent, dummySpriteComponent, dummyCollisionComponent, LINK_ANIMATION])
 
-        console.log(this.player)
-
+        // this.registry.addEntityToSystem(this.player)
 
         document.addEventListener("keyup", this.handleUserInput)
         document.addEventListener("keydown", this.handleUserInput)
+
+        this.loadScreen(openingScreen);
+
+        console.log("this.player: ", this.player);
     }
 
     update = () => {
 
         this.gameTime = Date.now();
 
+        this.registry.update();
+
+        this.registry.getSystem("CollisionSystem").update(this.player)
+
         this.registry.getSystem("MovementSystem").update()
-        this.registry.getSystem("RenderSystem").update();
+        this.registry.getSystem("RenderSystem").update(this.isDebug);
         this.registry.getSystem("AnimationSystem").update(this.gameTime);
         requestAnimationFrame(this.update)
     }
@@ -103,25 +118,29 @@ class Game {
                     case "w": {
                         playerAnimationComponent.shouldAnimate = true;
                         // playerAnimationComponent.facing = "up";
-                        playerMovementComponent.vY = -1;
+                        playerMovementComponent.vY = -5;
                         break;
                     }
                     case "a": {
                         playerAnimationComponent.shouldAnimate = true;
                         // playerAnimationComponent.facing = "left";
-                        playerMovementComponent.vX = -1;
+                        playerMovementComponent.vX = -5;
                         break;
                     }
                     case "s": {
                         playerAnimationComponent.shouldAnimate = true;
                         // playerAnimationComponent.facing = "down";
-                        playerMovementComponent.vY = 1
+                        playerMovementComponent.vY = 5
                         break;
                     }
                     case "d": {
                         playerAnimationComponent.shouldAnimate = true;
                         // playerAnimationComponent.facing = "right";
-                        playerMovementComponent.vX = 1;
+                        playerMovementComponent.vX = 5;
+                        break;
+                    }
+                    case "g": {
+                        this.isDebug = !this.isDebug;
                         break;
                     }
                     default: {
@@ -150,6 +169,74 @@ class Game {
             }
         }
     }
+
+
+    loadScreen = (screenObject) => {
+
+
+        for (let i = 0; i < this.numRows; i++) {
+
+            for (let j = 0; j < this.numCols; j++) {
+
+                let components = [];
+
+                const tile = screenObject.screen[i][j];
+                let srcRect = undefined
+                let path = '';
+
+                if (typeof tile === "number") {
+                    path = "tiles/";
+                }
+
+                else if (typeof tile === "string") {
+                    path = "collidables/"
+                    const dummyCollisionComponent = {
+                        name: "Collision",
+                        // value : { x: adf, y: daf , .....}
+                    }
+                    components.push(dummyCollisionComponent);
+                }
+
+                else if (typeof tile === "undefined") {
+                    continue;
+                }
+
+                const { assetPath } = screenObject;
+
+
+                const dummySpriteComponent = {
+                    name: "Sprite",
+                    value: {
+                        path: assetPath + path + tile + ".png",   // tiles/0.png
+                        srcRect
+                    }
+                }
+
+                components.push(dummySpriteComponent);
+
+                const dummyPositionComponent = {
+                    name: "Position",
+                    value: {
+                        x: j * TILE_SIZE,
+                        y: i * TILE_SIZE,
+                        width: TILE_SIZE,
+                        height: TILE_SIZE
+                    }
+                }
+
+                components.push(dummyPositionComponent);
+
+
+
+
+                const entity = this.registry.createEntity(components);
+
+
+            }
+        }
+
+    }
+
 }
 
 

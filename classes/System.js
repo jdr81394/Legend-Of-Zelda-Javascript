@@ -18,7 +18,26 @@ class MovementSystem extends System {
         for (let i = 0; i < this.entities.length; i++) {
             const entity = this.entities[i];
 
-            let { Movement, Position, Animation } = entity.components;
+            let { Movement, Position, Animation, Collision } = entity.components;
+
+            if (Collision) {
+                const { facing } = Animation;
+
+                if (Movement.collisionX) {
+                    Movement.vX = 0;
+                    if (facing === "right") Position.x -= 6;
+                    if (facing === "left") Position.x += 6
+                }
+
+                if (Movement.collisionY) {
+                    Movement.vY = 0;
+                    if (facing === "up") Position.y += 6;
+                    if (facing === "down") Position.y -= 6;
+
+                }
+            }
+            Movement.collisionX = false;
+            Movement.collisionY = false;
 
             Position.x += Movement.vX;
             Position.y += Movement.vY;
@@ -42,6 +61,54 @@ class MovementSystem extends System {
 }
 
 
+class CollisionSystem extends System {
+    constructor(systemType) {
+        super(systemType);
+        this.componentRequirements = ["Position", "Collision"]
+    }
+
+    update = (player) => {
+
+        if (player) {
+            for (let i = 0; i < this.entities.length; i++) {
+
+                const entity = this.entities[i];
+
+                if (player.id === entity.id) continue;
+
+
+                const { x: px, y: py, width: pwidth, height: pheight } = player.components["Position"];
+                const { x: ex, y: ey, width: ewidth, height: eheight } = entity.components["Position"];
+                const { Movement } = player.components;
+
+                if (
+                    px < ex + ewidth &&
+                    px + pwidth + Movement.vX > ex &&
+                    py < ey + eheight &&
+                    py + pheight + Movement.vY > ey
+                ) {
+
+
+                    if (Movement.vX !== 0) {
+                        Movement.collisionX = true
+                    }
+
+                    if (Movement.vY !== 0) {
+                        Movement.collisionY = true
+                    }
+
+                }
+
+
+            }
+        }
+    }
+
+
+
+}
+
+
 
 class RenderSystem extends System {
     constructor(systemType) {
@@ -49,21 +116,35 @@ class RenderSystem extends System {
         this.componentRequirements = ["Position", "Sprite"];
     }
 
-    update = () => {
+    update = (isDebug) => {
         c.clearRect(0, 0, canvas.width, canvas.height)
         for (let i = 0; i < this.entities.length; i++) {
 
-            const { Position, Sprite } = this.entities[i].components;
+            const { Position, Sprite, Collision } = this.entities[i].components;
             const { x, y, width, height } = Position;
             const { srcRect, path, sprite } = Sprite;
-            const { x: sx, y: sy, width: sw, height: sh } = srcRect;
 
 
 
             c.beginPath();
-            // c.fillStyle = "red";
-            // c.fillRect(x, y, width, height);
-            c.drawImage(sprite, sx, sy, sw, sh, x, y, width, height,);
+            if (srcRect) {
+                c.globalCompositeOperation = "source-over"
+                const { x: sx, y: sy, width: sw, height: sh } = srcRect;
+                c.drawImage(sprite, sx, sy, sw, sh, x, y, width, height);
+            }
+            else {
+                c.globalCompositeOperation = "destination-over"
+                c.drawImage(sprite, x, y, width, height)
+            }
+
+            if (isDebug) {
+                if (Collision) {
+                    c.rect(x, y, width, height);
+                    c.lineWidth = 2;
+                    c.strokeStyle = "red"
+                }
+            }
+
             c.stroke();
 
         }
@@ -102,4 +183,4 @@ class AnimationSystem extends System {
     }
 }
 
-export { MovementSystem, RenderSystem, AnimationSystem };
+export { MovementSystem, RenderSystem, AnimationSystem, CollisionSystem };
