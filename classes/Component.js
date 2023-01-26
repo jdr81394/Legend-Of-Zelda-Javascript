@@ -43,6 +43,25 @@ class MovementComponent extends Component {
     }
 }
 
+class TransitionComponent extends Component {
+    constructor(componentType, componentObj) {
+        super(componentType);
+
+        this.screen = componentObj.screen;
+        this.coX = componentObj.coX;
+        this.coY = componentObj.coY;
+    }
+}
+
+class ActionableComponent extends Component {
+    constructor(componentType, componentObj) {
+        super(componentType);
+        this.func = componentObj.func;
+        this.args = componentObj.args
+    }
+}
+
+
 class SpriteComponent extends Component {
     constructor(componentType, componentObj) {
         super(componentType);
@@ -93,9 +112,34 @@ class AnimationComponent extends Component {
         this.currentTimeOfAnimation = componentObj.currentTimeOfAnimation;
         this.facing = componentObj.facing;          // string
         this.shouldAnimate = componentObj.shouldAnimate;
+        this.isAttackingA = false;
+    }
+}
+
+class InventoryComponent extends Component {
+    constructor(componentType) {
+        super(componentType);
+        this.activeA = undefined
+        /*
+            {
+                srcRect: ...
+                name: ...
+                path ..
+                damage ... 
+                weaponEntity: Entity
+            }
+
+        */
+        this.activeB = undefined
+        this.inventory = {
+            sword: undefined,
+            bomb: 0,
+            rupies: 0,
+            keys: 0
+        }
     }
 }
 
 
 
-export { MovementComponent, PositionComponent, SpriteComponent, AnimationComponent, CollisionComponent }
+export { MovementComponent, PositionComponent, SpriteComponent, AnimationComponent, CollisionComponent, TransitionComponent, ActionableComponent, InventoryComponent }

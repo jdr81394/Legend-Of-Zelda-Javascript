@@ -1,6 +1,6 @@
-import { LINK_ANIMATION } from "./animations/animations.js";
+import { LINK_ANIMATION, LINK_PICKUP_SWORD_1 } from "./animations/animations.js";
 import Registry from "./classes/Registry.js";
-import { openingScreen } from "./screens/screen.js";
+import { openingScreen, shop } from "./screens/screen.js";
 
 export const canvas = document.getElementById("gameScreen");
 
@@ -21,6 +21,7 @@ class Game {
         this.numRows = 13;
         this.numCols = 18;
         this.isDebug = true;
+        this.eventBus = [];
     }
 
     initialize = () => {
@@ -30,70 +31,167 @@ class Game {
         this.registry.addSystem("RenderSystem");
         this.registry.addSystem("AnimationSystem");
         this.registry.addSystem("CollisionSystem");
+        this.registry.addSystem("TransitionSystem");
 
-        const dummyPositionComponent = {
-            name: "Position",
-            value: {
-                x: 500,
-                y: 500,
-                height: TILE_SIZE - 15,
-                width: TILE_SIZE - 15
-            }
-        }
+        this.registry.addSystem("ActionableSystem");
 
-        const dummyMovementComponent = {
-            name: "Movement",
-            value: {
-                vX: 0,
-                vY: 0
-            }
-        };
-
-        const dummySpriteComponent = {
-            name: "Sprite",
-            value: {
-                path: "./assets/link.png",
-                srcRect: {
-                    x: 58,
-                    y: -1,
-                    width: 19,
-                    height: 19
-                }
-            }
-        }
-
-        const dummyCollisionComponent = {
-            name: "Collision"
-        }
-
-        this.player = this.registry.createEntity([dummyMovementComponent, dummyPositionComponent, dummySpriteComponent, dummyCollisionComponent, LINK_ANIMATION])
-
-        // this.registry.addEntityToSystem(this.player)
+        this.createPlayer();
 
         document.addEventListener("keyup", this.handleUserInput)
         document.addEventListener("keydown", this.handleUserInput)
 
-        this.loadScreen(openingScreen);
-
-        console.log("this.player: ", this.player);
+        this.loadScreen(shop);     // 
     }
 
     update = () => {
 
         this.gameTime = Date.now();
 
+        const event = this.eventBus[this.eventBus.length - 1];
+
+        if (event) {
+            /*
+                {
+                    args: {
+                        screen,
+                        coX,
+                        coY,
+                        eventTime : number 
+                    },
+                    func: Function 
+                }
+            */
+
+            const { args, func } = event;
+
+            if (args.eventTime <= this.gameTime) {
+                // call the function
+                func(args);     // loadNewScreen( {coX, coY, screen} )
+                this.eventBus.pop();
+            }
+        }
+
         this.registry.update();
 
-        this.registry.getSystem("CollisionSystem").update(this.player)
-
-        this.registry.getSystem("MovementSystem").update()
-        this.registry.getSystem("RenderSystem").update(this.isDebug);
         this.registry.getSystem("AnimationSystem").update(this.gameTime);
+        this.registry.getSystem("CollisionSystem").update(this.player)
+        this.registry.getSystem("MovementSystem").update()
+        this.registry.getSystem("TransitionSystem").update(this.player, this.eventBus, this.loadNewScreen)
+        this.registry.getSystem("ActionableSystem").update(this.player, this.eventBus);
+
         requestAnimationFrame(this.update)
     }
 
+
+
     render = () => {
+        this.registry.getSystem("RenderSystem").update(this.isDebug);
         requestAnimationFrame(this.render);
+    }
+
+
+    loadNewScreen = ({ coX, coY, screen }) => {
+
+        this.registry.removeAllEntities();
+
+        let newScreenObject;
+
+        switch (screen) {
+            case "shop": {
+                newScreenObject = shop
+                break;
+            }
+            default:
+                break;
+        }
+
+        this.createPlayer(coX, coY);
+        this.loadScreen(newScreenObject)
+    }
+
+    createPlayer = (coX, coY) => {
+
+        let newComponents = [];
+
+        if (this.player) {
+            const { components } = this.player;
+
+            Object.values(components).forEach((component) => {
+
+
+                /*
+                    {
+                        componentTYpe: string,
+                        x,
+                        y,
+                        height,
+                        width
+                    }
+
+                */
+
+                if (component.componentType === "Position") {
+                    component.x = coX * TILE_SIZE;
+                    component.y = coY * TILE_SIZE;
+                }
+
+                if (component.componentType == "Sprite") {
+                    component.path = component.sprite.src;
+                }
+
+                newComponents.push({ name: component.componentType, value: { ...component } });
+            })
+            newComponents.push(LINK_ANIMATION)
+
+
+        } else {
+
+            const dummyPositionComponent = {
+                name: "Position",
+                value: {
+                    x: 500,
+                    y: 500,
+                    height: TILE_SIZE - 15,
+                    width: TILE_SIZE - 15
+                }
+            }
+
+            const dummyMovementComponent = {
+                name: "Movement",
+                value: {
+                    vX: 0,
+                    vY: 0
+                }
+            };
+
+            const dummySpriteComponent = {
+                name: "Sprite",
+                value: {
+                    path: "./assets/link.png",
+                    srcRect: {
+                        x: 58,
+                        y: -1,
+                        width: 19,
+                        height: 19
+                    }
+                }
+            }
+
+            const dummyCollisionComponent = {
+                name: "Collision"
+            }
+
+            const dummyInventoryComponent = {
+                name: "Inventory"
+            }
+
+            newComponents = [dummyCollisionComponent, dummyPositionComponent, dummySpriteComponent, dummyMovementComponent, dummyInventoryComponent, LINK_ANIMATION]
+        }
+
+        this.player = this.registry.createEntity(newComponents)
+
+
+
     }
 
 
@@ -143,6 +241,13 @@ class Game {
                         this.isDebug = !this.isDebug;
                         break;
                     }
+                    case "v": {
+                        if (playerAnimationComponent.isAttackingA === false) {
+                            playerAnimationComponent.isAttackingA = true;
+                            playerAnimationComponent.currentTimeOFAnimation = Date.now();
+                        }
+                        break;
+                    }
                     default: {
                         break;
                     }
@@ -163,6 +268,11 @@ class Game {
                         playerMovementComponent.vX = 0;
                         break;
                     }
+                    case "v": {
+                        playerAnimationComponent.isAttackingA = false;
+                        playerAnimationComponent.currentTimeOFAnimation = 0;
+                        break;
+                    }
                     default:
                         break;
                 }
@@ -180,7 +290,7 @@ class Game {
 
                 let components = [];
 
-                const tile = screenObject.screen[i][j];
+                let tile = screenObject.screen[i][j];
                 let srcRect = undefined
                 let path = '';
 
@@ -195,6 +305,120 @@ class Game {
                         // value : { x: adf, y: daf , .....}
                     }
                     components.push(dummyCollisionComponent);
+                }
+                else if (typeof tile === "object") {
+                    /*
+
+                    {
+                        type: string  - "door", "actionableTile"
+                        tile: string/number - 0
+                        coX: number
+                        coY: number
+                        screen: string 
+                    }
+
+                    */
+
+                    const { type } = tile;
+
+                    if (type === "door") {
+                        const { coX, coY, screen } = tile;
+                        const dummyTransitionComponent = {
+                            name: "Transition",
+                            value: { coX, coY, screen }
+                        };
+
+                        tile = tile.tile;
+                        path = "actionableTiles/"
+
+                        components.push(dummyTransitionComponent);
+                    }
+                    else if (type === "actTile") {
+
+                        // sword animation 
+                        const { eventType, tile1, tile2, remove } = tile;
+
+                        if (remove) {
+                            path = "tiles/"
+                            tile = tile2;
+                        }
+                        else {
+                            path = "actionableTiles/"
+                            tile = tile1;
+
+                            if (eventType === "Sword_1") {
+                                // Do Animation, create the actionable component
+                                const dummyActionableComponent = {
+                                    name: "Actionable",
+                                    value: {
+                                        args: {
+                                            newTilePositionComponent: {
+                                                name: "Position",
+                                                value: {
+                                                    x: j * TILE_SIZE,
+                                                    y: i * TILE_SIZE,
+                                                    width: TILE_SIZE,
+                                                    height: TILE_SIZE
+                                                }
+                                            },
+                                            player: this.player,
+                                            handleUserInput: this.handleUserInput,
+                                            id: this.registry.numberOfEntities,
+                                            eventTime: 0
+                                        },
+                                        func: LINK_PICKUP_SWORD_1  // swordPickupAnimation
+                                    }
+                                }
+
+                                components.push(dummyActionableComponent);
+
+                                /*
+
+                                    const dummyActionableComponent = {
+                                        name: "Actionable",
+                                        value: {
+                                            args: {
+                                                newTilePositionComponent: {
+                                                    name: "Position",
+                                                    value: {    
+                                                        x: j * TILE_SIZE,
+                                                        y: i * TILE_SIZE,
+                                                        width: TILE_SIZE,
+                                                        height: TILE_SIZE
+                                                    }
+                                                }
+                                                player: this.player
+                                                handleUserInput: this.handleUserInput
+                                                id: this.registry.numOfEntities,
+                                                eventTime: 0
+                                            },
+                                            func: Function      // swordPickupAnimation
+                                        }
+                                    }
+
+
+                                    done in the actionableSystem
+
+                                    ...eventBus.push({
+                                        args,
+                                        func
+                                    })
+
+                                    done in registry 
+
+                                    registry.getEntityById(id: int, system: system) {
+
+                                        if( system.hasId(id) ) return entityOfId
+                                    } 
+                                */
+                            }
+
+                        }
+
+
+                    }
+
+
                 }
 
                 else if (typeof tile === "undefined") {

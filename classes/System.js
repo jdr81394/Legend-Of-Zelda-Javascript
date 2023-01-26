@@ -1,4 +1,6 @@
+import { LINK_PICKUP_SWORD_1 } from "../animations/animations.js";
 import { canvas, c } from "../index.js";
+import { SWORD_1 } from "../weapons/weapons.js";
 
 class System {
     constructor(systemType) {
@@ -103,9 +105,97 @@ class CollisionSystem extends System {
             }
         }
     }
+}
+
+class ActionableSystem extends System {
+    constructor(systemType) {
+        super(systemType);
+        this.componentRequirements = ["Actionable"];
+    }
+
+    update = (player, eventBus) => {
+        for (let i = 0; i < this.entities.length; i++) {
+
+            if (player) {
+                const entity = this.entities[i];
+
+                const { x: px, y: py, width: pwidth, height: pheight } = player.components["Position"];
+                const { x: ex, y: ey, width: ewidth, height: eheight } = entity.components["Position"];
+
+                if (
+                    px < ex + ewidth &&
+                    px + pwidth > ex &&
+                    py < ey + eheight &&
+                    py + pheight > ey
+                ) {
 
 
+                    const { Actionable } = entity.components;
+                    const { args, func } = Actionable;
+                    // LINK_PICKUP_SWORD_1(player);
 
+                    const event = {
+                        args: {
+                            ...args,
+                            eventTime: 0
+                        },
+                        func
+                    };
+
+                    eventBus.push(event);
+
+
+                }
+            }
+        }
+    }
+}
+
+class TransitionSystem extends System {
+    constructor(systemType) {
+        super(systemType);
+        this.componentRequirements = ["Position", "Transition"]
+    }
+
+    update = (player, eventBus, loadNewScreen) => {
+
+        if (player) {
+            for (let i = 0; i < this.entities.length; i++) {
+
+
+                const entity = this.entities[i];
+
+                const { x: px, y: py, width: pwidth, height: pheight } = player.components["Position"];
+                const { x: ex, y: ey, width: ewidth, height: eheight } = entity.components["Position"];
+
+                if (
+                    px < ex + ewidth &&
+                    px + pwidth > ex &&
+                    py < ey + eheight &&
+                    py + pheight > ey
+                ) {
+
+
+                    const { Transition } = entity.components;
+
+
+                    const event = {
+                        args: {
+                            ...Transition,
+                            eventTime: 0
+                        },
+                        func: loadNewScreen
+                    };
+
+                    eventBus.push(event);
+
+
+                }
+
+
+            }
+        }
+    }
 }
 
 
@@ -120,7 +210,8 @@ class RenderSystem extends System {
         c.clearRect(0, 0, canvas.width, canvas.height)
         for (let i = 0; i < this.entities.length; i++) {
 
-            const { Position, Sprite, Collision } = this.entities[i].components;
+            const entity = this.entities[i]
+            const { Position, Sprite, Collision } = entity.components;
             const { x, y, width, height } = Position;
             const { srcRect, path, sprite } = Sprite;
 
@@ -130,6 +221,83 @@ class RenderSystem extends System {
             if (srcRect) {
                 c.globalCompositeOperation = "source-over"
                 const { x: sx, y: sy, width: sw, height: sh } = srcRect;
+
+
+                const { Inventory, Animation } = entity.components;
+                if (Animation && Inventory) {
+                    const { activeA } = Inventory;
+                    const { facing, isAttackingA } = Animation;
+                    const mode = isAttackingA ? "attack" : "move";
+
+                    // If there is inventory, it must be link
+                    // if there is an animation component and that isattackingA is set to true, we must be handling a sword swing
+                    if (isAttackingA && Animation["frames"][facing][mode]["currentFrame"] === 0) {
+
+                        let dummyPositionSwordComponent = { name: "Position", value: {} };
+                        let dummySpriteSwordComponent = { name: "Sprite", value: {} };
+                        switch (facing) {
+                            case "down": {
+                                let swordWidth = 70;
+                                let swordHeight = 60;
+                                let swordX = x - (width / 2) + (swordWidth / 2)
+                                let swordY = y + height - swordHeight * .25;
+                                dummyPositionSwordComponent.value = { x: swordX, y: swordY, width: swordWidth, height: swordHeight }
+                                break;
+                            }
+                            case "left": {
+                                let swordWidth = 80
+                                let swordHeight = 50;
+                                let swordX = x - swordWidth / 2;
+                                let swordY = y + (height / 2) - (swordHeight / 2)
+                                dummyPositionSwordComponent.value = { x: swordX, y: swordY, width: swordWidth, height: swordHeight }
+
+                                break;
+                            }
+                            case "up": {
+                                let swordWidth = 70;
+                                let swordHeight = 60;
+                                let swordX = x + (width / 2) - (swordWidth / 2)
+                                let swordY = y - (swordHeight * .75)
+                                dummyPositionSwordComponent.value = { x: swordX, y: swordY, width: swordWidth, height: swordHeight }
+                                break;
+                            }
+                            case "right": {
+                                let swordWidth = 80;
+                                let swordHeight = 50;
+                                let swordX = x + width - 15;
+                                let swordY = y + (height / 2) - 23;
+                                dummyPositionSwordComponent.value = {
+                                    x: swordX, y:
+                                        swordY, width: swordWidth, height: swordHeight
+                                }
+                                break;
+                            }
+                            default: {
+                                break;
+                            }
+                        }
+
+
+                        // create entity
+                        dummySpriteSwordComponent.value.srcRect = SWORD_1.srcRect[facing];
+                        dummySpriteSwordComponent.value.path = SWORD_1.path;
+
+
+                        if (!activeA.weaponEntity) {
+                            activeA.weaponEntity = entity.registry.createEntity([dummyPositionSwordComponent, dummySpriteSwordComponent]);
+                        }
+                    } else if (
+                        activeA
+                        && activeA.weaponEntity
+                        && (!isAttackingA
+                            || Animation["frames"][facing][mode]["currentFrame"] === 1)
+                    ) {
+                        entity.registry.entitiesToBeRemoved.push(entity.components["Inventory"]["activeA"]["weaponEntity"]);
+                        entity.components["Inventory"]["activeA"]["weaponEntity"] = undefined;
+                    }
+                }
+
+
                 c.drawImage(sprite, sx, sy, sw, sh, x, y, width, height);
             }
             else {
@@ -164,23 +332,29 @@ class AnimationSystem extends System {
         for (let i = 0; i < this.entities.length; i++) {
             const entity = this.entities[i];
 
-            const { facing, shouldAnimate } = entity.components["Animation"];
+            const { facing, shouldAnimate, isAttackingA } = entity.components["Animation"];
 
-            if (shouldAnimate) {
+            if (shouldAnimate || isAttackingA) {
+
+                const mode = isAttackingA ? "attack" : "move";
 
                 const currentFrame = Math.floor(
                     (gameTime - entity.components["Animation"]["currentTimeOfAnimation"]) *
-                    entity.components["Animation"]["frames"][facing]["move"]["frameSpeedRate"] / 1000
-                ) % entity.components["Animation"]["frames"][facing]["move"]["numFrames"];
+                    entity.components["Animation"]["frames"][facing][mode]["frameSpeedRate"] / 1000
+                ) % entity.components["Animation"]["frames"][facing][mode]["numFrames"];
 
 
-                entity.components["Sprite"]["srcRect"] = entity.components["Animation"]["frames"][facing]["move"]["srcRect"][currentFrame];
+                entity.components["Sprite"]["srcRect"] = entity.components["Animation"]["frames"][facing][mode]["srcRect"][currentFrame];
 
-                entity.components["Animation"]["frames"][facing]["move"]["currentFrame"] = currentFrame;
+                entity.components["Animation"]["frames"][facing][mode]["currentFrame"] = currentFrame;
+            }
+            else if (!shouldAnimate && !isAttackingA) {
+                entity.components["Sprite"]["srcRect"] = entity.components["Animation"]["frames"][facing]["move"]["srcRect"][0];
+                entity.components["Animation"]["frames"][facing]["move"]["currentFrame"] = 0;
             }
 
         }
     }
 }
 
-export { MovementSystem, RenderSystem, AnimationSystem, CollisionSystem };
+export { MovementSystem, RenderSystem, AnimationSystem, CollisionSystem, TransitionSystem, ActionableSystem };

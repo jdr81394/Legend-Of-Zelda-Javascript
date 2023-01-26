@@ -1,11 +1,12 @@
-import { AnimationComponent, CollisionComponent, MovementComponent, PositionComponent, SpriteComponent } from "./Component.js";
+import { ActionableComponent, AnimationComponent, CollisionComponent, InventoryComponent, MovementComponent, PositionComponent, SpriteComponent, TransitionComponent } from "./Component.js";
 import Entity from "./Entity.js";
-import { AnimationSystem, CollisionSystem, MovementSystem, RenderSystem } from "./System.js";
+import { ActionableSystem, AnimationSystem, CollisionSystem, MovementSystem, RenderSystem, TransitionSystem } from "./System.js";
 
 class Registry {
     constructor() {
         this.numberOfEntities = 0;
         this.entitiesToBeAdded = [];
+        this.entitiesToBeRemoved = [];
         this.systems = {}
     }
 
@@ -16,6 +17,12 @@ class Registry {
         })
 
         this.entitiesToBeAdded = [];
+
+        this.entitiesToBeRemoved.forEach((entity) => {
+            this.removeEntityFromSystem(entity);
+        })
+
+        this.entitiesToBeRemoved = [];
     }
 
 
@@ -64,6 +71,21 @@ class Registry {
                     newEntityComponents["Collision"] = new CollisionComponent(component["name"], componentObj);
                     break;
                 }
+                case "Transition": {
+                    const componentObj = component["value"];
+                    newEntityComponents["Transition"] = new TransitionComponent(component["name"], componentObj);
+                    break;
+                }
+                case "Actionable": {
+                    const componentObj = component["value"];
+                    newEntityComponents["Actionable"] = new ActionableComponent(component["name"], componentObj);
+                    break;
+                }
+                case "Inventory": {
+                    const componentObj = component["value"];
+                    newEntityComponents["Inventory"] = new InventoryComponent(component["name"], componentObj);
+                    break;
+                }
                 default:
                     break;
             }
@@ -95,7 +117,14 @@ class Registry {
             case "CollisionSystem": {
                 newSystem = new CollisionSystem(systemType);
                 break;
-
+            }
+            case "TransitionSystem": {
+                newSystem = new TransitionSystem(systemType)
+                break;
+            }
+            case "ActionableSystem": {
+                newSystem = new ActionableSystem(systemType);
+                break;
             }
             default: {
                 break;
@@ -135,8 +164,39 @@ class Registry {
         })
     }
 
+    removeEntityFromSystem = (entity) => {
+
+        Object.values(this.systems).forEach((system) => {
+            system.entities = system.entities.filter((sysEntity) => sysEntity.id !== entity.id);
+
+        })
+    }
+
     getSystem = (systemType) => {
         return this.systems[systemType];
+    }
+
+    removeEntityById = (id, systemType) => {
+        const system = this.systems[systemType];
+
+        for (let i = 0; i < system.entities.length; i++) {
+            const entity = system.entities[i];
+            if (id === entity.id) {
+                // remove the entity
+                system.entities = system.entities.slice(0, i).concat(
+                    system.entities.slice(i + 1)
+                );   // [a, b, c , d, e ] splice(0,2).concat(i.i)
+
+                return entity;
+
+            }
+        }
+    }
+
+    removeAllEntities = () => {
+        Object.values(this.systems).forEach((system) => {
+            system.entities = [];
+        })
     }
 
 }
