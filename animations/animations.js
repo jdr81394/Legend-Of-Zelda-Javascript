@@ -265,6 +265,8 @@ const LINK_PICKUP_SWORD_1 = ({ player, handleUserInput, id, newTilePositionCompo
     document.removeEventListener("keyup", handleUserInput)
     document.removeEventListener("keydown", handleUserInput)
 
+    new Audio("../assets/audio/importantItem.mp3").play();
+
     // waste time, return to normal
     const recursion = () => {
         if (endTime <= Date.now()) {

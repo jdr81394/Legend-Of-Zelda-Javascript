@@ -1,4 +1,5 @@
 import { LINK_ANIMATION, LINK_PICKUP_SWORD_1 } from "./animations/animations.js";
+import InventoryScreen from "./classes/InventoryScreen.js";
 import Registry from "./classes/Registry.js";
 import { openingScreen, shop } from "./screens/screen.js";
 
@@ -22,6 +23,10 @@ class Game {
         this.numCols = 18;
         this.isDebug = true;
         this.eventBus = [];
+        this.audioObject = undefined;
+        this.inventoryScreen = new InventoryScreen();
+        this.audioPath = "";
+        this.isPaused = false;
     }
 
     initialize = () => {
@@ -40,7 +45,9 @@ class Game {
         document.addEventListener("keyup", this.handleUserInput)
         document.addEventListener("keydown", this.handleUserInput)
 
+        // this.loadScreen(openingScreen);     // 
         this.loadScreen(shop);     // 
+
     }
 
     update = () => {
@@ -85,6 +92,7 @@ class Game {
 
 
     render = () => {
+        this.inventoryScreen.render(this.player, this.isPaused);
         this.registry.getSystem("RenderSystem").update(this.isDebug);
         requestAnimationFrame(this.render);
     }
@@ -247,6 +255,9 @@ class Game {
                             playerAnimationComponent.currentTimeOFAnimation = Date.now();
                         }
                         break;
+                    }
+                    case "p": {
+                        this.isPaused = !this.isPaused;
                     }
                     default: {
                         break;
@@ -459,6 +470,22 @@ class Game {
             }
         }
 
+
+        const { audioPath } = screenObject;
+
+
+        if (this.audioObject === undefined) {
+            this.audioObject = new Audio(audioPath);
+            this.audioPath = audioPath;
+            this.audioObject.play();
+        } else if (this.audioObject && audioPath !== this.audioPath) {
+            this.audioObject.pause();
+            this.audioObject = new Audio(audioPath);
+            this.audioPath = audioPath;
+            this.audioObject.play();
+        }
+
+        this.audioObject.loop = true;
     }
 
 }

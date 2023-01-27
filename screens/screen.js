@@ -4,6 +4,7 @@ const o = undefined;
 
 const openingScreen = {
     assetPath: "./assets/overworld/",
+    audioPath: "./assets/audio/overworld.mp3",
     screen: [
         [o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o],
         [o, "1", "1", "1", "1", "1", "1", "1", 0, 0, "1", "1", "1", "1", "1", "1", "1", o],
@@ -23,6 +24,7 @@ const openingScreen = {
 
 const shop = {
     assetPath: "./assets/shop/", // change this to shop/
+    audioPath: "./assets/audio/overworld.mp3",                            // "./assets/audio/silence.mp3",
     screen: [
         [o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o],
         [o, "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", o],
