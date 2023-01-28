@@ -1,7 +1,7 @@
 import { LINK_ANIMATION, LINK_PICKUP_SWORD_1 } from "./animations/animations.js";
 import InventoryScreen from "./classes/InventoryScreen.js";
 import Registry from "./classes/Registry.js";
-import { openingScreen, shop } from "./screens/screen.js";
+import { openingScreen, screenA, shop } from "./screens/screen.js";
 
 export const canvas = document.getElementById("gameScreen");
 
@@ -46,7 +46,8 @@ class Game {
         document.addEventListener("keydown", this.handleUserInput)
 
         // this.loadScreen(openingScreen);     // 
-        this.loadScreen(shop);     // 
+        // this.loadScreen(shop);     // 
+        this.loadScreen(screenA);
 
     }
 
@@ -109,8 +110,17 @@ class Game {
                 newScreenObject = shop
                 break;
             }
-            default:
+            case "openingScreen": {
+                newScreenObject = openingScreen;
                 break;
+            }
+            case "screenA": {
+                newScreenObject = screenA;
+                break;
+            }
+            default: {
+                break;
+            }
         }
 
         this.createPlayer(coX, coY);
@@ -438,16 +448,20 @@ class Game {
 
                 const { assetPath } = screenObject;
 
-
-                const dummySpriteComponent = {
-                    name: "Sprite",
-                    value: {
-                        path: assetPath + path + tile + ".png",   // tiles/0.png
-                        srcRect
+                if (typeof tile !== "undefined") {
+                    const dummySpriteComponent = {
+                        name: "Sprite",
+                        value: {
+                            path: assetPath + path + tile + ".png",   // tiles/0.png
+                            srcRect
+                        }
                     }
+                    components.push(dummySpriteComponent);
+
                 }
 
-                components.push(dummySpriteComponent);
+
+
 
                 const dummyPositionComponent = {
                     name: "Position",
