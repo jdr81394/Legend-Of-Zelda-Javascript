@@ -58,21 +58,27 @@ class InventoryScreen {
 
         }
 
+        let top = this.canvas.style.top.slice(0, this.canvas.style.top.length - 2)
+
+        top = top * 1;
 
         if (isPaused) {
             // Move the screen down;
-            let top = this.canvas.style.top.slice(0, this.canvas.style.top.length - 2)                // -558px => 558
-
-            top = top * 1;
-
             if (top < 210)       // 558 + 220 = 778 
             {
                 top += 10;
-                this.canvas.style.top = top + "px";
                 console.log("top: ", top);
             }
 
+        } else {
+
+            if (top > -558) {
+                top -= 10;
+
+            }
         }
+
+        this.canvas.style.top = top + "px";
 
     }
 

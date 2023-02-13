@@ -6,13 +6,13 @@ const openingScreen = {
     assetPath: "./assets/overworld/",
     audioPath: "./assets/audio/overworld.mp3",
     screen: [
-        [o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o],
+        [o, o, o, o, o, o, o, o, { screen: "screenC", type: "door", coX: 8, coY: 11 }, { screen: "screenC", type: "door", coX: 9, coY: 11 }, o, o, o, o, o, o, o, o],
         [o, "1", "1", "1", "1", "1", "1", "1", 0, 0, "1", "1", "1", "1", "1", "1", "1", o],
         [o, "1", "1", "1", "1", { type: "door", tile: 0, coX: 9, coY: 11, screen: "shop" }, "1", "2", 0, 0, "1", "1", "1", "1", "1", "1", "1", o],
         [o, "1", "1", "1", "2", 0, 0, 0, 0, 0, "1", "1", "1", "1", "1", "1", "1", o],
         [o, "1", "1", "2", 0, 0, 0, 0, 0, 0, "1", "1", "1", "1", "1", "1", "1", o],
         [o, "1", "2", 0, 0, 0, 0, 0, 0, 0, "3", "1", "1", "1", "1", "1", "1", o],
-        [{ type: "door", screen: "screenA", coX: 16, coY: 6 }, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, o],
+        [{ type: "door", screen: "screenA", coX: 16, coY: 6 }, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, { screen: "screenE", type: "door", coX: 1, coY: 6 }],
         [o, "5", "4", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "5", "5", o],
         [o, "1", "1", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "1", "1", o],
         [o, "1", "1", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "1", "1", o],
@@ -47,7 +47,7 @@ const screenA = {
     assetPath: "./assets/overworld/",
     audioPath: "./assets/audio/overworld.mp3",
     screen: [
-        [o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o],
+        [o, o, o, o, o, o, o, o, o, o, o, o, o, { screen: "screenB", type: "door", coX: 13, coY: 11 }, { screen: "screenB", type: "door", coX: 14, coY: 11 }, o, o, o],
         [o, "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", 0, 0, "1", "1", o],
         [o, "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", 0, 0, "1", "1", o],
         [o, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "1", "1", o],
@@ -64,6 +64,88 @@ const screenA = {
 
 }
 
+
+const screenB = {
+    assetPath: "./assets/overworld/",
+    audioPath: "./assets/audio/overworld.mp3",
+    screen: [
+        [o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o],
+        [o, "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", o],
+        [o, "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", o],
+        [o, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "3", "1", o],
+        [o, 0, 0, 0, 0, "11", "11", '11', '11', 0, 0, 0, 0, 0, 0, 0, "3", o],
+        [o, 0, 0, 0, 0, 0, 0, 0, 0, 0, "11", "11", "11", 0, 0, 0, 0, { screen: "screenC", type: "door", coX: 1, coY: 5 }],
+        [o, 0, 0, 0, 0, "11", "11", "11", "11", 0, 0, 0, 0, 0, 0, 0, 0, { screen: "screenC", type: "door", coX: 1, coY: 5 }],
+        [o, 0, 0, 0, 0, 0, 0, 0, 0, 0, "11", "11", "11", 0, 0, 0, 0, { screen: "screenC", type: "door", coX: 1, coY: 6 }],
+        [o, 0, 0, 0, 0, "11", "11", "11", "11", 0, 0, 0, 0, 0, 0, 0, 0, { screen: "screenC", type: "door", coX: 1, coY: 7 }],
+        [o, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "6", o],
+        [o, "5", "5", "5", "5", "5", "5", "5", "5", "5", "5", "5", "5", 0, 0, "6", "1", o],
+        [o, "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", 0, 0, "1", "1", o],
+        [o, o, o, o, o, o, o, o, o, o, o, o, o, { screen: "screenA", type: "door", coX: 13, coY: 2 }, { screen: "screenA", type: "door", coX: 14, coY: 2 }, o, o, o],
+    ]
+
+}
+
+const screenC = {
+    assetPath: "./assets/overworld/",
+    audioPath: "./assets/audio/overworld.mp3",
+    screen: [
+        [o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o],
+        [o, "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", o],
+        [o, "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", o],
+        [o, "1", "2", 0, 0, 0, 0, 0, 0, 0, "3", "2", 0, 0, 0, "3", "1", o],
+        [o, "2", 0, 0, "10", 0, "10", 0, 0, 0, 0, 0, 0, "10", 0, 0, "3", o],
+        [{ screen: "screenB", type: "door", coX: 16, coY: 5 }, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, { screen: "screenD", type: "door", coX: 1, coY: 5 }],
+        [{ screen: "screenB", type: "door", coX: 16, coY: 6 }, 0, 0, 0, "10", 0, "10", 0, 0, 0, 0, 0, 0, "10", 0, 0, 0, { screen: "screenD", type: "door", coX: 1, coY: 6 }],
+        [{ screen: "screenB", type: "door", coX: 16, coY: 7 }, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, { screen: "screenD", type: "door", coX: 1, coY: 7 }],
+        [o, "4", 0, 0, "10", 0, "10", 0, 0, 0, 0, 0, 0, "10", 0, 0, "6", o],
+        [o, "1", "4", 0, 0, 0, 0, 0, 0, 0, "6", "4", 0, 0, 0, "6", "1", o],
+        [o, "1", "1", "5", "5", "5", "5", "5", 0, 0, "1", "1", "5", "5", "5", "1", "1", o],
+        [o, "1", "1", "1", "1", "1", "1", "1", 0, 0, "1", "1", "1", "1", "1", "1", "1", o],
+        [o, o, o, o, o, o, o, o, { screen: "openingScreen", type: "door", coX: 8, coY: 1 }, { screen: "openingScreen", type: "door", coX: 9, coY: 1 }, o, o, o, o, o, o, o, o],
+    ]
+}
+
+const screenD = {
+    assetPath: "./assets/overworld/",
+    audioPath: "./assets/audio/overworld.mp3",
+    screen: [
+        [o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o],
+        [o, "1", "1", "20", 0, "20", 0, "20", 0, 0, "20", 0, "20", 0, "20", 0, "20", o],
+        [o, "1", "1", "20", 0, "20", 0, "20", 0, 0, "20", 0, "20", 0, "20", 0, "20", o],
+        [o, "1", "2", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "20", o],
+        [o, "2", 0, 0, 0, "20", 0, 0, 0, 0, "20", 0, 0, 0, "20", 0, 0, o],
+        [{ screen: "screenC", type: "door", coX: 16, coY: 5 }, 0, 0, "20", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, o],
+        [{ screen: "screenC", type: "door", coX: 16, coY: 6 }, 0, 0, 0, 0, "20", 0, "20", 0, 0, "20", 0, "20", 0, "20", 0, 0, o],
+        [{ screen: "screenC", type: "door", coX: 16, coY: 7 }, 0, 0, "20", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, o],
+        [o, "4", 0, 0, 0, "20", 0, 0, 0, 0, "20", 0, 0, 0, "20", 0, "20", o],
+        [o, "1", "4", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "20", o],
+        [o, "1", "1", "20", 0, "20", 0, "20", 0, 0, "20", 0, "20", 0, "20", 0, "20", o],
+        [o, "1", "1", "20", 0, "20", 0, "20", 0, 0, "20", 0, "20", 0, "20", 0, "20", o],
+        [o, o, o, o, { screen: "screenE", type: "door", coX: 4, coY: 1 }, o, { screen: "screenE", type: "door", coX: 6, coY: 1 }, o, { screen: "screenE", type: "door", coX: 8, coY: 1 }, { screen: "screenE", type: "door", coX: 9, coY: 1 }, o, { screen: "screenE", type: "door", coX: 11, coY: 1 }, o, { screen: "screenE", type: "door", coX: 13, coY: 1 }, o, { screen: "screenE", type: "door", coX: 15, coY: 1 }, o, o],
+    ]
+}
+
+
+const screenE = {
+    assetPath: "./assets/overworld/",
+    audioPath: "./assets/audio/overworld.mp3",
+    screen: [
+        [o, o, o, o, { screen: "screenD", type: "door", coX: 4, coY: 11 }, o, { screen: "screenD", type: "door", coX: 6, coY: 11 }, o, { screen: "screenD", type: "door", coX: 8, coY: 11 }, { screen: "screenD", type: "door", coX: 9, coY: 11 }, o, { screen: "screenD", type: "door", coX: 11, coY: 11 }, o, { screen: "screenD", type: "door", coX: 13, coY: 11 }, o, { screen: "screenD", type: "door", coX: 15, coY: 1 }, o, o],
+        [o, "1", "1", "20", 0, "20", 0, "20", 0, 0, "20", 0, "20", 0, "20", 0, "20", o],
+        [o, "1", "1", "20", 0, "20", 0, "20", 0, 0, "20", 0, "20", 0, "20", 0, "20", o],
+        [o, "1", "2", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, o],
+        [o, "2", 0, 0, 0, 0, 0, "20", 0, 0, "20", 0, "20", 0, "20", 0, 0, o],
+        [{ screen: "openingScreen", type: "door", coX: 16, coY: 6 }, 0, 0, "20", 0, "20", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, o],
+        [{ screen: "openingScreen", type: "door", coX: 16, coY: 6 }, 0, 0, 0, 0, 0, 0, "20", 0, 0, "20", 0, "20", 0, "20", 0, 0, o],
+        [{ screen: "openingScreen", type: "door", coX: 16, coY: 6 }, 0, 0, "20", 0, "20", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, o],
+        [o, "4", 0, 0, 0, 0, 0, "20", 0, 0, "20", 0, "20", 0, "20", 0, 0, o],
+        [o, "1", "4", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, o],
+        [o, "1", "1", "20", "20", "20", "20", "20", "20", "20", "20", "20", "20", "20", "20", "20", "20", o],
+        [o, "1", "1", "20", "20", "20", "20", "20", "20", "20", "20", "20", "20", "20", "20", "20", "20", o],
+        [o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o],
+    ]
+}
 /*
     for actTile:
         the tile property is for the initial tile
@@ -73,4 +155,4 @@ const screenA = {
 
 
 
-export { openingScreen, shop, screenA };
+export { openingScreen, shop, screenA, screenB, screenC, screenD, screenE };

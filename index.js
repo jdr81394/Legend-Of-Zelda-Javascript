@@ -1,7 +1,7 @@
 import { LINK_ANIMATION, LINK_PICKUP_SWORD_1 } from "./animations/animations.js";
 import InventoryScreen from "./classes/InventoryScreen.js";
 import Registry from "./classes/Registry.js";
-import { openingScreen, screenA, shop } from "./screens/screen.js";
+import { openingScreen, screenA, screenB, screenC, shop, screenD, screenE } from "./screens/screen.js";
 
 export const canvas = document.getElementById("gameScreen");
 
@@ -21,7 +21,7 @@ class Game {
         this.gameTime = Date.now();
         this.numRows = 13;
         this.numCols = 18;
-        this.isDebug = true;
+        this.isDebug = false;
         this.eventBus = [];
         this.audioObject = undefined;
         this.inventoryScreen = new InventoryScreen();
@@ -47,7 +47,12 @@ class Game {
 
         // this.loadScreen(openingScreen);     // 
         // this.loadScreen(shop);     // 
-        this.loadScreen(screenA);
+        // this.loadScreen(screenB);
+        // this.loadScreen(screenA);
+        this.loadScreen(screenC);
+        // this.loadScreen(screenD);
+        // this.loadScreen(screenE);
+
 
     }
 
@@ -116,6 +121,22 @@ class Game {
             }
             case "screenA": {
                 newScreenObject = screenA;
+                break;
+            }
+            case "screenB": {
+                newScreenObject = screenB;
+                break;
+            }
+            case "screenC": {
+                newScreenObject = screenC;
+                break;
+            }
+            case "screenD": {
+                newScreenObject = screenD;
+                break;
+            }
+            case "screenE": {
+                newScreenObject = screenE;
                 break;
             }
             default: {
