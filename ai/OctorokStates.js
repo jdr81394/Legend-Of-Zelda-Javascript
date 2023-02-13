@@ -1,6 +1,6 @@
 
 class DelayState {
-    constructor(){
+    constructor() {
         this.delayTime = undefined;
     }
 
@@ -9,7 +9,7 @@ class DelayState {
     }
 
     execute(enemy, gameGraph) {
-        if(this.delayTime <= 0) {
+        if (this.delayTime <= 0) {
             enemy.stateMachine.setGlobalState(SEARCH_STATE)
         }
         this.delayTime = this.delayTime - 1000;
@@ -22,7 +22,7 @@ class DelayState {
 
 // Get the path they need to travel to the player
 class SearchForPlayerState {
-    constructor() {}
+    constructor() { }
 
     enter(enemy) {
         // console.log("Enemy is searching for player");
@@ -33,7 +33,7 @@ class SearchForPlayerState {
         enemy.components["Character"].path = path;
 
         // if path is not found, make wander
-        if(path === []) {
+        if (path === []) {
             enemy.stateMachine.changeState(WANDER_STATE)         // wander
         } else {
             enemy.stateMachine.changeState(RUN_AT_STATE)
@@ -46,10 +46,10 @@ class SearchForPlayerState {
     }
 };
 
-class WanderState {}
+class WanderState { }
 
 class RunAtPlayerState {
-    constructor() {}
+    constructor() { }
 
     enter(enemy) {
         // console.log("Enemy is running at the player")
@@ -64,10 +64,10 @@ class RunAtPlayerState {
         let nextNodeId = path[length];
 
 
-        if(gameGraph.values[nextNodeId]) {
+        if (gameGraph.values[nextNodeId]) {
 
-            const {x: enemyX, y: enemyY} = enemy.components["Position"];
-            const {x,y} = gameGraph.values[nextNodeId]["position"];
+            const { x: enemyX, y: enemyY } = enemy.components["Position"];
+            const { x, y } = gameGraph.values[nextNodeId]["position"];
 
             // To determine if the enemy will go vertically or horizontally first, lets use some good old randomization
             // Depending on if it is 0 or 1, the enemy will go either vertically or horizontally
@@ -75,10 +75,10 @@ class RunAtPlayerState {
 
             // if 0, go horizontally or go x if y has already been determined
 
-            if(enemyX - x > 0) {
+            if (enemyX - x > 0) {
                 enemy.components["Movement"].vX = -1;
             }
-            else if (enemyX  - x < 0) {
+            else if (enemyX - x < 0) {
                 enemy.components["Movement"].vX = 1;
 
             }
@@ -87,41 +87,41 @@ class RunAtPlayerState {
                 enemy.components["Movement"].vX = 0;
             }
 
-            if(enemyY - y > 0) {
-                enemy.components["Movement"].vY =  -1;
+            if (enemyY - y > 0) {
+                enemy.components["Movement"].vY = -1;
             }
             else if (enemyY - y < 0) {
                 enemy.components["Movement"].vY = 1;
             }
- 
+
             else {
                 enemy.components["Movement"].vY = 0
             }
-            
+
 
             // These 2 if statements handle the situation where if there is knockback, the enemy can get back onto his track
-            if(Math.abs(enemyX - x) < 1  ) {
+            if (Math.abs(enemyX - x) < 1) {
                 enemy.components["Position"].x = x;
 
             }
 
-            if(Math.abs(enemyY - y) < 1 ) {
+            if (Math.abs(enemyY - y) < 1) {
                 enemy.components["Position"].y = y;
             }
-          
-            
-            if(enemyX === x && enemyY === y) {
+
+
+            if (enemyX === x && enemyY === y) {
                 path.pop();
-                if(path.length > 0) {
+                if (path.length > 0) {
                     this.execute(enemy, gameGraph)
 
                 }
 
             }
-     
-    
+
+
         }
-  
+
 
 
 

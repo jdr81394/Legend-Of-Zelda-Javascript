@@ -22,26 +22,26 @@ class StateMachine {
     }
 
     update() {
-        if(this.globalState) this.globalState.execute(this.owner, this.gameGraph);
+        if (this.globalState) this.globalState.execute(this.owner, this.gameGraph);
 
-        if(this.currentState) this.currentState.execute(this.owner, this.gameGraph);
+        if (this.currentState) this.currentState.execute(this.owner, this.gameGraph);
     }
 
     // takes telegram as argument but havent implemented this yet
-    handleMessage() {}
+    handleMessage() { }
 
     changeGlobalState(newState) {
         this.previousGlobalState = this.globalState;
-        if(this.globalState) this.globalState.exit(this.owner);
+        if (this.globalState) this.globalState.exit(this.owner);
         this.globalState = newState;
-        if(this.currentState) this.globalState.enter(this.owner, this.gameGraph)
+        if (this.currentState) this.globalState.enter(this.owner, this.gameGraph)
     }
 
     changeState(newState) {
         this.previousState = this.currentState;
-        if(this.currentState) this.currentState.exit(this.owner);
+        if (this.currentState) this.currentState.exit(this.owner);
         this.currentState = newState;
-        if(this.currentState) this.currentState.enter(this.owner, this.gameGraph);
+        if (this.currentState) this.currentState.enter(this.owner, this.gameGraph);
     }
 
     revertToPreviousState() {
