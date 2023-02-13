@@ -1,18 +1,19 @@
 
 class DelayState {
     constructor() {
-        this.delayTime = undefined;
+        this.startTime = undefined;
     }
 
     enter(enemy) {
-        this.delayTime = 230000;
+        this.startTime = Date.now();
     }
 
-    execute(enemy, gameGraph) {
-        if (this.delayTime <= 0) {
-            enemy.stateMachine.setGlobalState(SEARCH_STATE)
+    execute(enemy) {
+        if (this.startTime + 3000 <= Date.now()) {
+            enemy.stateMachine.changeState(SEARCH_STATE)
+            enemy.stateMachine.changeGlobalState(DELAY_STATE);
+
         }
-        this.delayTime = this.delayTime - 1000;
     }
 
     exit(enemy) {
@@ -34,10 +35,9 @@ class SearchForPlayerState {
 
         // if path is not found, make wander
         if (path === []) {
-            enemy.stateMachine.changeState(WANDER_STATE)         // wander
+            enemy.stateMachine.changeState(DELAY_STATE)         // wander
         } else {
             enemy.stateMachine.changeState(RUN_AT_STATE)
-            enemy.stateMachine.changeGlobalState(DELAY_STATE);
         }
     }
 

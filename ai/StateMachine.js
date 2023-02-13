@@ -34,7 +34,7 @@ class StateMachine {
         this.previousGlobalState = this.globalState;
         if (this.globalState) this.globalState.exit(this.owner);
         this.globalState = newState;
-        if (this.currentState) this.globalState.enter(this.owner, this.gameGraph)
+        if (this.globalState) this.globalState.enter(this.owner, this.gameGraph)
     }
 
     changeState(newState) {

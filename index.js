@@ -3,7 +3,7 @@ import { screenA, screenB, screenC, screenD, screenE, screenOneObject, shop1 } f
 import { InventoryScreen } from "./classes/Inventory.js";
 import { LINK_ANIMATIONS, RED_OCKOTOK, FIRE_ANIMATIONS } from "./animations/animations.js";
 import StateMachine from "./ai/StateMachine.js";
-import { SEARCH_STATE } from "./ai/OctorokStates.js";
+import { DELAY_STATE, SEARCH_STATE } from "./ai/OctorokStates.js";
 import Graph from "./dataStructures/Graph.js";
 import { swordPickupAnimation } from "./animations/eventAnimations.js";
 import { INVENTORY_SWORD_1, WEAPONS_TABLE } from "./items/weapons.js";
@@ -334,7 +334,7 @@ class Game {
 
                 const enemy = this.registry.createEntity(components);
                 enemy.stateMachine = new StateMachine(enemy, this.graph);
-                enemy.stateMachine.setGlobalState(SEARCH_STATE);
+                enemy.stateMachine.changeGlobalState(DELAY_STATE);
 
 
                 this.enemies.push(enemy);
