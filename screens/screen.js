@@ -130,6 +130,12 @@ const screenD = {
 const screenE = {
     assetPath: "./assets/overworld/",
     audioPath: "./assets/audio/overworld.mp3",
+    enemies: [{
+        x: 4,
+        y: 2,
+        // enemyType: string
+        // itemDrop: {}
+    }],
     screen: [
         [o, o, o, o, { screen: "screenD", type: "door", coX: 4, coY: 11 }, o, { screen: "screenD", type: "door", coX: 6, coY: 11 }, o, { screen: "screenD", type: "door", coX: 8, coY: 11 }, { screen: "screenD", type: "door", coX: 9, coY: 11 }, o, { screen: "screenD", type: "door", coX: 11, coY: 11 }, o, { screen: "screenD", type: "door", coX: 13, coY: 11 }, o, { screen: "screenD", type: "door", coX: 15, coY: 1 }, o, o],
         [o, "1", "1", "20", 0, "20", 0, "20", 0, 0, "20", 0, "20", 0, "20", 0, "20", o],

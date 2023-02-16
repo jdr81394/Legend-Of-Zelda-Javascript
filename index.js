@@ -1,4 +1,6 @@
-import { LINK_ANIMATION, LINK_PICKUP_SWORD_1 } from "./animations/animations.js";
+import { searchState } from "./ai/OctorokStates.js";
+import StateMachine from "./ai/StateMachine.js";
+import { LINK_ANIMATION, LINK_PICKUP_SWORD_1, RED_OCTOROK_ANIMATION } from "./animations/animations.js";
 import InventoryScreen from "./classes/InventoryScreen.js";
 import Registry from "./classes/Registry.js";
 import { openingScreen, screenA, screenB, screenC, shop, screenD, screenE } from "./screens/screen.js";
@@ -49,9 +51,9 @@ class Game {
         // this.loadScreen(shop);     // 
         // this.loadScreen(screenB);
         // this.loadScreen(screenA);
-        this.loadScreen(screenC);
+        // this.loadScreen(screenC);
         // this.loadScreen(screenD);
-        // this.loadScreen(screenE);
+        this.loadScreen(screenE);
 
 
     }
@@ -92,6 +94,12 @@ class Game {
         this.registry.getSystem("TransitionSystem").update(this.player, this.eventBus, this.loadNewScreen)
         this.registry.getSystem("ActionableSystem").update(this.player, this.eventBus);
 
+        for (let i = 0; i < this.registry.enemies.length; i++) {
+            const enemy = this.registry.enemies[i];
+
+            enemy.stateMachine.update();
+
+        }
         requestAnimationFrame(this.update)
     }
 
@@ -253,25 +261,21 @@ class Game {
 
                 switch (key) {
                     case "w": {
-                        playerAnimationComponent.shouldAnimate = true;
                         // playerAnimationComponent.facing = "up";
                         playerMovementComponent.vY = -5;
                         break;
                     }
                     case "a": {
-                        playerAnimationComponent.shouldAnimate = true;
                         // playerAnimationComponent.facing = "left";
                         playerMovementComponent.vX = -5;
                         break;
                     }
                     case "s": {
-                        playerAnimationComponent.shouldAnimate = true;
                         // playerAnimationComponent.facing = "down";
                         playerMovementComponent.vY = 5
                         break;
                     }
                     case "d": {
-                        playerAnimationComponent.shouldAnimate = true;
                         // playerAnimationComponent.facing = "right";
                         playerMovementComponent.vX = 5;
                         break;
@@ -300,13 +304,11 @@ class Game {
                 switch (key) {
                     case "w":
                     case "s": {
-                        playerAnimationComponent.shouldAnimate = false;
                         playerMovementComponent.vY = 0;
                         break;
                     }
                     case "a":
                     case "d": {
-                        playerAnimationComponent.shouldAnimate = false;
                         playerMovementComponent.vX = 0;
                         break;
                     }
@@ -501,6 +503,60 @@ class Game {
 
                 const entity = this.registry.createEntity(components);
 
+
+            }
+        }
+
+
+
+        if (screenObject && screenObject.enemies.length > 0) {
+
+            const { enemies } = screenObject;
+
+            for (let i = 0; i < enemies.length; i++) {
+                let components = [];
+
+                const enemy = enemies[i];
+                const { x, y } = enemy;
+
+                const dummyPositionComponent = {
+                    name: "Position",
+                    value: {
+                        x: x * TILE_SIZE, y: y * TILE_SIZE,
+                        width: TILE_SIZE - 10,
+                        height: TILE_SIZE - 10
+                    }
+                };
+
+                const dummySpriteComponent = {
+                    name: "Sprite",
+                    value: {
+                        srcRect: {
+                            x: -2, y: -1, width: 19, height: 19
+                        },
+                        path: "assets/overworld/enemies/enemies.png"
+                    }
+                }
+
+                const dummyMovementComponent = {
+                    name: "Movement",
+                    value: {
+                        vX: 1,
+                        vY: 0
+                    }
+                }
+
+
+
+
+                components.push(dummyPositionComponent, dummySpriteComponent, dummyMovementComponent, RED_OCTOROK_ANIMATION);
+
+                const entity = this.registry.createEntity(components);
+
+                entity.stateMachine = new StateMachine(entity, this.player)
+                entity.stateMachine.changeState(searchState);
+
+                this.registry.enemies.push(entity);
 
             }
         }

@@ -187,6 +187,113 @@ const LINK_ANIMATION = {
 }
 
 
+const RED_OCTOROK_ANIMATION = {
+    name: "Animation",
+    value: {
+        shouldAnimate: false,
+        currentTimeOfAnimation: 0,
+        facing: "down",
+        frames: {
+            down: {
+                move: {
+                    srcRect: [
+                        {
+                            x: -2,
+                            y: -1,
+                            width: 20,
+                            height: 19
+                        },
+                        {
+                            x: -1,
+                            y: 28,
+                            width: 19,
+                            height: 19
+                        },
+                    ],
+                    currentFrame: 0,
+                    numFrames: 2,
+                    frameSpeedRate: 3,
+                    startTime: Date.now()
+                },
+                attack: {}
+            },
+            left: {
+                move: {
+                    srcRect: [
+                        {
+                            x: 28,
+                            y: -1,
+                            width: 19,
+                            height: 19
+                        },
+                        {
+                            x: 28,
+                            y: 29,
+                            width: 19,
+                            height: 19
+                        },
+                    ],
+                    currentFrame: 0,
+                    numFrames: 2,
+                    frameSpeedRate: 3,
+                    startTime: Date.now()
+                },
+                attack: {}
+
+            },
+            up: {
+                move: {
+                    srcRect: [
+                        {
+                            x: 58,
+                            y: -1,
+                            width: 19,
+                            height: 19
+                        },
+                        {
+                            x: 58,
+                            y: 28,
+                            width: 19,
+                            height: 19
+                        },
+                    ],
+                    currentFrame: 0,
+                    numFrames: 2,
+                    frameSpeedRate: 3,
+                    startTime: Date.now()
+                },
+                attack: {}
+            },
+            right: {
+                move: {
+                    srcRect: [
+                        {
+                            x: 88,
+                            y: -1,
+                            width: 19,
+                            height: 19
+                        },
+                        {
+                            x: 88,
+                            y: 28,
+                            width: 19,
+                            height: 19
+                        },
+                    ],
+                    currentFrame: 0,
+                    numFrames: 2,
+                    frameSpeedRate: 3,
+                    startTime: Date.now()
+                },
+                attack: {}
+
+            },
+
+        }
+    }
+}
+
+
 
 // player, registry, handleUserInput, newTilePositionComponent
 const LINK_PICKUP_SWORD_1 = ({ player, handleUserInput, id, newTilePositionComponent }) => {
@@ -296,4 +403,4 @@ const LINK_PICKUP_SWORD_1 = ({ player, handleUserInput, id, newTilePositionCompo
 
 }
 
-export { LINK_ANIMATION, LINK_PICKUP_SWORD_1 };
+export { LINK_ANIMATION, LINK_PICKUP_SWORD_1, RED_OCTOROK_ANIMATION };

@@ -58,6 +58,12 @@ class MovementSystem extends System {
             if (Movement.vY > 0) {
                 Animation.facing = "down";
             }
+
+            if (Movement.vX || Movement.vY) {
+                Animation.shouldAnimate = true
+            } else {
+                Animation.shouldAnimate = false
+            }
         }
     }
 }
@@ -306,6 +312,17 @@ class RenderSystem extends System {
             }
 
             if (isDebug) {
+
+                c.globalCompositeOperation = "source-over"
+                const { id } = entity;
+
+                c.beginPath();
+                c.fillStyle = "black"
+                c.font = "15px Arial"
+                c.fillText(id, x, y + 70, 50);
+                c.stroke();
+
+
                 if (Collision) {
                     c.rect(x, y, width, height);
                     c.lineWidth = 2;

@@ -7,6 +7,7 @@ class Registry {
         this.numberOfEntities = 0;
         this.entitiesToBeAdded = [];
         this.entitiesToBeRemoved = [];
+        this.enemies = [];
         this.systems = {}
     }
 

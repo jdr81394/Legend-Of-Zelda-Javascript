@@ -1,7 +1,8 @@
 class Entity {
-    constructor(id, registry) {
+    constructor(id, registry, stateMachine) {
         this.id = id;
         this.registry = registry;
+        this.stateMachine = stateMachine;
         this.components = {}
         /*
 
