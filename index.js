@@ -4,7 +4,7 @@ import { LINK_ANIMATION, LINK_PICKUP_SWORD_1, RED_OCTOROK_ANIMATION } from "./an
 import InventoryScreen from "./classes/InventoryScreen.js";
 import Registry from "./classes/Registry.js";
 import { openingScreen, screenA, screenB, screenC, shop, screenD, screenE } from "./screens/screen.js";
-
+import Graph from "./classes/Graph.js";
 export const canvas = document.getElementById("gameScreen");
 
 canvas.width = window.innerWidth;
@@ -27,6 +27,7 @@ class Game {
         this.eventBus = [];
         this.audioObject = undefined;
         this.inventoryScreen = new InventoryScreen();
+        this.graph = undefined;
         this.audioPath = "";
         this.isPaused = false;
     }
@@ -43,7 +44,7 @@ class Game {
         this.registry.addSystem("ActionableSystem");
 
         this.createPlayer();
-
+        this.graph = new Graph(this.player);
         document.addEventListener("keyup", this.handleUserInput)
         document.addEventListener("keydown", this.handleUserInput)
 
@@ -98,8 +99,10 @@ class Game {
             const enemy = this.registry.enemies[i];
 
             enemy.stateMachine.update();
-
+            this.graph.dijkstrasAlgorithm(enemy);
         }
+
+
         requestAnimationFrame(this.update)
     }
 
@@ -328,9 +331,12 @@ class Game {
     loadScreen = (screenObject) => {
 
 
+        let idOfTile = 0;
         for (let i = 0; i < this.numRows; i++) {
 
             for (let j = 0; j < this.numCols; j++) {
+
+                idOfTile++;
 
                 let components = [];
 
@@ -338,8 +344,24 @@ class Game {
                 let srcRect = undefined
                 let path = '';
 
+
+                const dummyPositionComponent = {
+                    name: "Position",
+                    value: {
+                        x: j * TILE_SIZE,
+                        y: i * TILE_SIZE,
+                        width: TILE_SIZE,
+                        height: TILE_SIZE
+                    }
+                }
+
+                components.push(dummyPositionComponent);
+
                 if (typeof tile === "number") {
                     path = "tiles/";
+
+                    // Add the navigatable tile to the graph
+                    this.graph.generateGraph(idOfTile, dummyPositionComponent)
                 }
 
                 else if (typeof tile === "string") {
@@ -466,6 +488,7 @@ class Game {
                 }
 
                 else if (typeof tile === "undefined") {
+                    this.registry.createEntity([]);
                     continue;
                 }
 
@@ -486,17 +509,6 @@ class Game {
 
 
 
-                const dummyPositionComponent = {
-                    name: "Position",
-                    value: {
-                        x: j * TILE_SIZE,
-                        y: i * TILE_SIZE,
-                        width: TILE_SIZE,
-                        height: TILE_SIZE
-                    }
-                }
-
-                components.push(dummyPositionComponent);
 
 
 
@@ -507,7 +519,7 @@ class Game {
             }
         }
 
-
+        this.graph.generateEdges();
 
         if (screenObject && screenObject.enemies.length > 0) {
 
@@ -541,7 +553,7 @@ class Game {
                 const dummyMovementComponent = {
                     name: "Movement",
                     value: {
-                        vX: 1,
+                        vX: 0,
                         vY: 0
                     }
                 }
@@ -553,8 +565,8 @@ class Game {
 
                 const entity = this.registry.createEntity(components);
 
-                entity.stateMachine = new StateMachine(entity, this.player)
-                entity.stateMachine.changeState(searchState);
+                entity.stateMachine = new StateMachine(entity, this.graph)
+                entity.stateMachine.changeGlobalState(searchState);
 
                 this.registry.enemies.push(entity);
 

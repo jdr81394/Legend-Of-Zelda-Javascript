@@ -1,8 +1,8 @@
 class StateMachine {
 
-    constructor(owner, player) {
+    constructor(owner, graph) {
         this.owner = owner;
-        this.player = player;
+        this.graph = graph;
 
         this.globalState = undefined;        // higher priority
         this.currentState = undefined;       // lower priority
@@ -15,9 +15,9 @@ class StateMachine {
     update = () => {
 
 
-        if (this.globalState) this.globalState.execute();
+        if (this.globalState) this.globalState.execute(this.owner, this.graph);
 
-        if (this.currentState) this.currentState.execute(this.owner, this.player);
+        if (this.currentState) this.currentState.execute(this.owner, this.graph);
     }
 
     changeGlobalState(newState) {
