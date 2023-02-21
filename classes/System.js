@@ -233,7 +233,13 @@ class RenderSystem extends System {
                 if (Animation && Inventory) {
                     const { activeA } = Inventory;
                     const { facing, isAttackingA } = Animation;
-                    const mode = isAttackingA ? "attack" : "move";
+                    let mode;
+
+                    if (!shouldAnimate && isAttackingA) {
+                        mode = "attack";
+                    } else {
+                        mode = "move"
+                    }
 
                     // If there is inventory, it must be link
                     // if there is an animation component and that isattackingA is set to true, we must be handling a sword swing
@@ -289,7 +295,7 @@ class RenderSystem extends System {
                         dummySpriteSwordComponent.value.path = SWORD_1.path;
 
 
-                        if (!activeA.weaponEntity) {
+                        if (activeA && !activeA.weaponEntity) {
                             activeA.weaponEntity = entity.registry.createEntity([dummyPositionSwordComponent, dummySpriteSwordComponent]);
                         }
                     } else if (
@@ -353,7 +359,12 @@ class AnimationSystem extends System {
 
             if (shouldAnimate || isAttackingA) {
 
-                const mode = isAttackingA ? "attack" : "move";
+                let mode;
+                if (!shouldAnimate && isAttackingA) {
+                    mode = "attack";
+                } else {
+                    mode = "move"
+                }
 
                 const currentFrame = Math.floor(
                     (gameTime - entity.components["Animation"]["currentTimeOfAnimation"]) *

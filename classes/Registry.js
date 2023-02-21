@@ -195,6 +195,9 @@ class Registry {
     }
 
     removeAllEntities = () => {
+
+        this.enemies = [];
+
         Object.values(this.systems).forEach((system) => {
             system.entities = [];
         })

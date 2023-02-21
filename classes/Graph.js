@@ -34,7 +34,6 @@ class Graph {
 
         this.nodeOrderedGraph[x][y] = idOfTile;
 
-        console.log("this graph property: ", this.graph, " and this node Ordered Graph: ", this.nodeOrderedGraph)
     }
 
     generateEdges = () => {
@@ -72,7 +71,6 @@ class Graph {
 
         })
 
-        console.log("this graph: ", this.graph);
     }
 
     dijkstrasAlgorithm = (enemy) => {
@@ -160,7 +158,6 @@ class Graph {
 
         }
 
-        console.log("Path: ", path);
         return path;
 
 

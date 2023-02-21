@@ -49,12 +49,12 @@ class Game {
         document.addEventListener("keydown", this.handleUserInput)
 
         // this.loadScreen(openingScreen);     // 
-        // this.loadScreen(shop);     // 
+        this.loadScreen(shop);     // 
         // this.loadScreen(screenB);
         // this.loadScreen(screenA);
         // this.loadScreen(screenC);
         // this.loadScreen(screenD);
-        this.loadScreen(screenE);
+        // this.loadScreen(screenE);
 
 
     }
@@ -155,8 +155,8 @@ class Game {
             }
         }
 
-        this.createPlayer(coX, coY);
         this.loadScreen(newScreenObject)
+        this.createPlayer(coX, coY);
     }
 
     createPlayer = (coX, coY) => {
@@ -164,35 +164,14 @@ class Game {
         let newComponents = [];
 
         if (this.player) {
-            const { components } = this.player;
-
-            Object.values(components).forEach((component) => {
+            const { Position } = this.player.components;
 
 
-                /*
-                    {
-                        componentTYpe: string,
-                        x,
-                        y,
-                        height,
-                        width
-                    }
 
-                */
-
-                if (component.componentType === "Position") {
-                    component.x = coX * TILE_SIZE;
-                    component.y = coY * TILE_SIZE;
-                }
-
-                if (component.componentType == "Sprite") {
-                    component.path = component.sprite.src;
-                }
-
-                newComponents.push({ name: component.componentType, value: { ...component } });
-            })
-            newComponents.push(LINK_ANIMATION)
-
+            Position.x = coX * TILE_SIZE;
+            Position.y = coY * TILE_SIZE;
+            this.registry.entitiesToBeAdded.push(this.player);
+            return;
 
         } else {
 
@@ -259,27 +238,32 @@ class Game {
         if (this.player) {
             let playerMovementComponent = this.player.components["Movement"];
             let playerAnimationComponent = this.player.components["Animation"];
+            let playerInventoryComponent = this.player.components["Inventory"];
 
             if (type === "keydown") {
 
                 switch (key) {
                     case "w": {
                         // playerAnimationComponent.facing = "up";
+                        playerAnimationComponent.isAttackingA = false;
                         playerMovementComponent.vY = -5;
                         break;
                     }
                     case "a": {
                         // playerAnimationComponent.facing = "left";
+                        playerAnimationComponent.isAttackingA = false;
                         playerMovementComponent.vX = -5;
                         break;
                     }
                     case "s": {
                         // playerAnimationComponent.facing = "down";
+                        playerAnimationComponent.isAttackingA = false;
                         playerMovementComponent.vY = 5
                         break;
                     }
                     case "d": {
                         // playerAnimationComponent.facing = "right";
+                        playerAnimationComponent.isAttackingA = false;
                         playerMovementComponent.vX = 5;
                         break;
                     }
@@ -288,7 +272,7 @@ class Game {
                         break;
                     }
                     case "v": {
-                        if (playerAnimationComponent.isAttackingA === false) {
+                        if (playerAnimationComponent.isAttackingA === false && playerInventoryComponent.activeA) {
                             playerAnimationComponent.isAttackingA = true;
                             playerAnimationComponent.currentTimeOFAnimation = Date.now();
                         }
@@ -521,7 +505,7 @@ class Game {
 
         this.graph.generateEdges();
 
-        if (screenObject && screenObject.enemies.length > 0) {
+        if (screenObject.enemies && screenObject.enemies.length > 0) {
 
             const { enemies } = screenObject;
 

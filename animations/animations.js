@@ -1,3 +1,4 @@
+import { shop } from "../screens/screen.js";
 import { SWORD_1 } from "../weapons/weapons.js";
 
 const LINK_ANIMATION = {
@@ -398,7 +399,7 @@ const LINK_PICKUP_SWORD_1 = ({ player, handleUserInput, id, newTilePositionCompo
     player.components["Inventory"].activeA = SWORD_1;
 
 
-
+    shop.screen[5][8].remove = true;
 
 
 }
