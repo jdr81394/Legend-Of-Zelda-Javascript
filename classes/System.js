@@ -27,22 +27,42 @@ class MovementSystem extends System {
 
                 if (Movement.collisionX) {
                     Movement.vX = 0;
-                    if (facing === "right") Position.x -= 6;
-                    if (facing === "left") Position.x += 6
+                    Movement.knockbackVx = 0;
+                    Position.x = Position.previousX;
+                } else {
+                    Position.previousX = Position.x;
                 }
 
                 if (Movement.collisionY) {
                     Movement.vY = 0;
-                    if (facing === "up") Position.y += 6;
-                    if (facing === "down") Position.y -= 6;
-
+                    Movement.knockbackVy = 0;
+                    Position.y = Position.previousY;
+                } else {
+                    Position.previousY = Position.y;
                 }
             }
             Movement.collisionX = false;
             Movement.collisionY = false;
 
-            Position.x += Movement.vX;
-            Position.y += Movement.vY;
+            Position.x += Movement.vX + Movement.knockbackVx;
+            Position.y += Movement.vY + Movement.knockbackVy;
+
+            const f = 0.95;     // friction coefficient
+
+            if (Movement.knockbackVx < 0) {
+                Movement.knockbackVx = f * Math.ceil(Movement.knockbackVx)
+            }
+            else if (Movement.knockbackVx > 0) {
+                Movement.knockbackVx = f * Math.floor(Movement.knockbackVx)
+            }
+
+            if (Movement.knockbackVy < 0) {
+                Movement.knockbackVy = f * Math.ceil(Movement.knockbackVy);
+            }
+            else if (Movement.knockbackVy > 0) {
+                Movement.knockbackVy = f * Math.floor(Movement.knockbackVy);
+            }
+
 
             if (Movement.vX > 0) {
                 Animation.facing = "right"
@@ -91,17 +111,17 @@ class CollisionSystem extends System {
 
                 if (
                     px < ex + ewidth &&
-                    px + pwidth + Movement.vX > ex &&
+                    px + pwidth + Movement.vX + Movement.knockbackVx > ex &&
                     py < ey + eheight &&
-                    py + pheight + Movement.vY > ey
+                    py + pheight + Movement.vY + Movement.knockbackVy > ey
                 ) {
 
 
-                    if (Movement.vX !== 0) {
+                    if (Movement.vX !== 0 || Movement.knockbackVx) {
                         Movement.collisionX = true
                     }
 
-                    if (Movement.vY !== 0) {
+                    if (Movement.vY !== 0 || Movement.knockbackVy) {
                         Movement.collisionY = true
                     }
 
@@ -204,6 +224,184 @@ class TransitionSystem extends System {
     }
 }
 
+class HitboxSystem extends System {
+    constructor(systemType) {
+        super(systemType);
+        this.componentRequirements = ["Hitbox", "Position"]
+    }
+
+    update = () => {
+        for (let i = this.entities.length - 1; i > 0; i--) {
+            for (let j = 0; j < i; j++) {
+                const e1 = this.entities[i];
+                const e2 = this.entities[j];
+
+                const { Position: e1Position } = e1.components;
+                const { Position: e2Position } = e2.components;
+
+                const { x: x1, y: y1, width: width1, height: height1 } = e1Position;
+                const { x: x2, y: y2, width: width2, height: height2 } = e2Position;
+
+
+                if (
+                    x1 < x2 + width2 &&
+                    x1 + width1 > x2 &&
+                    y1 < y2 + height2 &&
+                    y1 + height1 > y2
+                ) {
+
+                    const { Hitbox: hitbox1 } = e1.components;
+                    const { Hitbox: hitbox2 } = e2.components;
+                    let kbReceiver = undefined;
+                    let kbSender = undefined;
+
+                    // If hitbox1 owner is linkweapon, and hitbox2 owner is enemy
+                    // If hitbox1 owner is enem7, and hitbox2 owner is link weapon
+                    if (
+                        (hitbox1.owner === 3 && hitbox2.owner === 2)
+                        ||
+                        (hitbox1.owner === 2 && hitbox2.owner === 3)
+                    ) {
+                        // If link's sword overlaps with the enemy, do damage to enemy
+                        const linkAttack = hitbox1.owner === 3 ? e1 : e2;
+                        const enemy = hitbox1.owner === 2 ? e1 : e2;
+
+
+
+                        const { damage } = linkAttack.components["Hitbox"]
+
+                        if (damage) {
+
+                            const { invulnerableTime } = enemy.components["Health"];
+
+                            if (invulnerableTime === 0) {
+                                // Do damage
+                                enemy.components["Health"].remainingHealth -= damage;
+                                enemy.components["Health"].invulnerableTime = Date.now() + 1500; // We will be handling this later
+
+                                // Apply Knockback
+                                kbReceiver = enemy;
+                                kbSender = linkAttack;
+                                new Audio("../assets/audio/enemyHurt.mp3").play();
+
+
+                            }
+
+
+                        }
+
+                    }
+                    // If enemy overlaps with Link, do damage to link
+                    // If enemy projectile overlaps with Link, we'll do damage to link
+                    else if (
+                        (hitbox1.owner === 1 && hitbox2.owner % 2 === 0)
+                        ||
+                        (hitbox1.owner % 2 === 0 && hitbox2.owner === 1)
+                    ) {
+                        // If link's sword overlaps with the enemy, do damage to enemy
+                        const link = hitbox1.owner === 1 ? e1 : e2;
+                        const enemy = hitbox1.owner === 1 ? e2 : e1;            // enemy or enemyProjectil
+
+                        const { damage } = enemy.components["Hitbox"]
+
+                        if (damage) {
+
+                            const { invulnerableTime } = link.components["Health"];
+
+                            if (invulnerableTime === 0) {
+                                // Do damage
+                                link.components["Health"].remainingHealth -= damage;
+                                link.components["Health"].invulnerableTime = Date.now() + 1500;
+
+                                kbReceiver = link;
+                                kbSender = enemy;
+                                new Audio("../assets/audio/linkHurt.mp3").play();
+
+                            }
+
+
+                        }
+
+
+                    }
+
+
+                    if (kbReceiver && kbSender) {
+                        const receiverCenterX = kbReceiver.components["Position"].x - (kbReceiver.components["Position"].width / 2);
+                        const receiverCenterY = kbReceiver.components["Position"].y - (kbReceiver.components["Position"].height / 2);
+
+                        const senderCenterX = kbSender.components["Position"].x - (kbSender.components["Position"].width / 2);
+                        const senderCenterY = kbSender.components["Position"].y - (kbSender.components["Position"].height / 2);
+
+                        let differenceX = senderCenterX - receiverCenterX;
+                        let differenceY = senderCenterY - receiverCenterY;
+
+                        let absoluteDiffX = differenceX < 0 ? differenceX * -1 : differenceX;
+                        let absoluteDiffY = differenceY < 0 ? differenceY * -1 : differenceY;
+
+                        let side = undefined;
+
+                        // Whatever is greater will determine the axis that collision occurred on.
+                        if (absoluteDiffX > absoluteDiffY) {
+                            // It is either left or right
+                            if (differenceX < 0) {
+                                side = "right"
+                                // Apply knock back 
+                                kbReceiver.components["Movement"].knockbackVx = 10
+                            } else {
+                                side = "left"
+                                kbReceiver.components["Movement"].knockbackVx = -10;
+                            }
+                        }
+                        else {
+                            // It is either top or bottom
+
+                            if (differenceY < 0) {
+                                side = "top";
+                                kbReceiver.components["Movement"].knockbackVy = 10;
+                            } else {
+                                side = "bottom";
+                                kbReceiver.components["Movement"].knockbackVy = -10;
+                            }
+                        }
+
+                        console.log("side: ", side)
+
+                    }
+
+
+                }
+
+            }
+        }
+
+
+    }
+}
+
+
+class HealthSystem extends System {
+    constructor(systemType) {
+        super(systemType);
+        this.componentRequirements = ["Health"];
+    }
+
+    update = (registry) => {
+
+        for (let i = 0; i < this.entities.length; i++) {
+            const entity = this.entities[i];
+            const { remainingHealth, invulnerableTime } = entity.components["Health"];
+
+            if (Date.now() >= invulnerableTime) {
+                entity.components["Health"].invulnerableTime = 0;
+            }
+
+            if (remainingHealth <= 0) {
+                registry.entitiesToBeRemoved.push(entity);
+            }
+        }
+    }
+}
 
 
 class RenderSystem extends System {
@@ -232,7 +430,7 @@ class RenderSystem extends System {
                 const { Inventory, Animation } = entity.components;
                 if (Animation && Inventory) {
                     const { activeA } = Inventory;
-                    const { facing, isAttackingA } = Animation;
+                    const { facing, isAttackingA, shouldAnimate } = Animation;
                     let mode;
 
                     if (!shouldAnimate && isAttackingA) {
@@ -243,7 +441,7 @@ class RenderSystem extends System {
 
                     // If there is inventory, it must be link
                     // if there is an animation component and that isattackingA is set to true, we must be handling a sword swing
-                    if (isAttackingA && Animation["frames"][facing][mode]["currentFrame"] === 0) {
+                    if (mode === "attack" && Animation["frames"][facing][mode]["currentFrame"] === 0) {
 
                         let dummyPositionSwordComponent = { name: "Position", value: {} };
                         let dummySpriteSwordComponent = { name: "Sprite", value: {} };
@@ -294,14 +492,25 @@ class RenderSystem extends System {
                         dummySpriteSwordComponent.value.srcRect = SWORD_1.srcRect[facing];
                         dummySpriteSwordComponent.value.path = SWORD_1.path;
 
+                        // add hitbox 
+                        const dummyHitboxComponent = {
+                            name: "Hitbox",
+                            value: {
+                                damage: 1,
+                                owner: 3
+                            }
+                        }
+
+
 
                         if (activeA && !activeA.weaponEntity) {
-                            activeA.weaponEntity = entity.registry.createEntity([dummyPositionSwordComponent, dummySpriteSwordComponent]);
+                            new Audio("../assets/audio/swordSlash.mp3").play();
+                            activeA.weaponEntity = entity.registry.createEntity([dummyPositionSwordComponent, dummySpriteSwordComponent, dummyHitboxComponent]);
                         }
                     } else if (
                         activeA
                         && activeA.weaponEntity
-                        && (!isAttackingA
+                        && (mode === "move"
                             || Animation["frames"][facing][mode]["currentFrame"] === 1)
                     ) {
                         entity.registry.entitiesToBeRemoved.push(entity.components["Inventory"]["activeA"]["weaponEntity"]);
@@ -330,13 +539,28 @@ class RenderSystem extends System {
 
 
                 if (Collision) {
+                    c.beginPath();
                     c.rect(x, y, width, height);
                     c.lineWidth = 2;
                     c.strokeStyle = "red"
+                    c.stroke();
+
                 }
+
+                const { Hitbox } = entity.components;
+
+                if (Hitbox) {
+                    c.beginPath();
+                    c.rect(x, y, width, height);
+                    c.linkWidth = 2;
+                    c.strokeStyle = "orange";
+                    c.stroke();
+
+                }
+
+
             }
 
-            c.stroke();
 
         }
 
@@ -385,4 +609,4 @@ class AnimationSystem extends System {
     }
 }
 
-export { MovementSystem, RenderSystem, AnimationSystem, CollisionSystem, TransitionSystem, ActionableSystem };
+export { MovementSystem, RenderSystem, AnimationSystem, CollisionSystem, HealthSystem, TransitionSystem, ActionableSystem, HitboxSystem };

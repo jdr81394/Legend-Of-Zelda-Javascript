@@ -5,6 +5,7 @@ import InventoryScreen from "./classes/InventoryScreen.js";
 import Registry from "./classes/Registry.js";
 import { openingScreen, screenA, screenB, screenC, shop, screenD, screenE } from "./screens/screen.js";
 import Graph from "./classes/Graph.js";
+import { SWORD_1 } from "./weapons/weapons.js";
 export const canvas = document.getElementById("gameScreen");
 
 canvas.width = window.innerWidth;
@@ -40,21 +41,22 @@ class Game {
         this.registry.addSystem("AnimationSystem");
         this.registry.addSystem("CollisionSystem");
         this.registry.addSystem("TransitionSystem");
-
+        this.registry.addSystem("HitboxSystem");
         this.registry.addSystem("ActionableSystem");
+        this.registry.addSystem("HealthSystem");
 
         this.createPlayer();
-        this.graph = new Graph(this.player);
+
         document.addEventListener("keyup", this.handleUserInput)
         document.addEventListener("keydown", this.handleUserInput)
 
         // this.loadScreen(openingScreen);     // 
-        this.loadScreen(shop);     // 
+        // this.loadScreen(shop);     // 
         // this.loadScreen(screenB);
         // this.loadScreen(screenA);
         // this.loadScreen(screenC);
         // this.loadScreen(screenD);
-        // this.loadScreen(screenE);
+        this.loadScreen(screenE);
 
 
     }
@@ -92,8 +94,11 @@ class Game {
         this.registry.getSystem("AnimationSystem").update(this.gameTime);
         this.registry.getSystem("CollisionSystem").update(this.player)
         this.registry.getSystem("MovementSystem").update()
+        this.registry.getSystem("HitboxSystem").update();
+        this.registry.getSystem("HealthSystem").update(this.registry);
         this.registry.getSystem("TransitionSystem").update(this.player, this.eventBus, this.loadNewScreen)
         this.registry.getSystem("ActionableSystem").update(this.player, this.eventBus);
+
 
         for (let i = 0; i < this.registry.enemies.length; i++) {
             const enemy = this.registry.enemies[i];
@@ -214,10 +219,29 @@ class Game {
                 name: "Inventory"
             }
 
-            newComponents = [dummyCollisionComponent, dummyPositionComponent, dummySpriteComponent, dummyMovementComponent, dummyInventoryComponent, LINK_ANIMATION]
+            const dummyHealthComponent = {
+                name: "Health",
+                value: {
+                    totalHealth: 3,
+                    remainingHealth: 2.5
+                }
+            }
+
+            const dummyHitboxComponent = {
+                name: "Hitbox",
+                value: {
+                    owner: 1,
+                    damage: undefined
+                }
+            }
+
+            newComponents = [dummyHitboxComponent, dummyCollisionComponent, dummyPositionComponent, dummySpriteComponent, dummyMovementComponent, dummyInventoryComponent, dummyHealthComponent, LINK_ANIMATION]
         }
 
         this.player = this.registry.createEntity(newComponents)
+
+        this.player.components["Inventory"].inventory.sword = SWORD_1;
+        this.player.components["Inventory"].activeA = SWORD_1;
 
 
 
@@ -314,6 +338,7 @@ class Game {
 
     loadScreen = (screenObject) => {
 
+        this.graph = new Graph(this.player);
 
         let idOfTile = 0;
         for (let i = 0; i < this.numRows; i++) {
@@ -500,6 +525,7 @@ class Game {
                 const entity = this.registry.createEntity(components);
 
 
+
             }
         }
 
@@ -542,10 +568,26 @@ class Game {
                     }
                 }
 
+                const dummyHealthComponent = {
+                    name: "Health",
+                    value: {
+                        totalHealth: 3,
+                        remainingHealth: 2
+                    }
+                }
+
+                const dummyHitboxComponent = {
+                    name: "Hitbox",
+                    value: {
+                        owner: 2,
+                        damage: 0.5
+                    }
+                }
 
 
 
-                components.push(dummyPositionComponent, dummySpriteComponent, dummyMovementComponent, RED_OCTOROK_ANIMATION);
+
+                components.push(dummyPositionComponent, dummySpriteComponent, dummyMovementComponent, dummyHitboxComponent, RED_OCTOROK_ANIMATION, dummyHealthComponent);
 
                 const entity = this.registry.createEntity(components);
 

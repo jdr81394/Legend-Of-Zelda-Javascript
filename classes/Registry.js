@@ -1,6 +1,6 @@
-import { ActionableComponent, AnimationComponent, CollisionComponent, InventoryComponent, MovementComponent, PositionComponent, SpriteComponent, TransitionComponent } from "./Component.js";
+import { ActionableComponent, AnimationComponent, CollisionComponent, HealthComponent, HitboxComponent, InventoryComponent, MovementComponent, PositionComponent, SpriteComponent, TransitionComponent } from "./Component.js";
 import Entity from "./Entity.js";
-import { ActionableSystem, AnimationSystem, CollisionSystem, MovementSystem, RenderSystem, TransitionSystem } from "./System.js";
+import { ActionableSystem, AnimationSystem, CollisionSystem, HealthSystem, HitboxSystem, MovementSystem, RenderSystem, TransitionSystem } from "./System.js";
 
 class Registry {
     constructor() {
@@ -87,6 +87,16 @@ class Registry {
                     newEntityComponents["Inventory"] = new InventoryComponent(component["name"], componentObj);
                     break;
                 }
+                case "Hitbox": {
+                    const componentObj = component["value"];
+                    newEntityComponents["Hitbox"] = new HitboxComponent(component["name"], componentObj);
+                    break;
+                }
+                case "Health": {
+                    const componentObj = component["value"];
+                    newEntityComponents["Health"] = new HealthComponent(component["name"], componentObj);
+                    break;
+                }
                 default:
                     break;
             }
@@ -125,6 +135,14 @@ class Registry {
             }
             case "ActionableSystem": {
                 newSystem = new ActionableSystem(systemType);
+                break;
+            }
+            case "HitboxSystem": {
+                newSystem = new HitboxSystem(systemType);
+                break;
+            }
+            case "HealthSystem": {
+                newSystem = new HealthSystem(systemType);
                 break;
             }
             default: {
@@ -201,6 +219,10 @@ class Registry {
         Object.values(this.systems).forEach((system) => {
             system.entities = [];
         })
+
+        this.numberOfEntities = 0;
+
+
     }
 
 }

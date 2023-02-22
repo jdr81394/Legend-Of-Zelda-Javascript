@@ -11,6 +11,8 @@ class PositionComponent extends Component {
 
         this.x = componentObj.x;
         this.y = componentObj.y;
+        this.previousX = componentObj.x;
+        this.previousY = componentObj.y;
         this.width = componentObj.width;
         this.height = componentObj.height;
 
@@ -38,6 +40,8 @@ class MovementComponent extends Component {
         super(componentType);
         this.vX = componentObj.vX;
         this.vY = componentObj.vY;
+        this.knockbackVx = 0;
+        this.knockbackVy = 0;
         this.collisionX = false;
         this.collisionY = false;
     }
@@ -140,6 +144,24 @@ class InventoryComponent extends Component {
     }
 }
 
+class HealthComponent extends Component {
+    constructor(componentType, componentObj) {
+        super(componentType);
+        this.totalHealth = componentObj.totalHealth
+        this.remainingHealth = componentObj.remainingHealth;
+        this.invulnerableTime = 0;
+    }
+}
+
+class HitboxComponent extends Component {
+    constructor(componentType, componentObj) {
+        super(componentType);
+        this.owner = componentObj.owner;            // Link = 1, enemy = 2 , LinkWeapon = 3 , enemyProjectile = 4
+        this.damage = componentObj.damage;
+    }
+
+}
 
 
-export { MovementComponent, PositionComponent, SpriteComponent, AnimationComponent, CollisionComponent, TransitionComponent, ActionableComponent, InventoryComponent }
+
+export { MovementComponent, HitboxComponent, PositionComponent, SpriteComponent, AnimationComponent, CollisionComponent, TransitionComponent, ActionableComponent, InventoryComponent, HealthComponent }

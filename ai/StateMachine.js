@@ -40,7 +40,6 @@ class StateMachine {
         }
 
         this.currentState = newState;
-        console.log("CURRENT STATE:  ", this.currentState)
         this.currentState.enter();
 
     }
