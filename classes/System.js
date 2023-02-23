@@ -1,5 +1,6 @@
 import { LINK_PICKUP_SWORD_1 } from "../animations/animations.js";
 import { canvas, c } from "../index.js";
+import { ITEM_DROP_TABLE } from "../items/itemDropTable.js";
 import { SWORD_1 } from "../weapons/weapons.js";
 
 class System {
@@ -224,6 +225,47 @@ class TransitionSystem extends System {
     }
 }
 
+class ItemSystem extends System {
+    constructor(systemType) {
+        super(systemType);
+        this.componentRequirements = ["Item"];
+    }
+
+    update = (player) => {
+
+        if (player) {
+
+            for (let i = 0; i < this.entities.length; i++) {
+
+
+                const e1 = this.entities[i];
+                const { Position: e1Position, Item } = e1.components;
+                const { Position: playerPosition } = player.components;
+
+                const { x: x1, y: y1, width: width1, height: height1 } = e1Position;
+                const { x: px, y: py, width: pwidth, height: pheight } = playerPosition;
+
+
+                if (
+                    x1 < px + pwidth &&
+                    x1 + width1 > px &&
+                    y1 < py + pheight &&
+                    y1 + height1 > py
+                ) {
+                    const { itemType } = Item;
+
+                    ITEM_DROP_TABLE[itemType].onPickup(e1, player);
+                }
+
+            }
+
+
+        }
+    }
+
+
+}
+
 class HitboxSystem extends System {
     constructor(systemType) {
         super(systemType);
@@ -397,6 +439,25 @@ class HealthSystem extends System {
             }
 
             if (remainingHealth <= 0) {
+
+                const { itemDrop } = entity.components["ItemDrop"];
+                if (itemDrop) {
+
+
+                    // Call the functions
+
+                    for (let key in itemDrop) {
+
+                        const value = itemDrop[key];
+
+                        if (Math.random() < value) {
+                            const { x, y } = entity.components["Position"];
+                            ITEM_DROP_TABLE[key].onDrop(registry, x, y);
+                            break;
+                        }
+                    }
+                }
+
                 registry.entitiesToBeRemoved.push(entity);
             }
         }
@@ -609,4 +670,4 @@ class AnimationSystem extends System {
     }
 }
 
-export { MovementSystem, RenderSystem, AnimationSystem, CollisionSystem, HealthSystem, TransitionSystem, ActionableSystem, HitboxSystem };
+export { MovementSystem, RenderSystem, ItemSystem, AnimationSystem, CollisionSystem, HealthSystem, TransitionSystem, ActionableSystem, HitboxSystem };

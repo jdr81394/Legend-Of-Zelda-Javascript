@@ -5,7 +5,7 @@ import InventoryScreen from "./classes/InventoryScreen.js";
 import Registry from "./classes/Registry.js";
 import { openingScreen, screenA, screenB, screenC, shop, screenD, screenE } from "./screens/screen.js";
 import Graph from "./classes/Graph.js";
-import { SWORD_1 } from "./weapons/weapons.js";
+import { SWORD_1, WEAPONS_TABLE } from "./weapons/weapons.js";
 export const canvas = document.getElementById("gameScreen");
 
 canvas.width = window.innerWidth;
@@ -30,7 +30,7 @@ class Game {
         this.inventoryScreen = new InventoryScreen();
         this.graph = undefined;
         this.audioPath = "";
-        this.isPaused = false;
+        this.isPaused = true;
     }
 
     initialize = () => {
@@ -44,6 +44,7 @@ class Game {
         this.registry.addSystem("HitboxSystem");
         this.registry.addSystem("ActionableSystem");
         this.registry.addSystem("HealthSystem");
+        this.registry.addSystem("ItemSystem");
 
         this.createPlayer();
 
@@ -65,46 +66,52 @@ class Game {
 
         this.gameTime = Date.now();
 
-        const event = this.eventBus[this.eventBus.length - 1];
+        if (!this.isPaused) {
 
-        if (event) {
-            /*
-                {
-                    args: {
-                        screen,
-                        coX,
-                        coY,
-                        eventTime : number 
-                    },
-                    func: Function 
+            const event = this.eventBus[this.eventBus.length - 1];
+
+            if (event) {
+                /*
+                    {
+                        args: {
+                            screen,
+                            coX,
+                            coY,
+                            eventTime : number 
+                        },
+                        func: Function 
+                    }
+                */
+
+                const { args, func } = event;
+
+                if (args.eventTime <= this.gameTime) {
+                    // call the function
+                    func(args);     // loadNewScreen( {coX, coY, screen} )
+                    this.eventBus.pop();
                 }
-            */
-
-            const { args, func } = event;
-
-            if (args.eventTime <= this.gameTime) {
-                // call the function
-                func(args);     // loadNewScreen( {coX, coY, screen} )
-                this.eventBus.pop();
             }
-        }
 
-        this.registry.update();
-
-        this.registry.getSystem("AnimationSystem").update(this.gameTime);
-        this.registry.getSystem("CollisionSystem").update(this.player)
-        this.registry.getSystem("MovementSystem").update()
-        this.registry.getSystem("HitboxSystem").update();
-        this.registry.getSystem("HealthSystem").update(this.registry);
-        this.registry.getSystem("TransitionSystem").update(this.player, this.eventBus, this.loadNewScreen)
-        this.registry.getSystem("ActionableSystem").update(this.player, this.eventBus);
+            this.registry.update();
 
 
-        for (let i = 0; i < this.registry.enemies.length; i++) {
-            const enemy = this.registry.enemies[i];
+            this.registry.getSystem("AnimationSystem").update(this.gameTime);
+            this.registry.getSystem("CollisionSystem").update(this.player)
+            this.registry.getSystem("MovementSystem").update()
+            this.registry.getSystem("HitboxSystem").update();
+            this.registry.getSystem("HealthSystem").update(this.registry);
+            this.registry.getSystem("TransitionSystem").update(this.player, this.eventBus, this.loadNewScreen)
+            this.registry.getSystem("ActionableSystem").update(this.player, this.eventBus);
+            this.registry.getSystem("ItemSystem").update(this.player)
 
-            enemy.stateMachine.update();
-            this.graph.dijkstrasAlgorithm(enemy);
+
+            for (let i = 0; i < this.registry.enemies.length; i++) {
+                const enemy = this.registry.enemies[i];
+
+                enemy.stateMachine.update();
+                this.graph.dijkstrasAlgorithm(enemy);
+            }
+
         }
 
 
@@ -115,7 +122,9 @@ class Game {
 
     render = () => {
         this.inventoryScreen.render(this.player, this.isPaused);
-        this.registry.getSystem("RenderSystem").update(this.isDebug);
+        if (!this.isPaused) {
+            this.registry.getSystem("RenderSystem").update(this.isDebug);
+        }
         requestAnimationFrame(this.render);
     }
 
@@ -268,27 +277,47 @@ class Game {
 
                 switch (key) {
                     case "w": {
-                        // playerAnimationComponent.facing = "up";
-                        playerAnimationComponent.isAttackingA = false;
-                        playerMovementComponent.vY = -5;
+                        if (this.isPaused) {
+                            this.inventoryScreen.moveCursorUp();
+                        }
+                        else {
+
+                            playerAnimationComponent.isAttackingA = false;
+                            playerMovementComponent.vY = -5;
+                        }
+
                         break;
                     }
                     case "a": {
-                        // playerAnimationComponent.facing = "left";
-                        playerAnimationComponent.isAttackingA = false;
-                        playerMovementComponent.vX = -5;
+                        if (this.isPaused) {
+                            this.inventoryScreen.moveCursorLeft();
+                        }
+                        else {
+                            playerAnimationComponent.isAttackingA = false;
+                            playerMovementComponent.vX = -5;
+                        }
+
                         break;
                     }
+
                     case "s": {
-                        // playerAnimationComponent.facing = "down";
-                        playerAnimationComponent.isAttackingA = false;
-                        playerMovementComponent.vY = 5
+                        if (this.isPaused) {
+                            this.inventoryScreen.moveCursorDown();
+                        } else {
+                            playerAnimationComponent.isAttackingA = false;
+                            playerMovementComponent.vY = 5
+                        }
+
                         break;
                     }
                     case "d": {
-                        // playerAnimationComponent.facing = "right";
-                        playerAnimationComponent.isAttackingA = false;
-                        playerMovementComponent.vX = 5;
+                        if (this.isPaused) {
+                            this.inventoryScreen.moveCursorRight();
+                        } else {
+                            playerAnimationComponent.isAttackingA = false;
+                            playerMovementComponent.vX = 5;
+                        }
+
                         break;
                     }
                     case "g": {
@@ -296,9 +325,18 @@ class Game {
                         break;
                     }
                     case "v": {
-                        if (playerAnimationComponent.isAttackingA === false && playerInventoryComponent.activeA) {
-                            playerAnimationComponent.isAttackingA = true;
-                            playerAnimationComponent.currentTimeOFAnimation = Date.now();
+                        if (this.isPaused) {
+                            console.log(this.inventoryScreen)
+                            const { selectedItem } = this.inventoryScreen;
+                            const item = this.inventoryScreen.itemLayout[selectedItem]
+                            this.player.components["Inventory"].activeB = WEAPONS_TABLE[item];
+                            console.log(this.player.components["Inventory"].activeB)
+                        }
+                        else {
+                            if (playerAnimationComponent.isAttackingA === false && playerInventoryComponent.activeA) {
+                                playerAnimationComponent.isAttackingA = true;
+                                playerAnimationComponent.currentTimeOFAnimation = Date.now();
+                            }
                         }
                         break;
                     }
@@ -539,7 +577,7 @@ class Game {
                 let components = [];
 
                 const enemy = enemies[i];
-                const { x, y } = enemy;
+                const { x, y, itemDrop } = enemy;
 
                 const dummyPositionComponent = {
                     name: "Position",
@@ -584,10 +622,17 @@ class Game {
                     }
                 }
 
+                const dummyItemDropComponent = {
+                    name: "ItemDrop",
+                    value: {
+                        itemDrop
+                    }
+                }
 
 
 
-                components.push(dummyPositionComponent, dummySpriteComponent, dummyMovementComponent, dummyHitboxComponent, RED_OCTOROK_ANIMATION, dummyHealthComponent);
+
+                components.push(dummyPositionComponent, dummySpriteComponent, dummyMovementComponent, dummyHitboxComponent, RED_OCTOROK_ANIMATION, dummyHealthComponent, dummyItemDropComponent);
 
                 const entity = this.registry.createEntity(components);
 

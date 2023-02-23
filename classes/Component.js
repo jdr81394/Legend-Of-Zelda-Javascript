@@ -137,9 +137,9 @@ class InventoryComponent extends Component {
         this.activeB = undefined
         this.inventory = {
             sword: undefined,
-            bomb: 0,
-            rupies: 0,
-            keys: 0
+            bomb: 1,
+            rupies: 2,
+            keys: 3
         }
     }
 }
@@ -162,6 +162,20 @@ class HitboxComponent extends Component {
 
 }
 
+class ItemDropComponent extends Component {
+    constructor(componentType, componentObj) {
+        super(componentType);
+        this.itemDrop = componentObj.itemDrop;
+    }
+}
+
+class ItemComponent extends Component {
+    constructor(componenType, componentObj) {
+        super(componenType)
+        this.itemType = componentObj.itemType
+    }
+}
 
 
-export { MovementComponent, HitboxComponent, PositionComponent, SpriteComponent, AnimationComponent, CollisionComponent, TransitionComponent, ActionableComponent, InventoryComponent, HealthComponent }
+
+export { MovementComponent, HitboxComponent, ItemComponent, PositionComponent, ItemDropComponent, SpriteComponent, AnimationComponent, CollisionComponent, TransitionComponent, ActionableComponent, InventoryComponent, HealthComponent }

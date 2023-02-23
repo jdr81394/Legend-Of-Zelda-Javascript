@@ -1,6 +1,7 @@
-import { ActionableComponent, AnimationComponent, CollisionComponent, HealthComponent, HitboxComponent, InventoryComponent, MovementComponent, PositionComponent, SpriteComponent, TransitionComponent } from "./Component.js";
+import { ITEM_DROP_TABLE } from "../items/itemDropTable.js";
+import { ActionableComponent, AnimationComponent, CollisionComponent, HealthComponent, HitboxComponent, InventoryComponent, ItemComponent, ItemDropComponent, MovementComponent, PositionComponent, SpriteComponent, TransitionComponent } from "./Component.js";
 import Entity from "./Entity.js";
-import { ActionableSystem, AnimationSystem, CollisionSystem, HealthSystem, HitboxSystem, MovementSystem, RenderSystem, TransitionSystem } from "./System.js";
+import { ActionableSystem, AnimationSystem, CollisionSystem, HealthSystem, HitboxSystem, ItemSystem, MovementSystem, RenderSystem, TransitionSystem } from "./System.js";
 
 class Registry {
     constructor() {
@@ -97,6 +98,16 @@ class Registry {
                     newEntityComponents["Health"] = new HealthComponent(component["name"], componentObj);
                     break;
                 }
+                case "ItemDrop": {
+                    const componentObj = component["value"];
+                    newEntityComponents["ItemDrop"] = new ItemDropComponent(component["name"], componentObj);
+                    break;
+                }
+                case "Item": {
+                    const componentObj = component["value"];
+                    newEntityComponents["Item"] = new ItemComponent(component["name"], componentObj);
+                    break;
+                }
                 default:
                     break;
             }
@@ -145,6 +156,10 @@ class Registry {
                 newSystem = new HealthSystem(systemType);
                 break;
             }
+            case "ItemSystem": {
+                newSystem = new ItemSystem(systemType);
+                break;
+            }
             default: {
                 break;
             }
@@ -184,6 +199,16 @@ class Registry {
     }
 
     removeEntityFromSystem = (entity) => {
+
+        const { Item } = entity.components;
+
+        if (Item) {
+
+            const { itemType } = Item;
+
+            ITEM_DROP_TABLE[itemType].onDisappear();
+
+        }
 
         Object.values(this.systems).forEach((system) => {
             system.entities = system.entities.filter((sysEntity) => sysEntity.id !== entity.id);

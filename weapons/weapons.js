@@ -46,4 +46,22 @@ const SWORD_1 = {
 }
 
 
-export { SWORD_1 }
+const BOMB = {
+    name: "bomb",
+    damage: 3,
+    path: "../assets/link.png",
+    img: undefined,
+    srcRect: {
+        x: 360,
+        y: 224,
+        width: 18,
+        height: 18
+    }
+}
+
+const WEAPONS_TABLE = {
+    bomb: BOMB
+}
+
+
+export { SWORD_1, BOMB, WEAPONS_TABLE }

@@ -12,6 +12,12 @@ class InventoryScreen {
         this.fullHeart = new Image();
         this.halfHeart = new Image();
         this.emptyHeart = new Image();
+        this.cursorPositionX = 155;
+        this.cursorPositionY = 20;
+        this.cursorYCo = 25;
+        this.cursorXCo = 25
+        this.itemLayout = [];
+        this.selectedItem = 0;
         this.initialize();
     }
 
@@ -104,6 +110,26 @@ class InventoryScreen {
 
             this.c.drawImage(this.linkSpriteSheet, x, y, width, height, 156, 124, 30, 18);
 
+        }
+
+        if (player && player.components["Inventory"].activeB) {
+            this.c.drawImage(this.linkSpriteSheet, 360, 224, 18, 18, 122, 120, 25, 25)
+        }
+
+
+        // Render number of keys, bombs & rupies
+        if (player) {
+
+            const { bomb, rupies, keys } = player.components["Inventory"].inventory;
+
+            this.c.font = "9px Arial";
+            this.c.fillStyle = "white";
+
+            this.c.fillText(`x${rupies}`, 102, 119, 30);
+            this.c.fillText(`x${bomb}`, 102, 130, 30);
+            this.c.fillText(`x${keys}`, 102, 141, 30);
+
+
 
         }
 
@@ -115,11 +141,90 @@ class InventoryScreen {
         top = top * 1;
 
         if (isPaused) {
+
+            // Inventory 
+            this.c.beginPath();
+            this.c.font = "12px Arial";
+            this.lineWidth = 2
+            this.c.fillStyle = "red";
+            this.c.fillText("Inventory", 20, 20, 100);
+            this.c.stroke();
+
+            // Draw out rest of inventory screen
+            // Top Left blue square
+            this.c.beginPath();
+            this.c.rect(30, 30, 30, 30);
+            this.c.strokeStyle = "blue";
+            this.c.stroke();
+
+
+            if (player && player.components["Inventory"].activeB) {
+                this.c.drawImage(this.linkSpriteSheet, 360, 224, 18, 18, 32, 32, 30, 28)
+            }
+
+            // Blue square that defines the inventory space
+            this.c.beginPath();
+            this.c.rect(150, 20, 140, 50);
+            this.c.strokeStyle = "blue"
+            this.c.stroke();
+
+
+
+            // Use B button for this
+            this.c.beginPath();
+            this.c.fillStyle = "white";
+            this.c.fillText("Use B Button", 30, 75, 100)
+            this.c.fillText("for this", 30, 90, 100)
+            this.c.stroke();
+
+
+
+
+            // Fill inventory with items that link has.
+            const { inventory } = player.components["Inventory"];
+
+            const keys = Object.keys(inventory);
+            const initialX = 140;
+            const initialY = 20;
+
+            if (this.itemLayout.length === 0) {
+                for (let i = 0; i < keys.length; i++) {
+                    const item = keys[i];
+
+                    if (item === "sword" || item === "rupies" || item === "keys") continue;
+
+                    this.itemLayout.push(item)
+                }
+
+            } else {
+                for (let i = 0; i < keys.length; i++) {
+                    const item = keys[i];
+
+                    if (item === "sword" || item === "rupies" || item === "keys") continue;
+
+                    if (item === "bomb" && inventory[item] > 0) {
+                        this.c.drawImage(this.linkSpriteSheet, 360, 224, 18, 18, initialX + (18 * i), initialY, 20, 20)
+                    }
+
+                }
+
+            }
+
+            this.c.beginPath();
+            this.c.rect(this.cursorPositionX, this.cursorPositionY, 20, 20);
+            this.c.lineWidth = 1.0;
+            this.c.strokeStyle = "red"
+            this.c.stroke();
+
+
+
+
+
+
             // Move the screen down;
             if (top < 210)       // 558 + 220 = 778 
             {
                 top += 10;
-                console.log("top: ", top);
             }
 
         } else {
@@ -134,8 +239,27 @@ class InventoryScreen {
 
     }
 
+    moveCursorUp = () => {
+        if (this.selectedItem <= 4) return;
+        this.selectedItem -= 5;
+        this.cursorPositionY -= this.cursorYCo
 
-
+    }
+    moveCursorDown = () => {
+        if (this.selectedItem >= 5) return;
+        this.selectedItem += 5;
+        this.cursorPositionY += this.cursorYCo;
+    }
+    moveCursorLeft = () => {
+        if (this.selectedItem === 0 || this.selectedItem === 5) return;
+        this.selectedItem -= 1;
+        this.cursorPositionX -= this.cursorXCo;
+    }
+    moveCursorRight = () => {
+        if (this.selectedItem === 4 || this.selectedItem == 9) return;
+        this.selectedItem += 1;
+        this.cursorPositionX += this.cursorXCo;
+    }
 }
 
 
