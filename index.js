@@ -12,7 +12,7 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 export const c = canvas.getContext("2d");
-const TILE_SIZE = 70
+export const TILE_SIZE = 70
 
 
 

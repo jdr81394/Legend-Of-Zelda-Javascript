@@ -9,6 +9,7 @@ class StateMachine {
 
         this.previousGlobal = undefined;
         this.previousCurrent = undefined;
+
     }
 
 

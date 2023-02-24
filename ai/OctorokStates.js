@@ -1,3 +1,5 @@
+import { TILE_SIZE } from "../index.js";
+
 export class SearchState {
 
     constructor() {
@@ -9,7 +11,28 @@ export class SearchState {
     }
     execute = (enemy, graph) => {
         if (this.startTime + 2500 <= Date.now()) {
-            enemy.stateMachine.changeState(new HuntPlayerState());
+
+            // Decision making, hunt or shoot?
+            const { x: px, y: py } = enemy.stateMachine.graph.player.components["Position"];
+            const { x: ex, y: ey } = enemy.components["Position"];
+
+            // If they are on the same y axis
+            // or x axis
+            if (
+                (Math.abs(px - ex) < 50 && Math.abs(py - ey) > 300)
+                ||
+                (Math.abs(py - ey) < 50 && Math.abs(px - ex) > 300)
+            ) {
+                console.log("1: ", (Math.abs(px - ex) < 50 && Math.abs(py - ey) > 300));
+                console.log("2: ", (Math.abs(py - ey) < 50 && Math.abs(px - ex) > 300))
+                console.log("Player x ", px, ' player y: ', py)
+                console.log("enemy x ", ex, ' enemy y: ', ey)
+                enemy.stateMachine.changeState(new ShootRockState())
+
+            }
+            else {
+                enemy.stateMachine.changeState(new HuntPlayerState());
+            }
             enemy.stateMachine.changeGlobalState(new SearchState());
         }
 
@@ -17,6 +40,104 @@ export class SearchState {
     exit = () => { }
 }
 
+export class ShootRockState {
+    enter = () => { }
+    execute = (enemy) => {
+        const { x: px, y: py } = enemy.stateMachine.graph.player.components["Position"];
+        const { x: ex, y: ey } = enemy.components["Position"];
+
+        const dummySpriteComponent = {
+            name: "Sprite",
+            value: {
+                path: "./assets/link.png",
+                srcRect: {
+                    x: 390,
+                    y: 224,
+                    width: 18,
+                    height: 18
+                }
+            }
+        }
+
+        const dummyMovementComponent = {
+            name: "Movement",
+            value: {
+                vX: 0,
+                vY: 0
+            }
+        }
+
+        const dummyPositionComponent = {
+            name: "Position",
+            value: {
+                x: ex,
+                y: ey,
+                width: 50,
+                height: 50,
+            }
+        }
+
+        const dummyHitboxComponent = {
+            name: "Hitbox",
+            value: {
+                owner: 4,
+                damage: 1
+            }
+        }
+
+        if (Math.abs(px - ex) < 50 && Math.abs(py - ey) > 300) {
+            // same y axis
+            // now determine what side link is on, top or bottom
+            if (py > ey) {
+                // bottom 
+
+                console.log("Bottom")
+                enemy.components["Animation"].facing = "down"
+                dummyMovementComponent.value.vY = 5;
+                dummyPositionComponent.value.x += TILE_SIZE * .15
+                dummyPositionComponent.value.y += 30;
+
+            }
+            else {
+                // top
+                console.log("top")
+                enemy.components["Animation"].facing = "up"
+                dummyMovementComponent.value.vY = -5;
+                dummyPositionComponent.value.x += TILE_SIZE * .15
+                dummyPositionComponent.value.y -= 30;
+
+
+            }
+        }
+        else {
+            // same x axis
+            if (px > ex) {
+                enemy.components["Animation"].facing = "right"
+                dummyMovementComponent.value.vX = 5;
+                dummyPositionComponent.value.x += TILE_SIZE * .5
+                dummyPositionComponent.value.y += 10;
+
+                console.log("right")
+                // to the right
+            }
+            else {
+                // to the left
+                enemy.components["Animation"].facing = "left"
+                dummyMovementComponent.value.vX = -5;
+                dummyPositionComponent.value.x -= 15;
+                dummyPositionComponent.value.y += 10;
+
+                console.log("left")
+
+            }
+        }
+
+        enemy.registry.createEntity([dummyHitboxComponent, dummyMovementComponent, dummyPositionComponent, dummySpriteComponent])
+        enemy.stateMachine.changeState(new HuntPlayerState())
+    }
+    exit = () => { }
+
+}
 
 export class HuntPlayerState {
 

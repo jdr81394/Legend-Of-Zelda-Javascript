@@ -64,26 +64,29 @@ class MovementSystem extends System {
                 Movement.knockbackVy = f * Math.floor(Movement.knockbackVy);
             }
 
+            if (Animation) {
 
-            if (Movement.vX > 0) {
-                Animation.facing = "right"
-            }
-            if (Movement.vX < 0) {
-                Animation.facing = "left"
-            }
+                if (Movement.vX > 0) {
+                    Animation.facing = "right"
+                }
+                if (Movement.vX < 0) {
+                    Animation.facing = "left"
+                }
 
-            if (Movement.vY < 0) {
-                Animation.facing = "up";
-            }
+                if (Movement.vY < 0) {
+                    Animation.facing = "up";
+                }
 
-            if (Movement.vY > 0) {
-                Animation.facing = "down";
-            }
+                if (Movement.vY > 0) {
+                    Animation.facing = "down";
+                }
 
-            if (Movement.vX || Movement.vY) {
-                Animation.shouldAnimate = true
-            } else {
-                Animation.shouldAnimate = false
+
+                if (Movement.vX || Movement.vY) {
+                    Animation.shouldAnimate = true
+                } else {
+                    Animation.shouldAnimate = false
+                }
             }
         }
     }
@@ -407,7 +410,6 @@ class HitboxSystem extends System {
                             }
                         }
 
-                        console.log("side: ", side)
 
                     }
 
