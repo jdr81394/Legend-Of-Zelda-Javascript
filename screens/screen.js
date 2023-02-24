@@ -138,30 +138,22 @@ const screenE = {
         // enemyType: string
         itemDrop: {
             FIVE_RUPIES: 1
-            // ONE_RUPIE: 1
-            // BOMB: 1         // 0 - 1  0 = 0%, while 1 = 100% 0.5 = 50%
-
-            /*
-
-                .1: 5 rupies
-                .5: bomb
-            */
         }
     },
     {
-        x: 6,
-        y: 2,
+        x: 1,
+        y: 5,
         // enemyType: string
         itemDrop: {
-            FIVE_RUPIES: 1
-            // ONE_RUPIE: 1
-            // BOMB: 1         // 0 - 1  0 = 0%, while 1 = 100% 0.5 = 50%
-
-            /*
-
-                .1: 5 rupies
-                .5: bomb
-            */
+            BOMB: 1
+        }
+    },
+    {
+        x: 15,
+        y: 5,
+        // enemyType: string
+        itemDrop: {
+            BOMB: 1
         }
     },
     ],

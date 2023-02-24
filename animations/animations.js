@@ -294,6 +294,112 @@ const RED_OCTOROK_ANIMATION = {
     }
 }
 
+const BLUE_OCTOROK_ANIMATION = {
+    name: "Animation",
+    value: {
+        shouldAnimate: false,
+        currentTimeOfAnimation: 0,
+        facing: "down",
+        frames: {
+            down: {
+                move: {
+                    srcRect: [
+                        {
+                            x: 120,
+                            y: -1,
+                            width: 20,
+                            height: 19
+                        },
+                        {
+                            x: 120,
+                            y: 28,
+                            width: 19,
+                            height: 19
+                        },
+                    ],
+                    currentFrame: 0,
+                    numFrames: 2,
+                    frameSpeedRate: 3,
+                    startTime: Date.now()
+                },
+                attack: {}
+            },
+            left: {
+                move: {
+                    srcRect: [
+                        {
+                            x: 120 + 29,
+                            y: -1,
+                            width: 19,
+                            height: 19
+                        },
+                        {
+                            x: 120 + 28,
+                            y: 29,
+                            width: 19,
+                            height: 19
+                        },
+                    ],
+                    currentFrame: 0,
+                    numFrames: 2,
+                    frameSpeedRate: 3,
+                    startTime: Date.now()
+                },
+                attack: {}
+
+            },
+            up: {
+                move: {
+                    srcRect: [
+                        {
+                            x: 120 + 58,
+                            y: -1,
+                            width: 19,
+                            height: 19
+                        },
+                        {
+                            x: 120 + 58,
+                            y: 28,
+                            width: 19,
+                            height: 19
+                        },
+                    ],
+                    currentFrame: 0,
+                    numFrames: 2,
+                    frameSpeedRate: 3,
+                    startTime: Date.now()
+                },
+                attack: {}
+            },
+            right: {
+                move: {
+                    srcRect: [
+                        {
+                            x: 120 + 88,
+                            y: -1,
+                            width: 19,
+                            height: 19
+                        },
+                        {
+                            x: 120 + 88,
+                            y: 28,
+                            width: 19,
+                            height: 19
+                        },
+                    ],
+                    currentFrame: 0,
+                    numFrames: 2,
+                    frameSpeedRate: 3,
+                    startTime: Date.now()
+                },
+                attack: {}
+
+            },
+
+        }
+    }
+}
+
 
 
 // player, registry, handleUserInput, newTilePositionComponent
@@ -522,4 +628,4 @@ const BOMB_ANIMATION = {
 
 }
 
-export { LINK_ANIMATION, LINK_PICKUP_SWORD_1, RED_OCTOROK_ANIMATION, BOMB_DETONATION, BOMB_ANIMATION };
+export { LINK_ANIMATION, LINK_PICKUP_SWORD_1, RED_OCTOROK_ANIMATION, BLUE_OCTOROK_ANIMATION, BOMB_DETONATION, BOMB_ANIMATION };
