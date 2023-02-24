@@ -404,4 +404,122 @@ const LINK_PICKUP_SWORD_1 = ({ player, handleUserInput, id, newTilePositionCompo
 
 }
 
-export { LINK_ANIMATION, LINK_PICKUP_SWORD_1, RED_OCTOROK_ANIMATION };
+
+// entity is the BOMB itself, registry
+const BOMB_DETONATION = ({ entity }) => {
+
+    const { x, y } = entity.components["Position"];
+
+    /*
+    [0] [1] [2]
+    [3] [4] [5]
+    [6] [7] [8]
+
+    */
+
+    for (let i = 0; i < 9; i++) {
+        let displacementX = 0;
+        let displacementY = 0;
+
+        if (i < 3) {
+            displacementY -= 50;
+        } else if (i >= 6) {
+            displacementY += 50;
+        }
+
+        if (i === 0 || i === 3 || i === 6) {
+            displacementX -= 50
+        }
+        else if (i === 2 || i === 5 || i === 8) {
+            displacementX += 50
+        }
+
+
+        const dummyPositionComponent = {
+            name: "Position",
+            value: {
+                x: x + displacementX,
+                y: y + displacementY,
+                height: 50,
+                width: 50
+            }
+        }
+
+        const dummySpriteComponent = {
+            name: "Sprite",
+            value: {
+                path: "./assets/cloud.png",
+                srcRect: {
+                    x: 0,
+                    y: 0,
+                    width: 16,
+                    height: 16
+                }
+            }
+        }
+
+        const dummyHitboxComponent = {
+            name: "Hitbox",
+            value: {
+                owner: 3,
+                damage: 2
+            }
+        }
+
+        // Create animation component
+        let dummyAnimationComponent;
+        dummyAnimationComponent = Object.assign(BOMB_ANIMATION, dummyAnimationComponent);
+
+        dummyAnimationComponent.value.currentTimeOfAnimation = Date.now();
+
+
+        new Audio("../assets/audio/bombExplosion.mp3").play();
+
+        entity.registry.createEntity([dummyAnimationComponent, dummyHitboxComponent, dummyPositionComponent, dummySpriteComponent]);
+
+    }
+
+    entity.registry.entitiesToBeRemoved.push(entity);
+
+
+}
+
+
+const BOMB_ANIMATION = {
+    name: "Animation",
+    value: {
+        isStatic: true,
+        shouldAnimate: true,
+        currentTimeOfAnimation: 0,
+        removeOn: 2,             // This starts at 0, so 2 is the third frame
+        frames: {
+            srcRect: [
+                {
+                    x: 0,
+                    y: 0,
+                    width: 16,
+                    height: 16
+                },
+                {
+                    x: 16,
+                    y: 0,
+                    width: 16,
+                    height: 16
+                },
+                {
+                    x: 32,
+                    y: 0,
+                    height: 16,
+                    width: 16
+                }
+            ],
+            startTime: Date.now(),
+            currentFrame: 0,
+            numFrames: 3,
+            frameSpeedRate: 5
+        }
+    }
+
+}
+
+export { LINK_ANIMATION, LINK_PICKUP_SWORD_1, RED_OCTOROK_ANIMATION, BOMB_DETONATION, BOMB_ANIMATION };

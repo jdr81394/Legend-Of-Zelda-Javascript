@@ -1,4 +1,4 @@
-import { searchState } from "./ai/OctorokStates.js";
+import { SearchState } from "./ai/OctorokStates.js";
 import StateMachine from "./ai/StateMachine.js";
 import { LINK_ANIMATION, LINK_PICKUP_SWORD_1, RED_OCTOROK_ANIMATION } from "./animations/animations.js";
 import InventoryScreen from "./classes/InventoryScreen.js";
@@ -30,7 +30,7 @@ class Game {
         this.inventoryScreen = new InventoryScreen();
         this.graph = undefined;
         this.audioPath = "";
-        this.isPaused = true;
+        this.isPaused = false;
     }
 
     initialize = () => {
@@ -59,6 +59,8 @@ class Game {
         // this.loadScreen(screenD);
         this.loadScreen(screenE);
 
+        this.player.components["Inventory"].activeB = WEAPONS_TABLE["bomb"];
+
 
     }
 
@@ -68,28 +70,42 @@ class Game {
 
         if (!this.isPaused) {
 
-            const event = this.eventBus[this.eventBus.length - 1];
+            // const event = this.eventBus[this.eventBus.length - 1];
 
-            if (event) {
-                /*
-                    {
-                        args: {
-                            screen,
-                            coX,
-                            coY,
-                            eventTime : number 
-                        },
-                        func: Function 
+            // if (event) {
+            //     /*
+            //         {
+            //             args: {
+            //                 screen,
+            //                 coX,
+            //                 coY,
+            //                 eventTime : number 
+            //             },
+            //             func: Function 
+            //         }
+            //     */
+
+            //     const { args, func } = event;
+
+            //     if (args.eventTime <= this.gameTime) {
+            //         // call the function
+            //         func(args);     // loadNewScreen( {coX, coY, screen} )
+            //         this.eventBus.pop();
+            //     }
+            // }
+
+            for (let i = 0; i < this.eventBus.length; i++) {
+                const event = this.eventBus[i];
+
+                if (event) {
+
+                    const { args, func } = event;
+                    if (args.eventTime <= this.gameTime) {
+                        func(args);
+                        this.eventBus = this.eventBus.slice(0, i).concat(this.eventBus.slice(i + 1));
                     }
-                */
-
-                const { args, func } = event;
-
-                if (args.eventTime <= this.gameTime) {
-                    // call the function
-                    func(args);     // loadNewScreen( {coX, coY, screen} )
-                    this.eventBus.pop();
                 }
+
             }
 
             this.registry.update();
@@ -112,6 +128,15 @@ class Game {
                 this.graph.dijkstrasAlgorithm(enemy);
             }
 
+            const { inventory, activeB } = this.player.components["Inventory"];
+
+            if (activeB) {
+                if (activeB["name"] === "bomb" && inventory["bomb"] <= 0) {
+                    this.player.components["Inventory"].activeB = undefined;
+                }
+            }
+
+
         }
 
 
@@ -123,7 +148,7 @@ class Game {
     render = () => {
         this.inventoryScreen.render(this.player, this.isPaused);
         if (!this.isPaused) {
-            this.registry.getSystem("RenderSystem").update(this.isDebug);
+            this.registry.getSystem("RenderSystem").update(this.isDebug, this.eventBus);
         }
         requestAnimationFrame(this.render);
     }
@@ -326,16 +351,25 @@ class Game {
                     }
                     case "v": {
                         if (this.isPaused) {
-                            console.log(this.inventoryScreen)
                             const { selectedItem } = this.inventoryScreen;
                             const item = this.inventoryScreen.itemLayout[selectedItem]
                             this.player.components["Inventory"].activeB = WEAPONS_TABLE[item];
-                            console.log(this.player.components["Inventory"].activeB)
                         }
                         else {
                             if (playerAnimationComponent.isAttackingA === false && playerInventoryComponent.activeA) {
                                 playerAnimationComponent.isAttackingA = true;
                                 playerAnimationComponent.currentTimeOFAnimation = Date.now();
+                            }
+                        }
+                        break;
+                    }
+                    case "c": {
+                        const { activeB } = this.player.components["Inventory"];
+                        if (this.isPaused) {
+                            // Do something
+                        } else if (activeB) {
+                            if (playerAnimationComponent.isAttackingB === false) {
+                                playerAnimationComponent.isAttackingB = true;
                             }
                         }
                         break;
@@ -364,6 +398,10 @@ class Game {
                     case "v": {
                         playerAnimationComponent.isAttackingA = false;
                         playerAnimationComponent.currentTimeOFAnimation = 0;
+                        break;
+                    }
+                    case "c": {
+                        playerAnimationComponent.isAttackingB = false;
                         break;
                     }
                     default:
@@ -637,7 +675,7 @@ class Game {
                 const entity = this.registry.createEntity(components);
 
                 entity.stateMachine = new StateMachine(entity, this.graph)
-                entity.stateMachine.changeGlobalState(searchState);
+                entity.stateMachine.changeGlobalState(new SearchState());
 
                 this.registry.enemies.push(entity);
 

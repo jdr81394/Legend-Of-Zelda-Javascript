@@ -1,4 +1,4 @@
-class SearchState {
+export class SearchState {
 
     constructor() {
         this.startTime = undefined;
@@ -9,8 +9,8 @@ class SearchState {
     }
     execute = (enemy, graph) => {
         if (this.startTime + 2500 <= Date.now()) {
-            enemy.stateMachine.changeState(huntPlayerState);
-            enemy.stateMachine.changeGlobalState(searchState);
+            enemy.stateMachine.changeState(new HuntPlayerState());
+            enemy.stateMachine.changeGlobalState(new SearchState());
         }
 
     }
@@ -18,7 +18,7 @@ class SearchState {
 }
 
 
-class HuntPlayerState {
+export class HuntPlayerState {
 
     constructor() { }
 
@@ -79,5 +79,5 @@ class HuntPlayerState {
 
 
 
-export const huntPlayerState = new HuntPlayerState();
-export const searchState = new SearchState();
+// export const huntPlayerState = new HuntPlayerState();
+// export const searchState = new SearchState();

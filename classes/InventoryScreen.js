@@ -81,9 +81,11 @@ class InventoryScreen {
             const width = 14;
             const height = 14;
 
+            this.c.imageSmoothingEnabled = false;
+            this.c.imageSmoothingQuality = "high";
+
 
             // Render Hearts
-
             for (let i = 0; i < arrHealth.length; i++) {
                 const coX = 15 * i;
                 let target = undefined;
@@ -100,6 +102,8 @@ class InventoryScreen {
 
             }
 
+
+
         }
 
 
@@ -113,7 +117,7 @@ class InventoryScreen {
         }
 
         if (player && player.components["Inventory"].activeB) {
-            this.c.drawImage(this.linkSpriteSheet, 360, 224, 18, 18, 122, 120, 25, 25)
+            this.c.drawImage(this.linkSpriteSheet, 360, 224, 18, 18, 125, 125, 19, 19)
         }
 
 
@@ -125,9 +129,10 @@ class InventoryScreen {
             this.c.font = "9px Arial";
             this.c.fillStyle = "white";
 
-            this.c.fillText(`x${rupies}`, 102, 119, 30);
-            this.c.fillText(`x${bomb}`, 102, 130, 30);
-            this.c.fillText(`x${keys}`, 102, 141, 30);
+            this.c.fillText(`x${rupies}`, 102, 125, 30);
+            this.c.fillText(`x${keys}`, 102, 133, 30);
+            this.c.fillText(`x${bomb}`, 102, 141, 30);
+
 
 
 

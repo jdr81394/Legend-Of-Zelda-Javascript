@@ -86,6 +86,7 @@ class SpriteComponent extends Component {
 class AnimationComponent extends Component {
     constructor(componentType, componentObj) {
         super(componentType);
+        this.isStatic = componentObj.isStatic;
         this.frames = componentObj.frames;
         /*
             {
@@ -113,10 +114,12 @@ class AnimationComponent extends Component {
                 right: {}
             }
         */
+        this.removeOn = componentObj.removeOn;
         this.currentTimeOfAnimation = componentObj.currentTimeOfAnimation;
         this.facing = componentObj.facing;          // string
         this.shouldAnimate = componentObj.shouldAnimate;
         this.isAttackingA = false;
+        this.isAttackingB = false;
     }
 }
 
