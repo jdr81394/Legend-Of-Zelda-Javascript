@@ -65,25 +65,28 @@ class MovementSystem extends System {
             }
 
 
-            if (Movement.vX > 0) {
-                Animation.facing = "right"
-            }
-            if (Movement.vX < 0) {
-                Animation.facing = "left"
-            }
 
-            if (Movement.vY < 0) {
-                Animation.facing = "up";
-            }
+            if (Animation) {
+                if (Movement.vX > 0) {
+                    Animation.facing = "right"
+                }
+                if (Movement.vX < 0) {
+                    Animation.facing = "left"
+                }
 
-            if (Movement.vY > 0) {
-                Animation.facing = "down";
-            }
+                if (Movement.vY < 0) {
+                    Animation.facing = "up";
+                }
 
-            if (Movement.vX || Movement.vY) {
-                Animation.shouldAnimate = true
-            } else {
-                Animation.shouldAnimate = false
+                if (Movement.vY > 0) {
+                    Animation.facing = "down";
+                }
+
+                if (Movement.vX || Movement.vY) {
+                    Animation.shouldAnimate = true
+                } else {
+                    Animation.shouldAnimate = false
+                }
             }
         }
     }
@@ -319,7 +322,7 @@ class HitboxSystem extends System {
                             if (invulnerableTime === 0) {
                                 // Do damage
                                 enemy.components["Health"].remainingHealth -= damage;
-                                enemy.components["Health"].invulnerableTime = Date.now() + 500; // We will be handling this later
+                                enemy.components["Health"].invulnerableTime = Date.now() + 1000; // We will be handling this later
 
                                 // Apply Knockback
                                 kbReceiver = enemy;
@@ -353,7 +356,7 @@ class HitboxSystem extends System {
                             if (invulnerableTime === 0) {
                                 // Do damage
                                 link.components["Health"].remainingHealth -= damage;
-                                link.components["Health"].invulnerableTime = Date.now() + 500;
+                                link.components["Health"].invulnerableTime = Date.now() + 1000;
 
                                 kbReceiver = link;
                                 kbSender = enemy;

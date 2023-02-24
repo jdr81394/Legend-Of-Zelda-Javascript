@@ -12,7 +12,7 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 export const c = canvas.getContext("2d");
-const TILE_SIZE = 70
+export const TILE_SIZE = 70
 
 
 
@@ -217,7 +217,7 @@ class Game {
             const dummyPositionComponent = {
                 name: "Position",
                 value: {
-                    x: 500,
+                    x: 600,
                     y: 500,
                     height: TILE_SIZE - 15,
                     width: TILE_SIZE - 15
@@ -625,6 +625,7 @@ class Game {
                         height: TILE_SIZE - 10
                     }
                 };
+
 
                 const dummySpriteComponent = {
                     name: "Sprite",
