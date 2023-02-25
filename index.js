@@ -1,6 +1,6 @@
 import { SearchState } from "./ai/OctorokStates.js";
 import StateMachine from "./ai/StateMachine.js";
-import { LINK_ANIMATION, LINK_PICKUP_SWORD_1, RED_OCTOROK_ANIMATION } from "./animations/animations.js";
+import { BLUE_OCTOROK_ANIMATION, LINK_ANIMATION, LINK_PICKUP_SWORD_1, RED_OCTOROK_ANIMATION } from "./animations/animations.js";
 import InventoryScreen from "./classes/InventoryScreen.js";
 import Registry from "./classes/Registry.js";
 import { openingScreen, screenA, screenB, screenC, shop, screenD, screenE } from "./screens/screen.js";
@@ -56,8 +56,8 @@ class Game {
         // this.loadScreen(screenB);
         // this.loadScreen(screenA);
         // this.loadScreen(screenC);
-        // this.loadScreen(screenD);
-        this.loadScreen(screenE);
+        this.loadScreen(screenD);
+        // this.loadScreen(screenE);
 
         this.player.components["Inventory"].activeB = WEAPONS_TABLE["bomb"];
 
@@ -308,7 +308,7 @@ class Game {
                         else {
 
                             playerAnimationComponent.isAttackingA = false;
-                            playerMovementComponent.vY = -5;
+                            playerMovementComponent.vY = -3;
                         }
 
                         break;
@@ -319,7 +319,7 @@ class Game {
                         }
                         else {
                             playerAnimationComponent.isAttackingA = false;
-                            playerMovementComponent.vX = -5;
+                            playerMovementComponent.vX = -3;
                         }
 
                         break;
@@ -330,7 +330,7 @@ class Game {
                             this.inventoryScreen.moveCursorDown();
                         } else {
                             playerAnimationComponent.isAttackingA = false;
-                            playerMovementComponent.vY = 5
+                            playerMovementComponent.vY = 3
                         }
 
                         break;
@@ -340,7 +340,7 @@ class Game {
                             this.inventoryScreen.moveCursorRight();
                         } else {
                             playerAnimationComponent.isAttackingA = false;
-                            playerMovementComponent.vX = 5;
+                            playerMovementComponent.vX = 3;
                         }
 
                         break;
@@ -671,7 +671,7 @@ class Game {
 
 
 
-                components.push(dummyPositionComponent, dummySpriteComponent, dummyMovementComponent, dummyHitboxComponent, RED_OCTOROK_ANIMATION, dummyHealthComponent, dummyItemDropComponent);
+                components.push(dummyPositionComponent, dummySpriteComponent, dummyMovementComponent, dummyHitboxComponent, i % 2 === 0 ? RED_OCTOROK_ANIMATION : BLUE_OCTOROK_ANIMATION, dummyHealthComponent, dummyItemDropComponent);
 
                 const entity = this.registry.createEntity(components);
 

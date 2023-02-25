@@ -5,6 +5,7 @@ const o = undefined;
 const openingScreen = {
     assetPath: "./assets/overworld/",
     audioPath: "./assets/audio/overworld.mp3",
+
     screen: [
         [o, o, o, o, o, o, o, o, { screen: "screenC", type: "door", coX: 8, coY: 11 }, { screen: "screenC", type: "door", coX: 9, coY: 11 }, o, o, o, o, o, o, o, o],
         [o, "1", "1", "1", "1", "1", "1", "1", 0, 0, "1", "1", "1", "1", "1", "1", "1", o],
@@ -48,6 +49,32 @@ const shop = {
 const screenA = {
     assetPath: "./assets/overworld/",
     audioPath: "./assets/audio/overworld.mp3",
+    enemies: [{
+        x: 1,
+        y: 6,
+        itemDrop: {
+            FIVE_RUPIES: 1
+
+        }
+    },
+    {
+        x: 3,
+        y: 3,
+        itemDrop: {
+            BOMB: 1
+
+        }
+    },
+    {
+        x: 16,
+        y: 6,
+        itemDrop: {
+            ONE_RUPIE: 1
+
+        }
+    },
+
+    ],
     screen: [
         [o, o, o, o, o, o, o, o, o, o, o, o, o, { screen: "screenB", type: "door", coX: 13, coY: 11 }, { screen: "screenB", type: "door", coX: 14, coY: 11 }, o, o, o],
         [o, "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", 0, 0, "1", "1", o],
@@ -70,6 +97,40 @@ const screenA = {
 const screenB = {
     assetPath: "./assets/overworld/",
     audioPath: "./assets/audio/overworld.mp3",
+    enemies: [{
+        x: 1,
+        y: 6,
+        itemDrop: {
+            FIVE_RUPIES: 1
+
+        }
+    },
+    {
+        x: 3,
+        y: 3,
+        itemDrop: {
+            BOMB: 1
+
+        }
+    },
+    {
+        x: 16,
+        y: 6,
+        itemDrop: {
+            ONE_RUPIE: 1
+
+        }
+    },
+    {
+        x: 14,
+        y: 10,
+        itemDrop: {
+            ONE_RUPIE: 1
+
+        }
+    },
+
+    ],
     screen: [
         [o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o],
         [o, "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", o],
@@ -91,6 +152,32 @@ const screenB = {
 const screenC = {
     assetPath: "./assets/overworld/",
     audioPath: "./assets/audio/overworld.mp3",
+    enemies: [{
+        x: 1,
+        y: 6,
+        itemDrop: {
+            FIVE_RUPIES: 1
+
+        }
+    },
+    {
+        x: 3,
+        y: 3,
+        itemDrop: {
+            BOMB: 1
+
+        }
+    },
+    {
+        x: 16,
+        y: 6,
+        itemDrop: {
+            ONE_RUPIE: 1
+
+        }
+    },
+
+    ],
     screen: [
         [o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o],
         [o, "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", o],
@@ -111,6 +198,39 @@ const screenC = {
 const screenD = {
     assetPath: "./assets/overworld/",
     audioPath: "./assets/audio/overworld.mp3",
+    enemies: [{
+        x: 1,
+        y: 6,
+        itemDrop: {
+            FIVE_RUPIES: 1
+
+        }
+    },
+    {
+        x: 3,
+        y: 3,
+        itemDrop: {
+            BOMB: 1
+
+        }
+    },
+    {
+        x: 16,
+        y: 6,
+        itemDrop: {
+            ONE_RUPIE: 1
+
+        }
+    },
+    {
+        x: 14,
+        y: 10,
+        itemDrop: {
+            ONE_RUPIE: 1
+
+        }
+    },
+    ],
     screen: [
         [o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o],
         [o, "1", "1", "20", 0, "20", 0, "20", 0, 0, "20", 0, "20", 0, "20", 0, "20", o],
@@ -153,17 +273,19 @@ const screenE = {
         y: 2,
         // enemyType: string
         itemDrop: {
-            FIVE_RUPIES: 1
-            // ONE_RUPIE: 1
-            // BOMB: 1         // 0 - 1  0 = 0%, while 1 = 100% 0.5 = 50%
+            ONE_RUPIE: 1
 
-            /*
-
-                .1: 5 rupies
-                .5: bomb
-            */
         }
     },
+    {
+        x: 9,
+        y: 2,
+        // enemyType: string
+        itemDrop: {
+            BOMB: 1
+
+        }
+    }
     ],
     screen: [
         [o, o, o, o, { screen: "screenD", type: "door", coX: 4, coY: 11 }, o, { screen: "screenD", type: "door", coX: 6, coY: 11 }, o, { screen: "screenD", type: "door", coX: 8, coY: 11 }, { screen: "screenD", type: "door", coX: 9, coY: 11 }, o, { screen: "screenD", type: "door", coX: 11, coY: 11 }, o, { screen: "screenD", type: "door", coX: 13, coY: 11 }, o, { screen: "screenD", type: "door", coX: 15, coY: 1 }, o, o],
